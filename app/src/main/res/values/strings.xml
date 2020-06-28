@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">RaceMarshallAndroid</string>
+    <string name="tab_text_1">Active Racers</string>
+    <string name="tab_text_2">Racer Times</string>
+    <string name="tab_text_3">Checkpoints</string>
+    <string name="timeButtonString">00:00:00</string>
+    <string name="inButtonString">In</string>
+    <string name="selectedRacersLabelString">Selected Racers</string>
+    <string name="selectedRacersTextViewString">No Racers Selected</string>
+    <string name="outButtonString">Out</string>
+    <string name="deselectAllButtonString">Deselect All</string>
+    <string name="otherActionButtonString">Other</string>
+</resources>
