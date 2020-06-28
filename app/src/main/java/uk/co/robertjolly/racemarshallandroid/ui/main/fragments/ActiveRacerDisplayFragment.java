@@ -1,5 +1,6 @@
 package uk.co.robertjolly.racemarshallandroid.ui.main.fragments;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,12 +28,12 @@ public class ActiveRacerDisplayFragment extends Fragment {
 
         Fragment frag = getParentFragment();
         racers = (ArrayList<Integer>) frag.getArguments().get("racers");
-        
+
         View view = inflater.inflate(R.layout.active_racers_display_fragment, container, false);
         view.setElevation(0); //doesn't work when set in XML - I'm unsure why, but I should fix this later when I know.
 
         final GridView gridView = ((GridView) view.findViewById(R.id.gridView));
-        final RaceGridViewAdapter raceGridViewAdapter = new RaceGridViewAdapter(gridView.getContext(), racers);
+        final RaceGridViewAdapter raceGridViewAdapter = new RaceGridViewAdapter(gridView.getContext(), this, racers);
         gridView.setAdapter(raceGridViewAdapter);
 
         int j = 0;
@@ -59,7 +60,9 @@ public class ActiveRacerDisplayFragment extends Fragment {
     public void setRacers(ArrayList<Integer> passedRacers) {
         this.racers = passedRacers;
     }
-    public void changeBackground() {
+
+    public void passSelected(ArrayList<Integer> selectedList) {
+        ((ActiveRacerActionFragment) getFragmentManager().findFragmentById(R.id.actionFragment)).setSelectedRacers(selectedList);
     }
 
 }

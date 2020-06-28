@@ -54,7 +54,15 @@ public class ActiveRacerActionFragment extends Fragment {
       //  initialiseTimeButton(view);
     }
 
-    public void setRacers() {
+    public void setSelectedRacers(ArrayList<Integer> passedSelectedRacers) {
+        this.selectedRacers = passedSelectedRacers;
+
+        TextView test = (TextView) this.getView().findViewById(R.id.selectedRacersTextView);
+        if (selectedRacers != null) {
+            test.setText(selectedRacers.toString());
+        } else {
+            test.setText("No selected racers.");
+        }
 
     }
 }
