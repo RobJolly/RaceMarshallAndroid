@@ -53,4 +53,8 @@ public class ActiveRacerActionFragment extends Fragment {
     public void startup(View view) {
       //  initialiseTimeButton(view);
     }
+
+    public void setRacers() {
+
+    }
 }

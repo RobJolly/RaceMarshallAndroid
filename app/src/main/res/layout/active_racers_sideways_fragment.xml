@@ -39,7 +39,7 @@
         app:srcCompat="@android:drawable/ic_menu_search" />
 
     <fragment
-        android:id="@+id/fragment"
+        android:id="@+id/selectedFragment"
         android:name="uk.co.robertjolly.racemarshallandroid.ui.main.fragments.ActiveRacerDisplayFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
