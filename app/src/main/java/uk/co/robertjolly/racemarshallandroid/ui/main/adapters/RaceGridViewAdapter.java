@@ -12,6 +12,7 @@ import android.widget.TextView;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.ui.main.fragments.ActiveRacerDisplayFragment;
@@ -83,6 +84,13 @@ public class RaceGridViewAdapter extends BaseAdapter {
 
     private void passSelected(View view) {
      //   ((TextView) (view.findViewById(R.id.selectedRacersTextView))).setText(selected.toString());
+    }
+
+    public void removeSelected() {
+        for (HashMap.Entry<Integer, Integer> entry : selected.entrySet()) {
+            activeRacers.remove(entry.getKey());
+        }
+        notifyDataSetChanged();
     }
 
     public void resetSelected() {

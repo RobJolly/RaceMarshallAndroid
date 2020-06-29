@@ -42,6 +42,15 @@ public class ActiveRacerActionFragment extends Fragment {
                 resetSelected();
             }
         });
+        Button outButton = view.findViewById(R.id.outButton);
+        outButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ActiveRacerDisplayFragment frag = (ActiveRacerDisplayFragment) getFragmentManager().findFragmentById(R.id.selectionFragment);
+                frag.removeSelectedRacers();
+                resetSelected();
+            }
+        });
         startup(view);
         return view;
     }

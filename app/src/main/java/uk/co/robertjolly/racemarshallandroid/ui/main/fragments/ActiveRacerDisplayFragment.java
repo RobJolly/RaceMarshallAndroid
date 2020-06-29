@@ -37,23 +37,6 @@ public class ActiveRacerDisplayFragment extends Fragment {
         return view;
     }
 
-    private ArrayList<Integer> getRacers() {
-        ArrayList<Integer> racers = new ArrayList<>();
-        /*for (int i = 0; i < 121; i++) {
-            racers.add(i);
-        }
-        return racers;*/
-      if (getArguments() != null) {
-          ArrayList<Integer> test = (ArrayList<Integer>) getArguments().get("racers");
-          return test;
-      } else {
-          return racers;
-      }
-      //  ArrayList<Integer> test = (ArrayList<Integer>) getArguments().get("racers");
-       // int i = 0;
-     //   return racers;
-    }
-
     public void setRacers(ArrayList<Integer> passedRacers) {
         this.racers = passedRacers;
     }
@@ -64,6 +47,10 @@ public class ActiveRacerDisplayFragment extends Fragment {
 
     public void resetSelected() {
         ((RaceGridViewAdapter)(((GridView)(getView().findViewById(R.id.gridView))).getAdapter())).resetSelected();
+    }
+
+    public void removeSelectedRacers() {
+        ((RaceGridViewAdapter)(((GridView)(getView().findViewById(R.id.gridView))).getAdapter())).removeSelected();
     }
 
 }
