@@ -5,13 +5,13 @@ import android.os.Parcelable;
 
 public class Racer implements Comparable {
 
-    short racerNumber;
+    int racerNumber;
 
-    public Racer(short racerNumber) {
+    public Racer(int racerNumber) {
         this.racerNumber = racerNumber;
     }
 
-    public short getRacerNumber() {
+    public int getRacerNumber() {
         return racerNumber;
     }
 

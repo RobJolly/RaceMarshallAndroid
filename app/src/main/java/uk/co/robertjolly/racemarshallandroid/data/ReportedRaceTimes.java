@@ -2,6 +2,19 @@ package uk.co.robertjolly.racemarshallandroid.data;
 
 public class ReportedRaceTimes {
 
-    RaceTimes raceTimes;
-    ReportedItems reportedItems;
+    private RaceTimes raceTimes;
+    private ReportedItems reportedItems;
+
+    public ReportedRaceTimes() {
+        raceTimes = new RaceTimes();
+        reportedItems = new ReportedItems();
+    }
+
+    public RaceTimes getRaceTimes() {
+        return raceTimes;
+    }
+
+    public ReportedItems getReportedItems() {
+        return reportedItems;
+    }
 }

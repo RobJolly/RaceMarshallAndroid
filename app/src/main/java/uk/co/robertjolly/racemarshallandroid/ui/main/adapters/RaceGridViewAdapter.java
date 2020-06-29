@@ -1,4 +1,4 @@
-package uk.co.robertjolly.racemarshallandroid.ui.main.customElements;
+package uk.co.robertjolly.racemarshallandroid.ui.main.adapters;
 
 import android.content.Context;
 import android.graphics.Color;

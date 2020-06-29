@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import uk.co.robertjolly.racemarshallandroid.R;
 
 public class ActiveRacerFragment extends Fragment {
-    private static final String TAG = "ActiveRacerFragment";
     private ArrayList<Integer> racers;
    /* public ActiveRacerFragment(ArrayList<Integer> passedRacers) {
         this.racers = passedRacers;

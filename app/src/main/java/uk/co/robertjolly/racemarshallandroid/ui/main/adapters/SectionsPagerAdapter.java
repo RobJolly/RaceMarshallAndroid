@@ -1,4 +1,4 @@
-package uk.co.robertjolly.racemarshallandroid.ui.main;
+package uk.co.robertjolly.racemarshallandroid.ui.main.adapters;
 
 import android.content.Context;
 import android.os.Bundle;

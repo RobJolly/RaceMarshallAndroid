@@ -12,7 +12,6 @@ import androidx.fragment.app.Fragment;
 import uk.co.robertjolly.racemarshallandroid.R;
 
 public class CheckpointFragment extends Fragment {
-    private static final String TAG = "CheckpointFragment";
 
     @Nullable
     @Override

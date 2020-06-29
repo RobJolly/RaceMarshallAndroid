@@ -3,6 +3,8 @@ package uk.co.robertjolly.racemarshallandroid.data;
 import java.util.Calendar;
 import java.util.Date;
 
+import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
+
 public class RaceTimes {
     Date inTime;
     Date outTime;
@@ -10,20 +12,43 @@ public class RaceTimes {
     Date notStartedTime;
     Date LastSetTime;
 
-    public void setInTime (Date inTime) {
-
+    public void setTime(Date time, TimeTypes type ) {
+        switch (type) {
+            case IN :
+                setInTime(time);
+                break;
+            case OUT :
+                setOutTime(time);
+                break;
+            case DROPPEDOUT:
+                setDroppedOutTime(time);
+                break;
+            case DIDNOTSTART:
+                setNotStartedTime(time);
+                break;
+            default:
+                //TODO: ADD ERROR HERE
+        }
     }
 
-    public void setOutTime(Date outTime) {
-
+    private void setInTime (Date inTime) {
+        this.inTime = inTime;
+        setLastSetTime();
     }
 
-    public void setDroppedOutTime(Date droppedOutTime) {
-
+    private void setOutTime(Date outTime) {
+        this.outTime = outTime;
+        setLastSetTime();
     }
 
-    public void setNotStartedTime(Date notStartedTime) {
+    private void setDroppedOutTime(Date droppedOutTime) {
+        this.droppedOutTime = droppedOutTime;
+        setLastSetTime();
+    }
 
+    private void setNotStartedTime(Date notStartedTime) {
+        this.notStartedTime = notStartedTime;
+        setLastSetTime();
     }
 
     public Date getLastSetTime() {
@@ -32,5 +57,13 @@ public class RaceTimes {
 
     private void setLastSetTime() {
         LastSetTime = Calendar.getInstance().getTime();
+    }
+
+    public boolean hasPassed() {
+        if (outTime != null & droppedOutTime != null & notStartedTime != null) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

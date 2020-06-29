@@ -2,23 +2,17 @@ package uk.co.robertjolly.racemarshallandroid;
 
 import android.os.Bundle;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.view.View;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-import uk.co.robertjolly.racemarshallandroid.ui.main.SectionsPagerAdapter;
+import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.SectionsPagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = "MainActivity";
     private SectionsPagerAdapter pagerAdapter = getPagerAdapter();
 
     private SectionsPagerAdapter getPagerAdapter() {

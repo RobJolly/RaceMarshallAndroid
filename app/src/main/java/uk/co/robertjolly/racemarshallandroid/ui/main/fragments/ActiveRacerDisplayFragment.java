@@ -1,6 +1,5 @@
 package uk.co.robertjolly.racemarshallandroid.ui.main.fragments;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,15 +9,13 @@ import android.widget.GridView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 
 import java.util.ArrayList;
 
 import uk.co.robertjolly.racemarshallandroid.R;
-import uk.co.robertjolly.racemarshallandroid.ui.main.customElements.RaceGridViewAdapter;
+import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.RaceGridViewAdapter;
 
 public class ActiveRacerDisplayFragment extends Fragment {
-    private static final String TAG = "ActiveRacerDisplayFragment";
     private ArrayList<Integer> racers = new ArrayList<>();
 
 

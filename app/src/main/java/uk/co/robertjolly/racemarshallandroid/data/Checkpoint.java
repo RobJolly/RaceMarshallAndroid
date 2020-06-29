@@ -1,39 +1,84 @@
 package uk.co.robertjolly.racemarshallandroid.data;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Observable;
+import java.util.Set;
 import java.util.SortedMap;
 
 import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
 
 
-public class Checkpoint {
-    short checkPointNumber;
-    SortedMap<Racer, ReportedRaceTimes> racerData;
+public class Checkpoint extends Observable {
+    int checkPointNumber;
+    HashMap<Racer, ReportedRaceTimes> racerData;
 
-    public Checkpoint(short checkPointNumber, short racerNumber) {
+    public Checkpoint(int checkPointNumber, int racerNumber) {
         this.checkPointNumber = checkPointNumber;
-
-        for (short i = 0; i < racerNumber; i++) {
-            racerData.put(new Racer(racerNumber), new ReportedRaceTimes());
+        racerData = new HashMap<>();
+        for (int i = 0; i < racerNumber; i++) {
+            racerData.put(new Racer(i+1), new ReportedRaceTimes());
         }
     }
 
-    public boolean reportedItem(short racerNumber, TimeTypes type) {
+    public boolean reportedItem(int racerNumber, TimeTypes type) {
         if (racerData.containsKey(new Racer(racerNumber))) {
-            return Objects.requireNonNull(racerData.get(new Racer(racerNumber))).reportedItems.getReportedItem(type);
+            return Objects.requireNonNull(racerData.get(new Racer(racerNumber))).getReportedItems().getReportedItem(type);
         } else {
             //TODO: ERROR HERE
             return false;
         }
     }
 
-    public void setReportedItem(short racerNumber, TimeTypes type, boolean isReported) {
+    public void setReportedItem(int racerNumber, TimeTypes type, boolean isReported) {
         if (racerData.containsKey(new Racer(racerNumber))) {
-            Objects.requireNonNull(racerData.get(new Racer(racerNumber))).reportedItems.setReportedItem(type,isReported);
+            notifyObservers();
+            Objects.requireNonNull(racerData.get(new Racer(racerNumber))).getReportedItems().setReportedItem(type,isReported);
         } else {
             //TODO: ERROR HERE
         }
     }
 
+    public ArrayList<Racer> getAllNotPassed() {
+        ArrayList<Racer> unpassedRacers = new ArrayList<>();
+
+        for (HashMap.Entry<Racer, ReportedRaceTimes> entry : racerData.entrySet()) {
+            if (!entry.getValue().getRaceTimes().hasPassed()) {
+                unpassedRacers.add(entry.getKey());
+            }
+        }
+
+        return unpassedRacers;
+    }
+
+    public ArrayList<Racer> getAllPassed() {
+        ArrayList<Racer> unpassedRacers = new ArrayList<>();
+
+        for (HashMap.Entry<Racer, ReportedRaceTimes> entry : racerData.entrySet()) {
+            if (entry.getValue().getRaceTimes().hasPassed()) {
+                unpassedRacers.add(entry.getKey());
+            }
+        }
+
+        return unpassedRacers;
+    }
+
+    public void setTime(int racerNumber, TimeTypes type, Date timeToSet) {
+        if (racerData.containsKey(new Racer(racerNumber))) {
+            notifyObservers();
+            Objects.requireNonNull(racerData.get(new Racer(racerNumber))).getRaceTimes().setTime(timeToSet, type);
+        } else {
+            //TODO: ERROR HERE
+        }
+    }
 
 }

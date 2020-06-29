@@ -24,7 +24,6 @@ import uk.co.robertjolly.racemarshallandroid.ui.main.customElements.TimeButton;
 import com.ikovac.timepickerwithseconds.*; //Note - this is not mine, but an opensource project.
 
 public class ActiveRacerActionFragment extends Fragment {
-    private static final String TAG = "ActiveRacerActionFragment";
     private boolean timeChanged = false;
     private List<Integer> selectedRacers = new ArrayList<Integer>();
 
