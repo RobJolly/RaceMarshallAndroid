@@ -86,7 +86,8 @@ public class RaceGridViewAdapter extends BaseAdapter {
     }
 
     public void resetSelected() {
-
+        selected.clear();
+        notifyDataSetChanged();
     }
 
 }

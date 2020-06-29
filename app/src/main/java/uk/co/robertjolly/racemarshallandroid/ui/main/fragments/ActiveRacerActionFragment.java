@@ -35,6 +35,14 @@ public class ActiveRacerActionFragment extends Fragment {
         View view = inflater.inflate(R.layout.active_racers_action_fragment, container, false);
         view.setElevation(12); //doesn't work when set in XML - I'm unsure why, but I should fix this later when I know.
         //((TextView) view.findViewById(R.id.selectedRacersTextView)).setElevation(6);
+
+        Button deselectAllButton = view.findViewById(R.id.deselectAllButton);
+        deselectAllButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                resetSelected();
+            }
+        });
         startup(view);
         return view;
     }
@@ -58,11 +66,18 @@ public class ActiveRacerActionFragment extends Fragment {
         this.selectedRacers = passedSelectedRacers;
 
         TextView test = (TextView) this.getView().findViewById(R.id.selectedRacersTextView);
-        if (selectedRacers != null) {
+        if (selectedRacers != null && selectedRacers.size()>0) {
             test.setText(selectedRacers.toString());
         } else {
-            test.setText("No selected racers.");
+            test.setText(R.string.selectedRacersTextViewString);
         }
+    }
 
+    public void resetSelected() {
+        this.selectedRacers.clear();
+        TextView test = (TextView) this.getView().findViewById(R.id.selectedRacersTextView);
+        test.setText(R.string.selectedRacersTextViewString);
+
+        ((ActiveRacerDisplayFragment) getFragmentManager().findFragmentById(R.id.selectionFragment)).resetSelected();
     }
 }

@@ -65,4 +65,8 @@ public class ActiveRacerDisplayFragment extends Fragment {
         ((ActiveRacerActionFragment) getFragmentManager().findFragmentById(R.id.actionFragment)).setSelectedRacers(selectedList);
     }
 
+    public void resetSelected() {
+        ((RaceGridViewAdapter)(((GridView)(getView().findViewById(R.id.gridView))).getAdapter())).resetSelected();
+    }
+
 }
