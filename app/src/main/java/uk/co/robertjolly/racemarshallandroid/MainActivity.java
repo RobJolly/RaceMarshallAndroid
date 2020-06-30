@@ -7,8 +7,6 @@ import com.google.android.material.tabs.TabLayout;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.ArrayList;
-
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoint;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
 import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.SectionsPagerAdapter;
@@ -16,10 +14,11 @@ import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.SectionsPagerAdapt
 public class MainActivity extends AppCompatActivity {
 
     private SectionsPagerAdapter pagerAdapter = getPagerAdapter();
-    private Checkpoints checkpoints = new Checkpoints();
+    private Checkpoints checkpoints;
 
     private SectionsPagerAdapter getPagerAdapter() {
-        SectionsPagerAdapter adapter = new SectionsPagerAdapter(this, getSupportFragmentManager(), getRacers());
+        checkpoints = setRaceData();
+        SectionsPagerAdapter adapter = new SectionsPagerAdapter(this, getSupportFragmentManager(), getCheckpoints());
 
          return adapter;
     }
@@ -29,8 +28,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
        // pagerAdapter.setRacers(getRacers());
         setContentView(R.layout.activity_main);
-        ViewPager viewPager = findViewById(R.id.view_pager);
-        ((ViewPager)findViewById(R.id.view_pager)).setElevation(12); //Doesn't work when set in XML, unsure why but fix when I know;
+        ViewPager viewPager = findViewById(R.id.mainViewPager);
+        ((ViewPager)findViewById(R.id.mainViewPager)).setElevation(12); //Doesn't work when set in XML, unsure why but fix when I know;
         viewPager.setAdapter(pagerAdapter);
 
 
@@ -38,11 +37,14 @@ public class MainActivity extends AppCompatActivity {
         tabs.setupWithViewPager(viewPager);
     }
 
-    private ArrayList<Integer> getRacers() {
-        ArrayList<Integer> racers = new ArrayList<>();
-        for (int i = 0; i < 121; i++) {
-            racers.add(i);
-        }
-        return racers;
+    private Checkpoints getCheckpoints() {
+        return checkpoints;
+    }
+
+    //here is where I plan to load in or ask for the overall race data. For now this just defaults to 100.
+    private Checkpoints setRaceData() {
+        Checkpoints checkpoints = new Checkpoints();
+        checkpoints.addCheckpoint(new Checkpoint(1, 150));
+        return checkpoints;
     }
 }

@@ -22,6 +22,9 @@ public class Checkpoint extends Observable {
         }
     }
 
+    public Checkpoint() {
+    }
+
     public boolean reportedItem(int racerNumber, TimeTypes type) {
         if (racerData.containsKey(new Racer(racerNumber))) {
             return Objects.requireNonNull(racerData.get(new Racer(racerNumber))).getReportedItems().getReportedItem(type);
@@ -46,7 +49,6 @@ public class Checkpoint extends Observable {
 
     public ArrayList<Racer> getAllNotPassed() {
         ArrayList<Racer> unpassedRacers = new ArrayList<>();
-
         for (HashMap.Entry<Racer, ReportedRaceTimes> entry : racerData.entrySet()) {
             if (!entry.getValue().getRaceTimes().hasPassed()) {
                 unpassedRacers.add(entry.getKey());
@@ -58,7 +60,6 @@ public class Checkpoint extends Observable {
 
     public ArrayList<Racer> getAllPassed() {
         ArrayList<Racer> unpassedRacers = new ArrayList<>();
-
         for (HashMap.Entry<Racer, ReportedRaceTimes> entry : racerData.entrySet()) {
             if (entry.getValue().getRaceTimes().hasPassed()) {
                 unpassedRacers.add(entry.getKey());

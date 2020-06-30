@@ -19,11 +19,13 @@ import java.util.Date;
 import java.util.List;
 
 import uk.co.robertjolly.racemarshallandroid.R;
+import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
+import uk.co.robertjolly.racemarshallandroid.ui.main.CheckpointGrabber;
 import uk.co.robertjolly.racemarshallandroid.ui.main.customElements.TimeButton;
 
 import com.ikovac.timepickerwithseconds.*; //Note - this is not mine, but an opensource project.
 
-public class ActiveRacerActionFragment extends Fragment {
+public class ActiveRacerActionFragment extends Fragment implements CheckpointGrabber {
     private boolean timeChanged = false;
     private List<Integer> selectedRacers = new ArrayList<Integer>();
 
@@ -87,5 +89,10 @@ public class ActiveRacerActionFragment extends Fragment {
         test.setText(R.string.selectedRacersTextViewString);
 
         ((ActiveRacerDisplayFragment) getFragmentManager().findFragmentById(R.id.selectionFragment)).resetSelected();
+    }
+
+    @Override
+    public Checkpoints grabCheckpoints() {
+        return ((ActiveRacerFragment) getParentFragment()).grabCheckpoints();
     }
 }

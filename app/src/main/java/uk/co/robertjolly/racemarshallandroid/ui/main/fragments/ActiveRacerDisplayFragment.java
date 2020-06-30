@@ -13,11 +13,18 @@ import androidx.fragment.app.Fragment;
 import java.util.ArrayList;
 
 import uk.co.robertjolly.racemarshallandroid.R;
+import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
+import uk.co.robertjolly.racemarshallandroid.ui.main.CheckpointGrabber;
 import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.RaceGridViewAdapter;
 
-public class ActiveRacerDisplayFragment extends Fragment {
+public class ActiveRacerDisplayFragment extends Fragment implements CheckpointGrabber {
     private ArrayList<Integer> racers = new ArrayList<>();
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+    }
 
     @Nullable
     @Override
@@ -53,4 +60,8 @@ public class ActiveRacerDisplayFragment extends Fragment {
         ((RaceGridViewAdapter)(((GridView)(getView().findViewById(R.id.gridView))).getAdapter())).removeSelected();
     }
 
+    @Override
+    public Checkpoints grabCheckpoints() {
+        return ((ActiveRacerFragment) getParentFragment()).grabCheckpoints();
+    }
 }

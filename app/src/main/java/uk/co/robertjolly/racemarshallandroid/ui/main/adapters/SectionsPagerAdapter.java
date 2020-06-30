@@ -10,8 +10,11 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import uk.co.robertjolly.racemarshallandroid.R;
+import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
+import uk.co.robertjolly.racemarshallandroid.ui.main.CheckpointGrabber;
 import uk.co.robertjolly.racemarshallandroid.ui.main.fragments.ActiveRacerFragment;
 import uk.co.robertjolly.racemarshallandroid.ui.main.fragments.RacerTimesFragment;
 
@@ -19,18 +22,20 @@ import uk.co.robertjolly.racemarshallandroid.ui.main.fragments.RacerTimesFragmen
  * A [FragmentPagerAdapter] that returns a fragment corresponding to
  * one of the sections/tabs/pages.
  */
-public class SectionsPagerAdapter extends FragmentPagerAdapter {
+public class SectionsPagerAdapter extends FragmentPagerAdapter implements CheckpointGrabber {
 
     @StringRes
     private final int[] TAB_TITLES = new int[]{R.string.tab_text_1, R.string.tab_text_2, R.string.tab_text_3};
     private final Fragment[] mFragmentList = getFragments();
     private final Context mContext;
-    private ArrayList<Integer> racers;
+    private Checkpoints checkpoints;
 
-    public SectionsPagerAdapter(Context context, FragmentManager fm, ArrayList<Integer> racers) {
+    public SectionsPagerAdapter(Context context, FragmentManager fm, Checkpoints checkpoints) {
         super(fm);
         mContext = context;
-        this.racers = racers;
+        ArrayList<Integer> racers = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5));
+
+        this.checkpoints = checkpoints;
         Bundle racerData = new Bundle();
         racerData.putIntegerArrayList("racers", racers);
         mFragmentList[0].setArguments(racerData);
@@ -69,7 +74,12 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         return mFragmentList.length;
     }
 
-    public void setRacers(ArrayList<Integer> passedRacers) {
-        racers = passedRacers;
+    public void setCheckpoints(Checkpoints passedCheckpoints) {
+        checkpoints = passedCheckpoints;
+    }
+
+    @Override
+    public Checkpoints grabCheckpoints() {
+        return checkpoints;
     }
 }

@@ -9,13 +9,19 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
+import androidx.viewpager.widget.ViewPager;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import uk.co.robertjolly.racemarshallandroid.R;
+import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
+import uk.co.robertjolly.racemarshallandroid.ui.main.CheckpointGrabber;
+import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.SectionsPagerAdapter;
 
-public class ActiveRacerFragment extends Fragment {
+public class ActiveRacerFragment extends Fragment implements CheckpointGrabber {
     private ArrayList<Integer> racers;
    /* public ActiveRacerFragment(ArrayList<Integer> passedRacers) {
         this.racers = passedRacers;
@@ -25,6 +31,8 @@ public class ActiveRacerFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.racers = getRacers();
+
+
     }
 
 
@@ -59,4 +67,9 @@ public class ActiveRacerFragment extends Fragment {
     }
 
 
+    @Override
+    public Checkpoints grabCheckpoints() {
+        return ((SectionsPagerAdapter) Objects.requireNonNull(((ViewPager) Objects.requireNonNull(getActivity()).findViewById(R.id.mainViewPager)).getAdapter())).grabCheckpoints();
+
+    }
 }
