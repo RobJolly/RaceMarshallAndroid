@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.Observable;
+import java.util.Set;
 import java.util.TreeMap;
 
 import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
@@ -78,4 +79,11 @@ public class Checkpoint extends Observable {
         }
     }
 
+    public ReportedRaceTimes getReportedRaceTime(Racer racer) {
+        return racerData.get(racer);
+    }
+
+    public Set<Racer> getRacers() {
+        return racerData.keySet();
+    }
 }

@@ -14,11 +14,13 @@ import java.util.ArrayList;
 
 import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
+import uk.co.robertjolly.racemarshallandroid.data.SelectionsStateManager;
 import uk.co.robertjolly.racemarshallandroid.ui.main.CheckpointGrabber;
+import uk.co.robertjolly.racemarshallandroid.ui.main.SelectionManagerGrabber;
 import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.RaceGridViewAdapter;
 
-public class ActiveRacerDisplayFragment extends Fragment implements CheckpointGrabber {
-    private ArrayList<Integer> racers = new ArrayList<>();
+public class ActiveRacerDisplayFragment extends Fragment implements CheckpointGrabber, SelectionManagerGrabber {
+    private SelectionsStateManager selectionsStateManager;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -29,22 +31,18 @@ public class ActiveRacerDisplayFragment extends Fragment implements CheckpointGr
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
-        Fragment frag = getParentFragment();
-        racers = (ArrayList<Integer>) frag.getArguments().get("racers");
-
         View view = inflater.inflate(R.layout.active_racers_display_fragment, container, false);
         view.setElevation(0); //doesn't work when set in XML - I'm unsure why, but I should fix this later when I know.
 
-        final GridView gridView = ((GridView) view.findViewById(R.id.gridView));
-        final RaceGridViewAdapter raceGridViewAdapter = new RaceGridViewAdapter(gridView.getContext(), this, racers);
-        gridView.setAdapter(raceGridViewAdapter);
+        selectionsStateManager = grabSelectionManager();
 
-        int j = 0;
+        final GridView gridView = ((GridView) view.findViewById(R.id.gridView));
+        final RaceGridViewAdapter raceGridViewAdapter = new RaceGridViewAdapter(gridView.getContext(), this);
+        gridView.setAdapter(raceGridViewAdapter);
         return view;
     }
 
-    public void setRacers(ArrayList<Integer> passedRacers) {
+  /*  public void setRacers(ArrayList<Integer> passedRacers) {
         this.racers = passedRacers;
     }
 
@@ -58,10 +56,15 @@ public class ActiveRacerDisplayFragment extends Fragment implements CheckpointGr
 
     public void removeSelectedRacers() {
         ((RaceGridViewAdapter)(((GridView)(getView().findViewById(R.id.gridView))).getAdapter())).removeSelected();
-    }
+    }*/
 
     @Override
     public Checkpoints grabCheckpoints() {
         return ((ActiveRacerFragment) getParentFragment()).grabCheckpoints();
+    }
+
+    @Override
+    public SelectionsStateManager grabSelectionManager() {
+        return ((ActiveRacerFragment) getParentFragment()).grabSelectionManager();
     }
 }

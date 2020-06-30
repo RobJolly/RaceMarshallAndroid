@@ -11,29 +11,47 @@ import android.widget.TextView;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 import uk.co.robertjolly.racemarshallandroid.R;
+import uk.co.robertjolly.racemarshallandroid.data.Racer;
+import uk.co.robertjolly.racemarshallandroid.data.SelectionsStateManager;
+import uk.co.robertjolly.racemarshallandroid.data.enums.RacerDisplayFilter;
+import uk.co.robertjolly.racemarshallandroid.ui.main.SelectionManagerGrabber;
 import uk.co.robertjolly.racemarshallandroid.ui.main.fragments.ActiveRacerDisplayFragment;
 
+import static uk.co.robertjolly.racemarshallandroid.data.enums.RacerDisplayFilter.*;
 
-public class RaceGridViewAdapter extends BaseAdapter {
+
+public class RaceGridViewAdapter extends BaseAdapter implements SelectionManagerGrabber {
 
     private final Context mContext;
-    public final ArrayList<Integer> activeRacers;
-    private HashMap<Integer, Integer> selected = new HashMap<>();
+    private SelectionsStateManager selectionsStateManager;
     private final ActiveRacerDisplayFragment mParent;
+    private ArrayList<Racer> toShow;
 
-    public RaceGridViewAdapter(Context mContext, ActiveRacerDisplayFragment parentFragment, ArrayList<Integer> list) {
+
+    public RaceGridViewAdapter(Context mContext, ActiveRacerDisplayFragment parentFragment) {
         this.mContext = mContext;
-        this.activeRacers = list;
         this.mParent = parentFragment;
+        selectionsStateManager = grabSelectionManager();
+        toShow = selectionsStateManager.getShowableList(new ArrayList<RacerDisplayFilter>(Arrays.asList(TOPASS, CHECKEDIN, CHECKEDOUT))); //Setting filters here - change later
+
+        selectionsStateManager.addObserver(new Observer() {
+            @Override
+            public void update(Observable observable, Object o) {
+                notifyDataSetChanged();
+            }
+        });
     }
 
     @Override
     public int getCount() {
-        return activeRacers.size();
+        return toShow.size();
     }
 
     @Override
@@ -48,54 +66,39 @@ public class RaceGridViewAdapter extends BaseAdapter {
 
     @Override
     public View getView(final int i, View view, ViewGroup viewGroup) {
+        selectionsStateManager = grabSelectionManager();
+
         final Button thisButton = new Button(mContext);
-        //note, button size setting from: https://stackoverflow.com/questions/11010111/how-to-set-the-width-of-a-button-in-dp-during-runtime-in-android
+        //note, button size setting (next 3 lines) from: https://stackoverflow.com/questions/11010111/how-to-set-the-width-of-a-button-in-dp-during-runtime-in-android
         final float scale = mContext.getResources().getDisplayMetrics().density;
         thisButton.setWidth((int)(100 * scale));
         thisButton.setHeight((int)(100 * scale));
 
-        if (selected.get(activeRacers.get(i)) != null) {
+        if (selectionsStateManager.isSelected(toShow.get(i))) {
             thisButton.getBackground().setColorFilter(Color.BLUE, PorterDuff.Mode.MULTIPLY);
         }
 
-        thisButton.setText(activeRacers.get(i).toString());
+        thisButton.setText(String.valueOf(toShow.get(i).getRacerNumber()));
 
         thisButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (selected.get(activeRacers.get(i)) != null) {
-                    selected.remove(activeRacers.get(i));
-                    mParent.passSelected(new ArrayList<>(selected.values()));
+                if (selectionsStateManager.isSelected(toShow.get(i))) {
+                    selectionsStateManager.removeSelected(toShow.get(i));
                     thisButton.getBackground().clearColorFilter();
                 } else {
-                    selected.put(activeRacers.get(i), i);
-               //     passSelected(view);
+                    selectionsStateManager.addSelected(toShow.get(i));
                     thisButton.getBackground().setColorFilter(Color.BLUE, PorterDuff.Mode.MULTIPLY);
-                    mParent.passSelected(new ArrayList<>(selected.values()));
-
                 }
-
-
             }
         });
+
 
         return thisButton;
     }
 
-    private void passSelected(View view) {
-     //   ((TextView) (view.findViewById(R.id.selectedRacersTextView))).setText(selected.toString());
+    @Override
+    public SelectionsStateManager grabSelectionManager() {
+        return mParent.grabSelectionManager();
     }
-
-    public void removeSelected() {
-        for (HashMap.Entry<Integer, Integer> entry : selected.entrySet()) {
-            activeRacers.remove(entry.getKey());
-        }
-        notifyDataSetChanged();
-    }
-
-    public void resetSelected() {
-        selected.clear();
-        notifyDataSetChanged();
-    }
-
 }

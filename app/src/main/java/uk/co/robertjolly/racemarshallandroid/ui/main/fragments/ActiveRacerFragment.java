@@ -18,11 +18,15 @@ import java.util.Objects;
 
 import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
+import uk.co.robertjolly.racemarshallandroid.data.SelectionsStateManager;
 import uk.co.robertjolly.racemarshallandroid.ui.main.CheckpointGrabber;
+import uk.co.robertjolly.racemarshallandroid.ui.main.SelectionManagerGrabber;
 import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.SectionsPagerAdapter;
 
-public class ActiveRacerFragment extends Fragment implements CheckpointGrabber {
+public class ActiveRacerFragment extends Fragment implements CheckpointGrabber, SelectionManagerGrabber {
     private ArrayList<Integer> racers;
+    private SelectionsStateManager selectionsStateManager;
+    private int selectedCheckpoint = 1;
    /* public ActiveRacerFragment(ArrayList<Integer> passedRacers) {
         this.racers = passedRacers;
     }*/
@@ -30,7 +34,7 @@ public class ActiveRacerFragment extends Fragment implements CheckpointGrabber {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.racers = getRacers();
+    //    this.racers = getRacers();
 
 
     }
@@ -39,15 +43,12 @@ public class ActiveRacerFragment extends Fragment implements CheckpointGrabber {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        int currentOrientation = getResources().getConfiguration().orientation;
+        selectionsStateManager = new SelectionsStateManager(grabCheckpoints().getCheckpoint(selectedCheckpoint));
 
+
+        int currentOrientation = getResources().getConfiguration().orientation;
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            int i = 0;
             View view = inflater.inflate(R.layout.active_racers_portrait_fragment,container,false);
-            int j = 0;
-            Bundle test = new Bundle();
-            test.putIntegerArrayList("racers", racers);
-            ((ActiveRacerDisplayFragment) getChildFragmentManager().findFragmentById(R.id.selectionFragment)).setRacers(racers);
             return view;
         } else {
             View view = inflater.inflate(R.layout.active_racers_sideways_fragment,container,false);
@@ -70,6 +71,10 @@ public class ActiveRacerFragment extends Fragment implements CheckpointGrabber {
     @Override
     public Checkpoints grabCheckpoints() {
         return ((SectionsPagerAdapter) Objects.requireNonNull(((ViewPager) Objects.requireNonNull(getActivity()).findViewById(R.id.mainViewPager)).getAdapter())).grabCheckpoints();
+    }
 
+    @Override
+    public SelectionsStateManager grabSelectionManager() {
+        return selectionsStateManager;
     }
 }

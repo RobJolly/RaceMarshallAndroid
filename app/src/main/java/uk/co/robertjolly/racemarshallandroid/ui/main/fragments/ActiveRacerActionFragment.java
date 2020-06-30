@@ -17,17 +17,22 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
+import uk.co.robertjolly.racemarshallandroid.data.Racer;
+import uk.co.robertjolly.racemarshallandroid.data.SelectionsStateManager;
 import uk.co.robertjolly.racemarshallandroid.ui.main.CheckpointGrabber;
+import uk.co.robertjolly.racemarshallandroid.ui.main.SelectionManagerGrabber;
 import uk.co.robertjolly.racemarshallandroid.ui.main.customElements.TimeButton;
 
 import com.ikovac.timepickerwithseconds.*; //Note - this is not mine, but an opensource project.
 
-public class ActiveRacerActionFragment extends Fragment implements CheckpointGrabber {
-    private boolean timeChanged = false;
-    private List<Integer> selectedRacers = new ArrayList<Integer>();
+public class ActiveRacerActionFragment extends Fragment implements CheckpointGrabber, SelectionManagerGrabber {
+   // private boolean timeChanged = false;
+    private SelectionsStateManager selectionsStateManager;
 
 
     @Nullable
@@ -37,23 +42,31 @@ public class ActiveRacerActionFragment extends Fragment implements CheckpointGra
         view.setElevation(12); //doesn't work when set in XML - I'm unsure why, but I should fix this later when I know.
         //((TextView) view.findViewById(R.id.selectedRacersTextView)).setElevation(6);
 
+        selectionsStateManager = grabSelectionManager();
+
         Button deselectAllButton = view.findViewById(R.id.deselectAllButton);
         deselectAllButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                resetSelected();
+                resetSelected((TextView) view.findViewById(R.id.selectedRacersTextView));
             }
         });
         Button outButton = view.findViewById(R.id.outButton);
         outButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ActiveRacerDisplayFragment frag = (ActiveRacerDisplayFragment) getFragmentManager().findFragmentById(R.id.selectionFragment);
+               /* ActiveRacerDisplayFragment frag = (ActiveRacerDisplayFragment) getFragmentManager().findFragmentById(R.id.selectionFragment);
                 frag.removeSelectedRacers();
-                resetSelected();
+                resetSelected();*/
             }
         });
-        startup(view);
+
+        selectionsStateManager.addObserver(new Observer() {
+            @Override
+            public void update(Observable observable, Object o) {
+                setSelectedRacersText((TextView) getView().findViewById(R.id.selectedRacersTextView));
+            }
+        });
         return view;
     }
 
@@ -68,31 +81,31 @@ public class ActiveRacerActionFragment extends Fragment implements CheckpointGra
         super.onStart();
     }
 
-    public void startup(View view) {
-      //  initialiseTimeButton(view);
-    }
-
-    public void setSelectedRacers(ArrayList<Integer> passedSelectedRacers) {
-        this.selectedRacers = passedSelectedRacers;
-
-        TextView test = (TextView) this.getView().findViewById(R.id.selectedRacersTextView);
-        if (selectedRacers != null && selectedRacers.size()>0) {
-            test.setText(selectedRacers.toString());
+    public void setSelectedRacersText(TextView textView) {
+        textView.setText("");
+        if (selectionsStateManager.getSelectedCount() > 0) {
+            for (Racer racer : selectionsStateManager.getSelected()) {
+                textView.append(String.valueOf(racer.getRacerNumber()) + ",");
+                //TODO add a text trimming function in here, to prevent the textView from being overfilled
+            }
+            textView.setText(textView.getText().subSequence(0, textView.length()-1));
         } else {
-            test.setText(R.string.selectedRacersTextViewString);
+            textView.setText(R.string.selectedRacersTextViewString);
         }
+
     }
 
-    public void resetSelected() {
-        this.selectedRacers.clear();
-        TextView test = (TextView) this.getView().findViewById(R.id.selectedRacersTextView);
-        test.setText(R.string.selectedRacersTextViewString);
-
-        ((ActiveRacerDisplayFragment) getFragmentManager().findFragmentById(R.id.selectionFragment)).resetSelected();
+    public void resetSelected(TextView textView) {
+        selectionsStateManager.clearSelected();
     }
 
     @Override
     public Checkpoints grabCheckpoints() {
         return ((ActiveRacerFragment) getParentFragment()).grabCheckpoints();
+    }
+
+    @Override
+    public SelectionsStateManager grabSelectionManager() {
+        return ((ActiveRacerFragment) getParentFragment()).grabSelectionManager();
     }
 }
