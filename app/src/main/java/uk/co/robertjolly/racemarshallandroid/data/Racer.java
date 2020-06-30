@@ -15,10 +15,10 @@ public class Racer implements Comparable {
         return racerNumber;
     }
 
-    //TODO Fix this dodgy code
     @Override
     public int compareTo(Object o) {
-        Racer oRacer = (Racer) o;
+        Racer oRacer;
+        oRacer = (Racer) o;
         if (getRacerNumber() > oRacer.getRacerNumber()) {
             return 1;
         } else if (getRacerNumber() < ((Racer) o).getRacerNumber()){
