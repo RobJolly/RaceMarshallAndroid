@@ -55,9 +55,15 @@ public class ActiveRacerActionFragment extends Fragment implements CheckpointGra
         outButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               /* ActiveRacerDisplayFragment frag = (ActiveRacerDisplayFragment) getFragmentManager().findFragmentById(R.id.selectionFragment);
-                frag.removeSelectedRacers();
-                resetSelected();*/
+               selectionsStateManager.setSelectedPassed(((TimeButton) getView().findViewById(R.id.timeButton)).getTime());
+            }
+        });
+
+        Button inButton = view.findViewById(R.id.inButton);
+        inButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectionsStateManager.setSelectedIn(((TimeButton) getView().findViewById(R.id.timeButton)).getTime());
             }
         });
 

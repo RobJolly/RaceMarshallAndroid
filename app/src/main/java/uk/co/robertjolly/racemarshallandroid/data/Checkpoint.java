@@ -70,10 +70,10 @@ public class Checkpoint extends Observable {
         return unpassedRacers;
     }
 
-    public void setTime(int racerNumber, TimeTypes type, Date timeToSet) {
-        if (racerData.containsKey(new Racer(racerNumber))) {
-            notifyObservers();
-            Objects.requireNonNull(racerData.get(new Racer(racerNumber))).getRaceTimes().setTime(timeToSet, type);
+    public void setTime(Racer racer, TimeTypes type, Date timeToSet) {
+        if (racerData.containsKey(racer)) {
+            Objects.requireNonNull(racerData.get(racer)).getRaceTimes().setTime(timeToSet, type);
+            setChanged();
         } else {
             //TODO: ERROR HERE
         }

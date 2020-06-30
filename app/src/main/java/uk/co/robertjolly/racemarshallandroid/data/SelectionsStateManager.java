@@ -1,9 +1,11 @@
 package uk.co.robertjolly.racemarshallandroid.data;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Observable;
 
 import uk.co.robertjolly.racemarshallandroid.data.enums.RacerDisplayFilter;
+import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
 
 public class SelectionsStateManager extends Observable {
     Checkpoint checkpointSelection;
@@ -49,7 +51,7 @@ public class SelectionsStateManager extends Observable {
         }
     }
 
-    private Checkpoint getCheckpointSelection() {
+    public Checkpoint getCheckpointSelection() {
         return checkpointSelection;
     }
 
@@ -64,6 +66,22 @@ public class SelectionsStateManager extends Observable {
         setChanged();
         notifyObservers();
      //   notifyObservers();
+    }
+
+    public void setSelectedPassed(Date passed) {
+       for (Racer racer : selected) {
+           checkpointSelection.setTime(racer, TimeTypes.OUT, passed);
+       }
+       checkpointSelection.notifyObservers();
+        clearSelected();
+    }
+
+    public void setSelectedIn(Date passed) {
+        for (Racer racer : selected) {
+            checkpointSelection.setTime(racer, TimeTypes.IN, passed);
+        }
+        checkpointSelection.notifyObservers();
+        clearSelected();
     }
 
     public void removeSelected(Racer racer) {

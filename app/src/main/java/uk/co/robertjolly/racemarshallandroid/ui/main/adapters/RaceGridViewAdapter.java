@@ -33,13 +33,13 @@ public class RaceGridViewAdapter extends BaseAdapter implements SelectionManager
     private SelectionsStateManager selectionsStateManager;
     private final ActiveRacerDisplayFragment mParent;
     private ArrayList<Racer> toShow;
-
+    private ArrayList<RacerDisplayFilter> filterList = new ArrayList<RacerDisplayFilter>(Arrays.asList(TOPASS, CHECKEDIN));
 
     public RaceGridViewAdapter(Context mContext, ActiveRacerDisplayFragment parentFragment) {
         this.mContext = mContext;
         this.mParent = parentFragment;
         selectionsStateManager = grabSelectionManager();
-        toShow = selectionsStateManager.getShowableList(new ArrayList<RacerDisplayFilter>(Arrays.asList(TOPASS, CHECKEDIN, CHECKEDOUT))); //Setting filters here - change later
+        toShow = selectionsStateManager.getShowableList(filterList); //Setting filters here - change later
 
         selectionsStateManager.addObserver(new Observer() {
             @Override
@@ -47,6 +47,14 @@ public class RaceGridViewAdapter extends BaseAdapter implements SelectionManager
                 notifyDataSetChanged();
             }
         });
+
+        selectionsStateManager.getCheckpointSelection().addObserver(new Observer() {
+            @Override
+            public void update(Observable observable, Object o) {
+                toShow = selectionsStateManager.getShowableList(filterList);
+            }
+        });
+
     }
 
     @Override
