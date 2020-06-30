@@ -1,5 +1,6 @@
 package uk.co.robertjolly.racemarshallandroid.ui.main.fragments;
 
+import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -67,12 +68,40 @@ public class ActiveRacerActionFragment extends Fragment implements CheckpointGra
             }
         });
 
+        Button otherActionButton = view.findViewById(R.id.otherActionButton);
+        otherActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+                dialogBuilder.setTitle(R.string.otherActions);
+                dialogBuilder.setCancelable(true);
+                String[] options = {getResources().getString(R.string.droppedOut), getResources().getString(R.string.didNotStart), getResources().getString(R.string.cancel)};
+
+                dialogBuilder.setItems(options, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        switch (i) {
+                            case 0:
+                                selectionsStateManager.setSelectedDroppedOut(((TimeButton) getView().findViewById(R.id.timeButton)).getTime());
+                                break;
+                            case 1:
+                                selectionsStateManager.setSelectedNotStarted(((TimeButton) getView().findViewById(R.id.timeButton)).getTime());
+                                break;
+                            default: //do nothing
+                        }
+                    }
+                });
+                dialogBuilder.show();
+            }
+        });
+
         selectionsStateManager.addObserver(new Observer() {
             @Override
             public void update(Observable observable, Object o) {
                 setSelectedRacersText((TextView) getView().findViewById(R.id.selectedRacersTextView));
             }
         });
+
         return view;
     }
 

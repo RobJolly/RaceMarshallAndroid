@@ -68,6 +68,7 @@ public class SelectionsStateManager extends Observable {
      //   notifyObservers();
     }
 
+    //TODO Combine these into one function, they're functionally identical.
     public void setSelectedPassed(Date passed) {
        for (Racer racer : selected) {
            checkpointSelection.setTime(racer, TimeTypes.OUT, passed);
@@ -79,6 +80,22 @@ public class SelectionsStateManager extends Observable {
     public void setSelectedIn(Date passed) {
         for (Racer racer : selected) {
             checkpointSelection.setTime(racer, TimeTypes.IN, passed);
+        }
+        checkpointSelection.notifyObservers();
+        clearSelected();
+    }
+
+    public void setSelectedNotStarted(Date passed) {
+        for (Racer racer : selected) {
+            checkpointSelection.setTime(racer, TimeTypes.DIDNOTSTART, passed);
+        }
+        checkpointSelection.notifyObservers();
+        clearSelected();
+    }
+
+    public void setSelectedDroppedOut(Date passed) {
+        for (Racer racer : selected) {
+            checkpointSelection.setTime(racer, TimeTypes.DROPPEDOUT, passed);
         }
         checkpointSelection.notifyObservers();
         clearSelected();

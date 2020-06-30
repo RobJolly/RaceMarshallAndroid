@@ -10,4 +10,10 @@
     <string name="outButtonString">Out</string>
     <string name="deselectAllButtonString">Deselect All</string>
     <string name="otherActionButtonString">Other</string>
+    <string name="otherActions">Other Actions</string>
+    <string name="didNotStart">Did Not Start</string>
+    <string name="droppedOut">Dropped Out</string>
+    <string name="cancel">Canel</string>
+
+
 </resources>
