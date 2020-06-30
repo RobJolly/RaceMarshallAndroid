@@ -1,30 +1,22 @@
 package uk.co.robertjolly.racemarshallandroid.data;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Observable;
-import java.util.Set;
-import java.util.SortedMap;
+import java.util.TreeMap;
 
 import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
 
 
 public class Checkpoint extends Observable {
     int checkPointNumber;
-    HashMap<Racer, ReportedRaceTimes> racerData;
+    TreeMap<Racer, ReportedRaceTimes> racerData;
 
     public Checkpoint(int checkPointNumber, int racerNumber) {
         this.checkPointNumber = checkPointNumber;
-        racerData = new HashMap<>();
+        racerData = new TreeMap<>();
         for (int i = 0; i < racerNumber; i++) {
             racerData.put(new Racer(i+1), new ReportedRaceTimes());
         }
@@ -37,6 +29,10 @@ public class Checkpoint extends Observable {
             //TODO: ERROR HERE
             return false;
         }
+    }
+
+    public int getCheckPointNumber() {
+        return checkPointNumber;
     }
 
     public void setReportedItem(int racerNumber, TimeTypes type, boolean isReported) {

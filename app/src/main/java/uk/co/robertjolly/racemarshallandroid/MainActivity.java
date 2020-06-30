@@ -9,11 +9,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 
+import uk.co.robertjolly.racemarshallandroid.data.Checkpoint;
+import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
 import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.SectionsPagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
     private SectionsPagerAdapter pagerAdapter = getPagerAdapter();
+    private Checkpoints checkpoints = new Checkpoints();
 
     private SectionsPagerAdapter getPagerAdapter() {
         SectionsPagerAdapter adapter = new SectionsPagerAdapter(this, getSupportFragmentManager(), getRacers());
