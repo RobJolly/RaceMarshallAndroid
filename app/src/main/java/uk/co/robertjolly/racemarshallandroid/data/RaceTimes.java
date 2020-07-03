@@ -67,29 +67,4 @@ public class RaceTimes {
         }
     }
 
-    public boolean isInCheckpoint() {
-        if (outTime == null & droppedOutTime == null & notStartedTime == null & inTime != null) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public boolean hasYetToArrive() {
-        if (outTime == null & droppedOutTime == null & notStartedTime == null & inTime == null) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public boolean hasDroppedOut() {
-        return (droppedOutTime != null);
-    }
-
-    public boolean didNotStart() {
-        return (notStartedTime != null);
-    }
-
-
 }

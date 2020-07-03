@@ -26,7 +26,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       // pagerAdapter.setRacers(getRacers());
         setContentView(R.layout.activity_main);
         ViewPager viewPager = findViewById(R.id.mainViewPager);
         ((ViewPager)findViewById(R.id.mainViewPager)).setElevation(12); //Doesn't work when set in XML, unsure why but fix when I know;

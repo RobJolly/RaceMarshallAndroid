@@ -14,7 +14,9 @@ import java.util.ArrayList;
 
 import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
+import uk.co.robertjolly.racemarshallandroid.data.DisplayFilterManager;
 import uk.co.robertjolly.racemarshallandroid.data.SelectionsStateManager;
+import uk.co.robertjolly.racemarshallandroid.data.enums.RacerDisplayFilter;
 import uk.co.robertjolly.racemarshallandroid.ui.main.CheckpointGrabber;
 import uk.co.robertjolly.racemarshallandroid.ui.main.SelectionManagerGrabber;
 import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.RaceGridViewAdapter;
@@ -66,5 +68,9 @@ public class ActiveRacerDisplayFragment extends Fragment implements CheckpointGr
     @Override
     public SelectionsStateManager grabSelectionManager() {
         return ((ActiveRacerFragment) getParentFragment()).grabSelectionManager();
+    }
+
+    public DisplayFilterManager grabDisplayFilterManager() {
+        return ((ActiveRacerFragment) getParentFragment()).grabDisplayFilterManager();
     }
 }

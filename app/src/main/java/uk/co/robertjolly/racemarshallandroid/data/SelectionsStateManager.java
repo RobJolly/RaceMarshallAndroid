@@ -36,19 +36,39 @@ public class SelectionsStateManager extends Observable {
     Boolean shouldShow(RacerDisplayFilter filter, Racer racer) {
         switch (filter) {
             case TOPASS:
-                return (checkpointSelection.getReportedRaceTime(racer).getRaceTimes().hasYetToArrive());
+                return toPass(checkpointSelection.getReportedRaceTime(racer).getRaceTimes());
             case CHECKEDIN:
-                return (checkpointSelection.getReportedRaceTime(racer).getRaceTimes().isInCheckpoint());
+                return checkedIn(checkpointSelection.getReportedRaceTime(racer).getRaceTimes());
             case CHECKEDOUT:
-                return (checkpointSelection.getReportedRaceTime(racer).getRaceTimes().hasPassed());
+                return checkedOut(checkpointSelection.getReportedRaceTime(racer).getRaceTimes());
             case DROPPEDOUT:
-                return (checkpointSelection.getReportedRaceTime(racer).getRaceTimes().hasDroppedOut());
+                return droppedOut(checkpointSelection.getReportedRaceTime(racer).getRaceTimes());
             case DIDNOTSTART:
-                return (checkpointSelection.getReportedRaceTime(racer).getRaceTimes().didNotStart());
+                return didNotStart(checkpointSelection.getReportedRaceTime(racer).getRaceTimes());
             default:
                 //TODO Error here
                 return null;
         }
+    }
+
+    private Boolean toPass(RaceTimes times) {
+        return (times.droppedOutTime == null & times.notStartedTime == null & times.inTime == null & times.outTime == null);
+    }
+
+    private Boolean checkedIn(RaceTimes times) {
+        return (times.droppedOutTime == null & times.notStartedTime == null & times.outTime == null & times.inTime != null);
+    }
+
+    private Boolean checkedOut(RaceTimes times) {
+        return (times.droppedOutTime == null & times.notStartedTime == null & times.outTime != null);
+    }
+
+    private Boolean droppedOut(RaceTimes times) {
+        return (times.droppedOutTime != null);
+    }
+
+    private boolean didNotStart(RaceTimes times) {
+        return (times.notStartedTime != null);
     }
 
     public Checkpoint getCheckpointSelection() {

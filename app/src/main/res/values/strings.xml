@@ -13,7 +13,10 @@
     <string name="otherActions">Other Actions</string>
     <string name="didNotStart">Did Not Start</string>
     <string name="droppedOut">Dropped Out</string>
-    <string name="cancel">Canel</string>
-
+    <string name="cancel">Cancel</string>
+    <string name="FilterRacers">Filter Racers</string>
+    <string name="toPass">Not Passed</string>
+    <string name="checkedIn">Checked In</string>
+    <string name="checkedOut">Checked Out</string>
 
 </resources>

@@ -18,6 +18,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import uk.co.robertjolly.racemarshallandroid.R;
+import uk.co.robertjolly.racemarshallandroid.data.DisplayFilterManager;
 import uk.co.robertjolly.racemarshallandroid.data.Racer;
 import uk.co.robertjolly.racemarshallandroid.data.SelectionsStateManager;
 import uk.co.robertjolly.racemarshallandroid.data.enums.RacerDisplayFilter;
@@ -33,13 +34,12 @@ public class RaceGridViewAdapter extends BaseAdapter implements SelectionManager
     private SelectionsStateManager selectionsStateManager;
     private final ActiveRacerDisplayFragment mParent;
     private ArrayList<Racer> toShow;
-    private ArrayList<RacerDisplayFilter> filterList = new ArrayList<RacerDisplayFilter>(Arrays.asList(TOPASS, CHECKEDIN));
 
     public RaceGridViewAdapter(Context mContext, ActiveRacerDisplayFragment parentFragment) {
         this.mContext = mContext;
         this.mParent = parentFragment;
         selectionsStateManager = grabSelectionManager();
-        toShow = selectionsStateManager.getShowableList(filterList); //Setting filters here - change later
+        toShow = selectionsStateManager.getShowableList(grabDisplayFilterManager().getFilterList()); //Setting filters here - change later
 
         selectionsStateManager.addObserver(new Observer() {
             @Override
@@ -51,7 +51,7 @@ public class RaceGridViewAdapter extends BaseAdapter implements SelectionManager
         selectionsStateManager.getCheckpointSelection().addObserver(new Observer() {
             @Override
             public void update(Observable observable, Object o) {
-                toShow = selectionsStateManager.getShowableList(filterList);
+                toShow = selectionsStateManager.getShowableList(grabDisplayFilterManager().getFilterList());
             }
         });
 
@@ -101,6 +101,15 @@ public class RaceGridViewAdapter extends BaseAdapter implements SelectionManager
             }
         });
 
+        grabDisplayFilterManager().addObserver(new Observer() {
+            @Override
+            public void update(Observable observable, Object o) {
+                toShow = selectionsStateManager.getShowableList(grabDisplayFilterManager().getFilterList());
+                notifyDataSetChanged();
+            }
+        });
+        ;
+
 
         return thisButton;
     }
@@ -108,5 +117,9 @@ public class RaceGridViewAdapter extends BaseAdapter implements SelectionManager
     @Override
     public SelectionsStateManager grabSelectionManager() {
         return mParent.grabSelectionManager();
+    }
+
+    public DisplayFilterManager grabDisplayFilterManager() {
+        return mParent.grabDisplayFilterManager();
     }
 }
