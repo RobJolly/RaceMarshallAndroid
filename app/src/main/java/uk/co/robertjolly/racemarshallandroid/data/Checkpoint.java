@@ -3,6 +3,7 @@ package uk.co.robertjolly.racemarshallandroid.data;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Observable;
 import java.util.Set;
@@ -41,8 +42,8 @@ public class Checkpoint extends Observable {
 
     public void setReportedItem(int racerNumber, TimeTypes type, boolean isReported) {
         if (racerData.containsKey(new Racer(racerNumber))) {
-            notifyObservers();
             Objects.requireNonNull(racerData.get(new Racer(racerNumber))).getReportedItems().setReportedItem(type,isReported);
+            setChanged();
         } else {
             //TODO: ERROR HERE
         }
@@ -77,6 +78,18 @@ public class Checkpoint extends Observable {
         } else {
             //TODO: ERROR HERE
         }
+    }
+
+    public TreeMap<Racer, ReportedRaceTimes> getRacersWithTimes() {
+        TreeMap<Racer, ReportedRaceTimes> setTimes = new TreeMap<>();
+
+        for (Racer racer : racerData.keySet()) {
+            if (racerData.get(racer).getRaceTimes().getLastSetTime() != null) {
+                setTimes.put(racer, racerData.get(racer));
+            }
+        }
+
+        return setTimes;
     }
 
     public ReportedRaceTimes getReportedRaceTime(Racer racer) {

@@ -55,6 +55,22 @@ public class RaceTimes {
         return LastSetTime;
     }
 
+    public Date getInTime() {
+        return inTime;
+    }
+
+    public Date getOutTime() {
+        return outTime;
+    }
+
+    public Date getDroppedOutTime() {
+        return droppedOutTime;
+    }
+
+    public Date getNotStartedTime() {
+        return notStartedTime;
+    }
+
     private void setLastSetTime() {
         LastSetTime = Calendar.getInstance().getTime();
     }

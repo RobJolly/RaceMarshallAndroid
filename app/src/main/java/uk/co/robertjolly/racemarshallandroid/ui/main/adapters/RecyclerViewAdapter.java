@@ -8,21 +8,34 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
+import java.io.PipedOutputStream;
+import java.util.Observable;
+import java.util.Observer;
 
 import uk.co.robertjolly.racemarshallandroid.R;
+import uk.co.robertjolly.racemarshallandroid.data.CheckOffStateManager;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoint;
 import uk.co.robertjolly.racemarshallandroid.data.Racer;
+import uk.co.robertjolly.racemarshallandroid.data.ReportedRaceTimes;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder> {
-    private Checkpoint test;
+    private Checkpoint checkpoint;
     private Context mContext;
+    private CheckOffStateManager toDisplay;
 
-    private ArrayList<Racer> notPassed;
-    public RecyclerViewAdapter(Checkpoint passedCheckpoint, Context mContext) {
-        this.test = passedCheckpoint;
+   // private ArrayList<Racer> notPassed;
+    public RecyclerViewAdapter(Checkpoint passedCheckpoints, Context mContext) {
+        this.checkpoint = passedCheckpoints;
         this.mContext = mContext;
-        notPassed = passedCheckpoint.getAllNotPassed();
+        toDisplay = new CheckOffStateManager(checkpoint, null);
+
+        toDisplay.addObserver(new Observer() {
+            @Override
+            public void update(Observable observable, Object o) {
+                notifyDataSetChanged();
+            }
+        });
+        //notPassed = passedCheckpoint.getAllNotPassed();
     }
 
     @NonNull
@@ -37,11 +50,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewHolder holder, int position) {
-        holder.setRacerText(String.valueOf(notPassed.get(position).getRacerNumber()));
+        holder.setRacerButton(String.valueOf(toDisplay.getListToDisplay().get(position).getRacerNumber()));
+        holder.setRacerTimes(checkpoint.getReportedRaceTime(toDisplay.getListToDisplay().get(position)));
+        ReportedRaceTimes times = checkpoint.getReportedRaceTime(toDisplay.getListToDisplay().get(position));
+        holder.setCheckBoxListener(times);
     }
 
     @Override
     public int getItemCount() {
-        return notPassed.size();
+        return toDisplay.getListToDisplay().size();
     }
 }
