@@ -19,7 +19,7 @@ public class SelectionsStateManager extends Observable {
         checkpoints.addObserver(new Observer() {
             @Override
             public void update(Observable observable, Object o) {
-                setChanged();
+                clearSelected();
                 notifyObservers();
             }
         });

@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
                 //I need to do some error checking here
                 Checkpoint createdPoint = new Checkpoint(checkPointNumber,racerCount);
                 checkpoints.addCheckpoint(createdPoint);
-                checkpoints.setCurrentCheckpointNumber(1);
+                checkpoints.setCurrentCheckpointNumber(checkPointNumber);
                 checkpoints.notifyObservers();
                 //do nothing
             }
