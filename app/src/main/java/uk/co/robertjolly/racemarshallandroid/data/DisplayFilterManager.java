@@ -9,9 +9,17 @@ import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.enums.RacerDisplayFilter;
 
 //TODO Implement a static array of racerDisplayFilters, so there's a consistent order - fewer bugs, less code.
+
+/**
+ * This handles the filters for which racers to display or not display, on the racer interaction screen
+ */
 public class DisplayFilterManager extends Observable {
     private ArrayList<RacerDisplayFilter> filterList = implementRacerFilters();
 
+    /**
+     * Gets the list of filters
+     * @return Loads the filters, if saved, failing that, will return with two default filters; CheckedIn and ToPass.
+     */
     public ArrayList<RacerDisplayFilter> implementRacerFilters() {
         ArrayList<RacerDisplayFilter> returningList;
 
@@ -25,10 +33,17 @@ public class DisplayFilterManager extends Observable {
         return returningList;
     }
 
+    /**
+     * Loading function for the filters
+     * @return The stored list of filters, or null if cannot be found.
+     */
     public ArrayList<RacerDisplayFilter> loadFilters() {
         return null;
     }
 
+    /**
+     * @return A boolean list of whether or not filters are in the list in order: TOPASS, CHECKEDIN, CHECKEDOUT, DROPPEDOUT, DIDNOTSTART
+     */
     public boolean[] getBooleanFilterList() {
         boolean[] returningArray = new boolean[]{false, false, false, false, false};
         for (RacerDisplayFilter filter : getFilterList()) {
@@ -58,10 +73,20 @@ public class DisplayFilterManager extends Observable {
         return filterList;
     }
 
+    /**
+     *
+     * @param resources The resources for the android application
+     * @return An array of strings, naming the filters.
+     */
     public String[] getFilterNames(Resources resources) {
         return new String[]{resources.getString(R.string.toPass), resources.getString(R.string.checkedIn), resources.getString(R.string.checkedOut), resources.getString(R.string.droppedOut), resources.getString(R.string.didNotStart)};
     }
 
+    /**
+     * Allows the changing of the filter in position i, to be there or not, based on boolean b.
+     * @param i filter at position i
+     * @param b should the filter be active or not
+     */
     public void changeFilter(int i, boolean b) {
         if (b) {
             switch (i) {

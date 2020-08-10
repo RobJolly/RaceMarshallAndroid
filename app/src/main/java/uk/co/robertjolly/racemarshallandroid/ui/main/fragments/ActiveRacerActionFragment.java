@@ -32,9 +32,7 @@ import uk.co.robertjolly.racemarshallandroid.ui.main.customElements.TimeButton;
 import com.ikovac.timepickerwithseconds.*; //Note - this is not mine, but an opensource project.
 
 public class ActiveRacerActionFragment extends Fragment implements CheckpointGrabber, SelectionManagerGrabber {
-   // private boolean timeChanged = false;
     private SelectionsStateManager selectionsStateManager;
-
 
     @Nullable
     @Override
@@ -45,11 +43,13 @@ public class ActiveRacerActionFragment extends Fragment implements CheckpointGra
 
         selectionsStateManager = grabSelectionManager();
 
+        setSelectedRacersText((TextView) view.findViewById(R.id.selectedRacersTextView));
         Button deselectAllButton = view.findViewById(R.id.deselectAllButton);
         deselectAllButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                resetSelected((TextView) view.findViewById(R.id.selectedRacersTextView));
+                selectionsStateManager.clearSelected();
+                selectionsStateManager.notifyObservers();
             }
         });
         Button outButton = view.findViewById(R.id.outButton);
@@ -57,6 +57,7 @@ public class ActiveRacerActionFragment extends Fragment implements CheckpointGra
             @Override
             public void onClick(View view) {
                selectionsStateManager.setSelectedPassed(((TimeButton) getView().findViewById(R.id.timeButton)).getTime());
+               selectionsStateManager.notifyObservers();
             }
         });
 
@@ -65,6 +66,7 @@ public class ActiveRacerActionFragment extends Fragment implements CheckpointGra
             @Override
             public void onClick(View view) {
                 selectionsStateManager.setSelectedIn(((TimeButton) getView().findViewById(R.id.timeButton)).getTime());
+                selectionsStateManager.notifyObservers();
             }
         });
 
@@ -83,9 +85,11 @@ public class ActiveRacerActionFragment extends Fragment implements CheckpointGra
                         switch (i) {
                             case 0:
                                 selectionsStateManager.setSelectedDroppedOut(((TimeButton) getView().findViewById(R.id.timeButton)).getTime());
+                                selectionsStateManager.notifyObservers();
                                 break;
                             case 1:
                                 selectionsStateManager.setSelectedNotStarted(((TimeButton) getView().findViewById(R.id.timeButton)).getTime());
+                                selectionsStateManager.notifyObservers();
                                 break;
                             default: //do nothing
                         }
@@ -128,10 +132,6 @@ public class ActiveRacerActionFragment extends Fragment implements CheckpointGra
             textView.setText(R.string.selectedRacersTextViewString);
         }
 
-    }
-
-    public void resetSelected(TextView textView) {
-        selectionsStateManager.clearSelected();
     }
 
     @Override

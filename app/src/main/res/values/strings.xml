@@ -18,5 +18,5 @@
     <string name="toPass">Not Passed</string>
     <string name="checkedIn">Checked In</string>
     <string name="checkedOut">Checked Out</string>
-
+    <string name="selectedCheckpoints">Selected Checkpoint: </string>
 </resources>

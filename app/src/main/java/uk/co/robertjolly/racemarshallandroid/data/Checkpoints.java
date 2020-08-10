@@ -1,10 +1,17 @@
 package uk.co.robertjolly.racemarshallandroid.data;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Observable;
 
+import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
+
+/**
+ * Checkpoints is a cass to store multiple checkpoints, with a single main 'active'/focused checkpoint.
+ */
 public class Checkpoints extends Observable {
     ArrayList<Checkpoint> checkpoints = new ArrayList<>();
+    int currentCheckpointNumber = 1;
 
     private ArrayList<Checkpoint> getCheckpoints() {
         return checkpoints;
@@ -64,5 +71,28 @@ public class Checkpoints extends Observable {
         }
 
         return checkpointNumbers;
+    }
+
+    /**
+     *
+     * @return The currently selected checkpoint.
+     */
+    public int getCurrentCheckpointNumber() {
+        return currentCheckpointNumber;
+    }
+
+    /**
+     *
+     * @param currentCheckpointNumber The checkpoint that is selected.
+     */
+    public void setCurrentCheckpointNumber(int currentCheckpointNumber) {
+        //TODO Error checking - make sure input checkpoint exists.
+        this.currentCheckpointNumber = currentCheckpointNumber;
+        setChanged();
+    }
+
+    public void setTime(Racer racer, TimeTypes times, Date date) {
+        getCheckpoint(getCurrentCheckpointNumber()).setTime(racer, times, date);
+        setChanged();
     }
 }

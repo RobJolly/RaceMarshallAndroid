@@ -3,23 +3,34 @@ package uk.co.robertjolly.racemarshallandroid.data;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Observable;
+import java.util.Observer;
 
 import uk.co.robertjolly.racemarshallandroid.data.enums.RacerDisplayFilter;
 import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
 
 public class SelectionsStateManager extends Observable {
-    Checkpoint checkpointSelection;
+    Checkpoints checkpoints;
     ArrayList<Racer> selected;
 
-    public SelectionsStateManager(Checkpoint checkpointSelection) {
-        this.checkpointSelection = checkpointSelection;
+    public SelectionsStateManager(Checkpoints checkpoints) {
+        this.checkpoints = checkpoints;
         selected = new ArrayList<>();
+
+        checkpoints.addObserver(new Observer() {
+            @Override
+            public void update(Observable observable, Object o) {
+                setChanged();
+                notifyObservers();
+            }
+        });
     }
 
     public ArrayList<Racer> getShowableList(ArrayList<RacerDisplayFilter> filters) {
         ArrayList<Racer> shouldShow = new ArrayList<>();
-        for (Racer racer : checkpointSelection.getRacers()) {
+        for (Racer racer : checkpoints.getCheckpoint(getCheckpointSelected()).getRacers()) {
             boolean shouldSelect = false;
+            // This means that if anything should be shown by a SINGLE selected filter, it's shown.
+            // Regardless of any other filters not selecting it.
             for (RacerDisplayFilter filter : filters) {
                 if (shouldShow(filter, racer)) {
                     shouldSelect = true;
@@ -33,18 +44,31 @@ public class SelectionsStateManager extends Observable {
         return shouldShow;
     }
 
+    public int getCheckpointSelected() {
+        return checkpoints.getCurrentCheckpointNumber();
+    }
+
+    /*public void changeCheckpoint(int racerNumber) {
+        if ((getCheckpointSelected() != racerNumber) && ( getAllCheckpoints().getCheckpointNumberList().contains(racerNumber))) {
+            checkpointSelected = racerNumber;
+            checkpoints.setCurrentCheckpointNumber(racerNumber);
+            checkpoints.notifyObservers();
+            clearSelected();
+        }
+    }*/
+
     Boolean shouldShow(RacerDisplayFilter filter, Racer racer) {
         switch (filter) {
             case TOPASS:
-                return toPass(checkpointSelection.getReportedRaceTime(racer).getRaceTimes());
+                return toPass(checkpoints.getCheckpoint(getCheckpointSelected()).getReportedRaceTime(racer).getRaceTimes());
             case CHECKEDIN:
-                return checkedIn(checkpointSelection.getReportedRaceTime(racer).getRaceTimes());
+                return checkedIn(checkpoints.getCheckpoint(getCheckpointSelected()).getReportedRaceTime(racer).getRaceTimes());
             case CHECKEDOUT:
-                return checkedOut(checkpointSelection.getReportedRaceTime(racer).getRaceTimes());
+                return checkedOut(checkpoints.getCheckpoint(getCheckpointSelected()).getReportedRaceTime(racer).getRaceTimes());
             case DROPPEDOUT:
-                return droppedOut(checkpointSelection.getReportedRaceTime(racer).getRaceTimes());
+                return droppedOut(checkpoints.getCheckpoint(getCheckpointSelected()).getReportedRaceTime(racer).getRaceTimes());
             case DIDNOTSTART:
-                return didNotStart(checkpointSelection.getReportedRaceTime(racer).getRaceTimes());
+                return didNotStart(checkpoints.getCheckpoint(getCheckpointSelected()).getReportedRaceTime(racer).getRaceTimes());
             default:
                 //TODO Error here
                 return null;
@@ -71,60 +95,73 @@ public class SelectionsStateManager extends Observable {
         return (times.notStartedTime != null);
     }
 
-    public Checkpoint getCheckpointSelection() {
-        return checkpointSelection;
+    public Checkpoint getSelectedCheckpoint() {
+        return getAllCheckpoints().getCheckpoint(getCheckpointSelected());
+    }
+
+    public Checkpoints getAllCheckpoints() {
+        return checkpoints;
     }
 
     public void clearSelected() {
         selected.clear();
         setChanged();
-        notifyObservers();
+        //notifyObservers();
     }
 
     public void addSelected(Racer racer) {
         selected.add(racer);
         setChanged();
-        notifyObservers();
-     //   notifyObservers();
+        //notifyObservers();
     }
 
     //TODO Combine these into one function, they're functionally identical.
     public void setSelectedPassed(Date passed) {
        for (Racer racer : selected) {
-           checkpointSelection.setTime(racer, TimeTypes.OUT, passed);
+           getAllCheckpoints().setTime(racer, TimeTypes.OUT, passed);
+           //getAllCheckpoints().getCheckpoint(getCheckpointSelected()).setTime(racer, TimeTypes.OUT, passed);
        }
-       checkpointSelection.notifyObservers();
-        clearSelected();
+       clearSelected();
+       getAllCheckpoints().notifyObservers();
     }
 
+    //TODO: Move to Checkpoints
     public void setSelectedIn(Date passed) {
         for (Racer racer : selected) {
-            checkpointSelection.setTime(racer, TimeTypes.IN, passed);
+            getAllCheckpoints().setTime(racer, TimeTypes.IN, passed);
+            //getAllCheckpoints().getCheckpoint(getCheckpointSelected()).setTime(racer, TimeTypes.IN, passed);
         }
-        checkpointSelection.notifyObservers();
+        //checkpoints.notifyObservers();
         clearSelected();
+        getAllCheckpoints().notifyObservers();
     }
 
+    //TODO: Move to checkpoints
     public void setSelectedNotStarted(Date passed) {
         for (Racer racer : selected) {
-            checkpointSelection.setTime(racer, TimeTypes.DIDNOTSTART, passed);
+            getAllCheckpoints().setTime(racer, TimeTypes.DIDNOTSTART, passed);
+            //getAllCheckpoints().getCheckpoint(getCheckpointSelected()).setTime(racer, TimeTypes.DIDNOTSTART, passed);
         }
-        checkpointSelection.notifyObservers();
+        //checkpoints.notifyObservers();
         clearSelected();
+        checkpoints.notifyObservers();
     }
 
+    //TODO: Move to checkpoints
     public void setSelectedDroppedOut(Date passed) {
         for (Racer racer : selected) {
-            checkpointSelection.setTime(racer, TimeTypes.DROPPEDOUT, passed);
+            getAllCheckpoints().setTime(racer, TimeTypes.DROPPEDOUT, passed);
+            //getAllCheckpoints().getCheckpoint(getCheckpointSelected()).setTime(racer, TimeTypes.DROPPEDOUT, passed);
         }
-        checkpointSelection.notifyObservers();
+        //checkpoints.notifyObservers();
         clearSelected();
+        checkpoints.notifyObservers();
     }
 
     public void removeSelected(Racer racer) {
         selected.remove(racer);
         setChanged();
-        notifyObservers();
+        //notifyObservers();
     }
 
     public int getSelectedCount() {

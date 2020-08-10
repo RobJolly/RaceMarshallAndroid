@@ -11,11 +11,19 @@ import java.util.TreeMap;
 
 import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
 
-
+/**
+ * A numbered checkpoint - Storing information about racers in the race, their given times and if those times
+ * have been reported yet.
+ */
 public class Checkpoint extends Observable {
     int checkPointNumber;
     TreeMap<Racer, ReportedRaceTimes> racerData;
 
+    /**
+     * Constructor for the checkpoint
+     * @param checkPointNumber the number of the given checkpoint
+     * @param racerNumber The number of racers in the race (Index 0)
+     */
     public Checkpoint(int checkPointNumber, int racerNumber) {
         this.checkPointNumber = checkPointNumber;
         racerData = new TreeMap<>();
@@ -24,9 +32,12 @@ public class Checkpoint extends Observable {
         }
     }
 
-    public Checkpoint() {
-    }
-
+    /**
+     *
+     * @param racerNumber The number of the racer
+     * @param type The time type to check
+     * @return Whether or not the given racer has the given time reported, in the checkpoint
+     */
     public boolean reportedItem(int racerNumber, TimeTypes type) {
         if (racerData.containsKey(new Racer(racerNumber))) {
             return Objects.requireNonNull(racerData.get(new Racer(racerNumber))).getReportedItems().getReportedItem(type);
@@ -36,10 +47,19 @@ public class Checkpoint extends Observable {
         }
     }
 
+    /**
+     * @return the number of the checkpoint
+     */
     public int getCheckPointNumber() {
         return checkPointNumber;
     }
 
+    /**
+     * Is able to set whether or not a given time, for a given racer, is marked as reported or not
+     * @param racerNumber the racer for which to change
+     * @param type the type of time that you wish to update
+     * @param isReported whether or not you wish to set the given time as reported or not reported
+     */
     public void setReportedItem(int racerNumber, TimeTypes type, boolean isReported) {
         if (racerData.containsKey(new Racer(racerNumber))) {
             Objects.requireNonNull(racerData.get(new Racer(racerNumber))).getReportedItems().setReportedItem(type,isReported);
@@ -49,6 +69,9 @@ public class Checkpoint extends Observable {
         }
     }
 
+    /**
+     * @return A list of racers that have not passed the checkpoint so far. Includes those checked into the checkpoint.
+     */
     public ArrayList<Racer> getAllNotPassed() {
         ArrayList<Racer> unpassedRacers = new ArrayList<>();
         for (HashMap.Entry<Racer, ReportedRaceTimes> entry : racerData.entrySet()) {
@@ -60,6 +83,9 @@ public class Checkpoint extends Observable {
         return unpassedRacers;
     }
 
+    /**
+     * @return A list of racers that have passed the checkpoint so far. Does not include those checked into the checkpoint.
+     */
     public ArrayList<Racer> getAllPassed() {
         ArrayList<Racer> unpassedRacers = new ArrayList<>();
         for (HashMap.Entry<Racer, ReportedRaceTimes> entry : racerData.entrySet()) {
@@ -71,6 +97,12 @@ public class Checkpoint extends Observable {
         return unpassedRacers;
     }
 
+    /**
+     * Sets a given time type for the given racer, to the input time.
+     * @param racer The racer for which data is to be changed
+     * @param type The time of the time you wish to change
+     * @param timeToSet The time you wish to set the time to
+     */
     public void setTime(Racer racer, TimeTypes type, Date timeToSet) {
         if (racerData.containsKey(racer)) {
             Objects.requireNonNull(racerData.get(racer)).getRaceTimes().setTime(timeToSet, type);
@@ -80,6 +112,9 @@ public class Checkpoint extends Observable {
         }
     }
 
+    /**
+     * @return A list of racers where atleast one time has been set, at any point.
+     */
     public TreeMap<Racer, ReportedRaceTimes> getRacersWithTimes() {
         TreeMap<Racer, ReportedRaceTimes> setTimes = new TreeMap<>();
 
@@ -92,10 +127,17 @@ public class Checkpoint extends Observable {
         return setTimes;
     }
 
+    /**
+     * @param racer the racer for which to get the ReportedRaceTimes for
+     * @return the list of ReportedRaceTimes for the given racer
+     */
     public ReportedRaceTimes getReportedRaceTime(Racer racer) {
         return racerData.get(racer);
     }
 
+    /**
+     * @return A list of racers stored within the checkpoint.
+     */
     public Set<Racer> getRacers() {
         return racerData.keySet();
     }

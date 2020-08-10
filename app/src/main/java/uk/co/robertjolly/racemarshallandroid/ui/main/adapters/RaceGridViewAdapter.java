@@ -7,25 +7,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.TextView;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
-import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.DisplayFilterManager;
 import uk.co.robertjolly.racemarshallandroid.data.Racer;
 import uk.co.robertjolly.racemarshallandroid.data.SelectionsStateManager;
-import uk.co.robertjolly.racemarshallandroid.data.enums.RacerDisplayFilter;
 import uk.co.robertjolly.racemarshallandroid.ui.main.SelectionManagerGrabber;
 import uk.co.robertjolly.racemarshallandroid.ui.main.fragments.ActiveRacerDisplayFragment;
-
-import static uk.co.robertjolly.racemarshallandroid.data.enums.RacerDisplayFilter.*;
 
 
 public class RaceGridViewAdapter extends BaseAdapter implements SelectionManagerGrabber {
@@ -44,14 +35,23 @@ public class RaceGridViewAdapter extends BaseAdapter implements SelectionManager
         selectionsStateManager.addObserver(new Observer() {
             @Override
             public void update(Observable observable, Object o) {
+                toShow = selectionsStateManager.getShowableList(grabDisplayFilterManager().getFilterList());
                 notifyDataSetChanged();
             }
         });
 
-        selectionsStateManager.getCheckpointSelection().addObserver(new Observer() {
+        /*selectionsStateManager.getSelectedCheckpoint().addObserver(new Observer() {
             @Override
             public void update(Observable observable, Object o) {
                 toShow = selectionsStateManager.getShowableList(grabDisplayFilterManager().getFilterList());
+            }
+        });*/
+
+        grabDisplayFilterManager().addObserver(new Observer() {
+            @Override
+            public void update(Observable observable, Object o) {
+                toShow = selectionsStateManager.getShowableList(grabDisplayFilterManager().getFilterList());
+                notifyDataSetChanged();
             }
         });
 
@@ -82,10 +82,11 @@ public class RaceGridViewAdapter extends BaseAdapter implements SelectionManager
         thisButton.setWidth((int)(100 * scale));
         thisButton.setHeight((int)(100 * scale));
 
-        if (selectionsStateManager.isSelected(toShow.get(i))) {
+        if (selectionsStateManager.isSelected(toShow.get(i))) { //if button is selected - blue colour
             thisButton.getBackground().setColorFilter(Color.BLUE, PorterDuff.Mode.MULTIPLY);
         }
 
+        //set the button text to the racer number
         thisButton.setText(String.valueOf(toShow.get(i).getRacerNumber()));
 
         thisButton.setOnClickListener(new View.OnClickListener() {
@@ -98,14 +99,6 @@ public class RaceGridViewAdapter extends BaseAdapter implements SelectionManager
                     selectionsStateManager.addSelected(toShow.get(i));
                     thisButton.getBackground().setColorFilter(Color.BLUE, PorterDuff.Mode.MULTIPLY);
                 }
-            }
-        });
-
-        grabDisplayFilterManager().addObserver(new Observer() {
-            @Override
-            public void update(Observable observable, Object o) {
-                toShow = selectionsStateManager.getShowableList(grabDisplayFilterManager().getFilterList());
-                notifyDataSetChanged();
             }
         });
         ;

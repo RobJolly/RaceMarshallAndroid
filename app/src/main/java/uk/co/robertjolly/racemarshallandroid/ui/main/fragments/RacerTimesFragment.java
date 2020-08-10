@@ -22,14 +22,15 @@ import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
 import uk.co.robertjolly.racemarshallandroid.ui.main.CheckpointGrabber;
 import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.RecyclerViewAdapter;
 import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.SectionsPagerAdapter;
+import uk.co.robertjolly.racemarshallandroid.ui.main.customElements.checkpointFob;
 
 public class RacerTimesFragment extends Fragment implements Observer, CheckpointGrabber {
     private Checkpoints checkpoints = new Checkpoints();
-    private int displayingCheckpoint = 1;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
        // grabCheckpoints().getCheckpoint(1);
     }
 
@@ -40,10 +41,19 @@ public class RacerTimesFragment extends Fragment implements Observer, Checkpoint
 
         View view = inflater.inflate(R.layout.racer_times_fragment,container,false);
 
-        RecyclerView recView = view.findViewById(R.id.changesRecyclerView);
+        final RecyclerView recView = view.findViewById(R.id.changesRecyclerView);
         recView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recView.setAdapter(new RecyclerViewAdapter(checkpoints.getCheckpoint(displayingCheckpoint), this.getContext()));
+        recView.setAdapter(new RecyclerViewAdapter(checkpoints, this.getContext()));
 
+        checkpoints.addObserver(new Observer() {
+            @Override
+            public void update(Observable observable, Object o) {
+                recView.getAdapter().notifyDataSetChanged();
+                //recView.getAdapter().notifyDataSetChanged();
+            }
+        });
+
+        checkpointFob.createCheckpointFob(view, getActivity(), checkpoints);
      /*   allData.addObserver(new Observer() {
             @Override
             public void update(Observable observable, Object o) {

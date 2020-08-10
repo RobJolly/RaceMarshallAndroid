@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.text.SimpleDateFormat;
 
 import uk.co.robertjolly.racemarshallandroid.R;
-import uk.co.robertjolly.racemarshallandroid.data.ReportedItems;
 import uk.co.robertjolly.racemarshallandroid.data.ReportedRaceTimes;
 import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
 
@@ -40,36 +39,6 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setRacerTimes(ReportedRaceTimes times) {
-        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-        String inTime = "";
-        String outTime = "";
-        String droppedOutTime = "";
-        String didNotStartTime = "";
-
-        if (times.getRaceTimes().getInTime() != null) {
-            inTime = timeFormat.format(times.getRaceTimes().getInTime());
-        } else {
-            inTime = null;
-        }
-
-        if (times.getRaceTimes().getOutTime() != null) {
-            outTime = timeFormat.format(times.getRaceTimes().getOutTime());
-        } else {
-            outTime = null;
-        }
-
-        if (times.getRaceTimes().getDroppedOutTime() != null) {
-            droppedOutTime = timeFormat.format(times.getRaceTimes().getDroppedOutTime());
-        } else {
-            droppedOutTime = null;
-        }
-
-        if (times.getRaceTimes().getNotStartedTime() != null) {
-            didNotStartTime = timeFormat.format(times.getRaceTimes().getNotStartedTime());
-        } else {
-            didNotStartTime = null;
-        }
-
         setRacerTimeTextBox1(times);
         setRacerTimeTextBox2(times);
         setRacerTimeTextBox3(times);
@@ -134,21 +103,27 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setCheckBoxListener(final ReportedRaceTimes times) {
-        manualChange = false;
-        racerReported.setChecked(times.allReported());
         manualChange = true;
+        racerReported.setChecked(times.allReported());
+        manualChange = false;
 
         racerReported.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b) {
-                    times.setAllUnreportedToReported();
-            } else if (manualChange) {
-                    times.setAllReportedToUnreported();
+                if (!manualChange) {
+                    if (b) {
+                        times.setAllUnreportedToReported();
+                    } else {
+                        times.setAllReportedToUnreported();
+                    }
+                    setRacerTimes(times);
                 }
-                setRacerTimes(times);
             }
         });
+    }
+
+    public void setBoxStylesAndTime(ReportedRaceTimes previousItem, ReportedRaceTimes currentItem) {
+
     }
 
 }

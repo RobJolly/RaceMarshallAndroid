@@ -10,7 +10,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:gravity="center"
-        android:text="(dropped out: 12:00:00)"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guidelineVerical70pc"
         app:layout_constraintStart_toStartOf="@+id/guidelineVerical20pc"
@@ -33,7 +32,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:gravity="center"
-        android:text="(in: 19:00:00)"
         app:layout_constraintBottom_toTopOf="@+id/guidelineHorizontal33pc"
         app:layout_constraintEnd_toStartOf="@+id/guidelineVerical70pc"
         app:layout_constraintStart_toStartOf="@+id/guidelineVerical20pc"
@@ -44,7 +42,6 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:gravity="center"
-        android:text="(out:12:00:00)"
         app:layout_constraintBottom_toTopOf="@+id/guidelineHorizontal66pc"
         app:layout_constraintEnd_toStartOf="@+id/guidelineVerical70pc"
         app:layout_constraintStart_toStartOf="@+id/guidelineVerical20pc"
@@ -82,11 +79,12 @@
         android:id="@+id/racerNumberButton"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:text="Button"
         app:layout_constraintBottom_toTopOf="@+id/guidelineHorizontal90pc"
         app:layout_constraintEnd_toStartOf="@+id/guidelineVerical20pc"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guidelineHorizontal10pc" />
+        app:layout_constraintTop_toBottomOf="@+id/timeDisplayView"
+        app:layout_constraintVertical_bias="1.0" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineHorizontal10pc"
@@ -102,12 +100,33 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.9" />
 
+    <TextView
+        android:id="@+id/timeDisplayView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/guidelineHorizontal33pc"
+        app:layout_constraintEnd_toStartOf="@+id/timeTextView1"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0" />
+
     <View
-        android:id="@+id/divider"
+        android:id="@+id/lowerDivider"
         android:layout_width="match_parent"
-        android:layout_height="4dp"
+        android:layout_height="2dp"
         android:background="?android:attr/listDivider"
+        android:elevation="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="parent"
-        tools:layout_editor_absoluteX="2dp" />
+        app:layout_constraintTop_toBottomOf="@+id/timeTextView3"
+        tools:layout_editor_absoluteX="1dp" />
+
+    <View
+        android:id="@+id/upperDivider"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintBottom_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="1dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

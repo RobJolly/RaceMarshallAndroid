@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.common.primitives.Chars;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -27,25 +28,20 @@ import uk.co.robertjolly.racemarshallandroid.data.enums.RacerDisplayFilter;
 import uk.co.robertjolly.racemarshallandroid.ui.main.CheckpointGrabber;
 import uk.co.robertjolly.racemarshallandroid.ui.main.SelectionManagerGrabber;
 import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.SectionsPagerAdapter;
+import uk.co.robertjolly.racemarshallandroid.ui.main.customElements.checkpointFob;
 
 public class ActiveRacerFragment extends Fragment implements CheckpointGrabber, SelectionManagerGrabber {
-    private ArrayList<RacerDisplayFilter> racerFilters;
-    private SelectionsStateManager selectionsStateManager;
     private DisplayFilterManager displayFilterManager = new DisplayFilterManager();
-
-    private int selectedCheckpoint = 1; //this will be changed when checkpoints are implemented
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    //    this.racers = getRacers();
 
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        selectionsStateManager = new SelectionsStateManager(grabCheckpoints().getCheckpoint(selectedCheckpoint));
         View view;
 
         //find orientation of screen
@@ -55,8 +51,8 @@ public class ActiveRacerFragment extends Fragment implements CheckpointGrabber, 
             view = inflater.inflate(R.layout.active_racers_sideways_fragment,container,false);
         }
 
-        FloatingActionButton fob = (FloatingActionButton) view.findViewById(R.id.filterFob);
-        fob.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fobFilter = (FloatingActionButton) view.findViewById(R.id.filterFob);
+        fobFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
@@ -73,14 +69,50 @@ public class ActiveRacerFragment extends Fragment implements CheckpointGrabber, 
                 dialogBuilder.show();
             }
         });
+
+        checkpointFob.createCheckpointFob(view, getActivity(), grabCheckpoints());
         return view;
     }
+
+    /*public void createCheckpointFob(View view) {
+        FloatingActionButton fobCheckpoint = (FloatingActionButton) view.findViewById(R.id.checkpointsFob);
+        fobCheckpoint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+                dialogBuilder.setTitle(R.string.selectedCheckpoints);
+                dialogBuilder.setCancelable(true);
+
+                final ArrayList<Integer> possibilities = grabCheckpoints().getCheckpointNumberList();
+                CharSequence[] checkpointNumberStrings = new CharSequence[possibilities.size()];
+                int selectedIndex = 0;
+                int count = 0;
+                for (int item : possibilities) {
+                    checkpointNumberStrings[count] = (CharSequence) String.valueOf(item);
+                    if (grabSelectionManager().getCheckpointSelected() == item) {
+                        selectedIndex = count;
+                    }
+                    count++;
+                }
+
+                dialogBuilder.setSingleChoiceItems(checkpointNumberStrings, selectedIndex, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        grabCheckpoints().setCurrentCheckpointNumber(possibilities.get(i));
+                        grabCheckpoints().notifyObservers();
+                        //grabSelectionManager().changeCheckpoint(possibilities.get(i));
+                        //grabSelectionManager().notifyObservers();
+                    }
+                });
+                dialogBuilder.show();
+            }
+        });
+    }*/
 
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
     }
-
 
     @Override
     public Checkpoints grabCheckpoints() {
@@ -89,10 +121,12 @@ public class ActiveRacerFragment extends Fragment implements CheckpointGrabber, 
 
     @Override
     public SelectionsStateManager grabSelectionManager() {
-        return selectionsStateManager;
+        return ((SectionsPagerAdapter) Objects.requireNonNull(((ViewPager) Objects.requireNonNull(getActivity()).findViewById(R.id.mainViewPager)).getAdapter())).grabSelectionManager();
     }
 
     public DisplayFilterManager grabDisplayFilterManager() {
         return displayFilterManager;
     }
+
+
 }

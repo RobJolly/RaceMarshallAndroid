@@ -48,6 +48,21 @@
         app:layout_constraintTop_toBottomOf="@+id/actionFragment"
         app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@drawable/outline_filter_alt_black_48"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/checkpointsFob"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintBottom_toTopOf="@+id/filterFob"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/actionFragment"
+        app:layout_constraintVertical_bias="1"
+        app:srcCompat="@android:drawable/ic_menu_myplaces" />
     <!-- Filter image Taken from:https://material.io/resources/icons/?icon=filter_alt&style=outline -->
 
 
