@@ -56,14 +56,21 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewHolder holder, int position) {
-        holder.setRacerButton(String.valueOf(toDisplay.getListToDisplay().get(position).getRacerNumber()));
-        holder.setRacerTimes(checkpoints.getCheckpoint(checkpoints.getCurrentCheckpointNumber()).getReportedRaceTime(toDisplay.getListToDisplay().get(position)));
-        ReportedRaceTimes times = checkpoints.getCheckpoint(checkpoints.getCurrentCheckpointNumber()).getReportedRaceTime(toDisplay.getListToDisplay().get(position));
-        holder.setCheckBoxListener(times);
+        int size = toDisplay.getListToDisplay().size();
+        if (position >= size || size == 0) {
+            holder.makeInvisible();
+        } else {
+            holder.setRacerButton(String.valueOf(toDisplay.getListToDisplay().get(position).getRacerNumber()));
+            holder.setRacerTimes(checkpoints.getCheckpoint(checkpoints.getCurrentCheckpointNumber()).getReportedRaceTime(toDisplay.getListToDisplay().get(position)));
+            ReportedRaceTimes times = checkpoints.getCheckpoint(checkpoints.getCurrentCheckpointNumber()).getReportedRaceTime(toDisplay.getListToDisplay().get(position));
+            holder.setCheckBoxListener(times);
+            holder.makeUninvisible();
+        }
+
     }
 
     @Override
     public int getItemCount() {
-        return toDisplay.getListToDisplay().size();
+        return toDisplay.getListToDisplay().size() + 2;
     }
 }

@@ -1,13 +1,17 @@
 package uk.co.robertjolly.racemarshallandroid.ui.main.customElements;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.security.keystore.StrongBoxUnavailableException;
 import android.view.View;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
 import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
@@ -15,7 +19,8 @@ import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
 public class checkpointFob {
 
     public static void createCheckpointFob(View view, final Activity activity, final Checkpoints checkpoints) {
-        FloatingActionButton fobCheckpoint = (FloatingActionButton) view.findViewById(R.id.checkpointsFob);
+        final FloatingActionButton fobCheckpoint = (FloatingActionButton) view.findViewById(R.id.checkpointsFob);
+
         fobCheckpoint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -47,6 +52,14 @@ public class checkpointFob {
                 dialogBuilder.show();
             }
         });
+
+        /*checkpoints.addObserver(new Observer() {
+            @Override
+            public void update(Observable observable, Object o) {
+                setVisibility(fobCheckpoint, checkpoints);
+            }
+        });*/
     }
+
 
 }

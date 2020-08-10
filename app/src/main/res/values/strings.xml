@@ -2,7 +2,7 @@
     <string name="app_name">RaceMarshallAndroid</string>
     <string name="tab_text_1">Active Racers</string>
     <string name="tab_text_2">Racer Times</string>
-    <string name="tab_text_3">Checkpoints</string>
+    <string name="tab_text_3">Settings</string>
     <string name="timeButtonString">00:00:00</string>
     <string name="inButtonString">In</string>
     <string name="selectedRacersLabelString">Selected Racers</string>

@@ -71,6 +71,7 @@ public class ActiveRacerFragment extends Fragment implements CheckpointGrabber, 
         });
 
         checkpointFob.createCheckpointFob(view, getActivity(), grabCheckpoints());
+
         return view;
     }
 

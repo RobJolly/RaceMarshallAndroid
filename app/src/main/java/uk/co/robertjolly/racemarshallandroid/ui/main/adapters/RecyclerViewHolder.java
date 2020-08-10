@@ -7,6 +7,7 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
@@ -22,6 +23,8 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder {
     private TextView timeTextView1;
     private TextView timeTextView2;
     private TextView timeTextView3;
+    private View upperDivider;
+    private View lowerDivider;
     private ReportedRaceTimes times;
     private boolean manualChange = false;
 
@@ -32,6 +35,8 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder {
         timeTextView1 = itemView.findViewById(R.id.timeTextView1);
         timeTextView2 = itemView.findViewById(R.id.timeTextView2);
         timeTextView3 = itemView.findViewById(R.id.timeTextView3);
+        upperDivider = itemView.findViewById(R.id.upperDivider);
+        lowerDivider = itemView.findViewById(R.id.lowerDivider);
     }
 
     public void setRacerButton(String text) {
@@ -124,6 +129,26 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder {
 
     public void setBoxStylesAndTime(ReportedRaceTimes previousItem, ReportedRaceTimes currentItem) {
 
+    }
+
+    public void makeInvisible() {
+        racerButton.setVisibility(View.INVISIBLE);
+        racerReported.setVisibility(View.INVISIBLE);
+        timeTextView1.setVisibility(View.INVISIBLE);
+        timeTextView2.setVisibility(View.INVISIBLE);
+        timeTextView3.setVisibility(View.INVISIBLE);
+        lowerDivider.setVisibility(View.INVISIBLE);
+        upperDivider.setVisibility(View.INVISIBLE);
+    }
+
+    public void makeUninvisible() {
+        racerButton.setVisibility(View.VISIBLE);
+        racerReported.setVisibility(View.VISIBLE);
+        timeTextView1.setVisibility(View.VISIBLE);
+        timeTextView2.setVisibility(View.VISIBLE);
+        timeTextView3.setVisibility(View.VISIBLE);
+        lowerDivider.setVisibility(View.VISIBLE);
+        upperDivider.setVisibility(View.VISIBLE);
     }
 
 }

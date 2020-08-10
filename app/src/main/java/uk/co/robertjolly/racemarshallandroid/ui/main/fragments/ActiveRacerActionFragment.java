@@ -77,8 +77,9 @@ public class ActiveRacerActionFragment extends Fragment implements CheckpointGra
                 final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
                 dialogBuilder.setTitle(R.string.otherActions);
                 dialogBuilder.setCancelable(true);
-                String[] options = {getResources().getString(R.string.droppedOut), getResources().getString(R.string.didNotStart), getResources().getString(R.string.cancel)};
+                
 
+                String[] options = {getResources().getString(R.string.droppedOut), getResources().getString(R.string.didNotStart), getResources().getString(R.string.cancel)};
                 dialogBuilder.setItems(options, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {

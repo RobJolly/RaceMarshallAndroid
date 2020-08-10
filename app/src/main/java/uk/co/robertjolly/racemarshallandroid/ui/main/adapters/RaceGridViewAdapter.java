@@ -57,9 +57,11 @@ public class RaceGridViewAdapter extends BaseAdapter implements SelectionManager
 
     }
 
+
     @Override
     public int getCount() {
-        return toShow.size();
+        //+6 exists to create a 'buffer' - prevents floating action buttons from making the bottom two rows unclickable/harder to click.
+        return toShow.size() + 6;
     }
 
     @Override
@@ -82,26 +84,31 @@ public class RaceGridViewAdapter extends BaseAdapter implements SelectionManager
         thisButton.setWidth((int)(100 * scale));
         thisButton.setHeight((int)(100 * scale));
 
-        if (selectionsStateManager.isSelected(toShow.get(i))) { //if button is selected - blue colour
-            thisButton.getBackground().setColorFilter(Color.BLUE, PorterDuff.Mode.MULTIPLY);
-        }
-
-        //set the button text to the racer number
-        thisButton.setText(String.valueOf(toShow.get(i).getRacerNumber()));
-
-        thisButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (selectionsStateManager.isSelected(toShow.get(i))) {
-                    selectionsStateManager.removeSelected(toShow.get(i));
-                    thisButton.getBackground().clearColorFilter();
-                } else {
-                    selectionsStateManager.addSelected(toShow.get(i));
-                    thisButton.getBackground().setColorFilter(Color.BLUE, PorterDuff.Mode.MULTIPLY);
-                }
+        //Prevents crash if button count too large and creates invisible 'buffer' buttons
+        if (i >= toShow.size()) {
+            thisButton.setVisibility(View.INVISIBLE);
+        } else {
+            if (selectionsStateManager.isSelected(toShow.get(i))) { //if button is selected - blue colour
+                thisButton.getBackground().setColorFilter(Color.BLUE, PorterDuff.Mode.MULTIPLY);
             }
-        });
-        ;
+
+            //set the button text to the racer number
+            thisButton.setText(String.valueOf(toShow.get(i).getRacerNumber()));
+
+            thisButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (selectionsStateManager.isSelected(toShow.get(i))) {
+                        selectionsStateManager.removeSelected(toShow.get(i));
+                        thisButton.getBackground().clearColorFilter();
+                    } else {
+                        selectionsStateManager.addSelected(toShow.get(i));
+                        thisButton.getBackground().setColorFilter(Color.BLUE, PorterDuff.Mode.MULTIPLY);
+                    }
+                    selectionsStateManager.notifyObservers();
+                }
+            });
+        }
 
 
         return thisButton;

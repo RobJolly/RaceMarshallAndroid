@@ -95,4 +95,8 @@ public class Checkpoints extends Observable {
         getCheckpoint(getCurrentCheckpointNumber()).setTime(racer, times, date);
         setChanged();
     }
+
+    public void clearCheckpoints() {
+        checkpoints.clear();
+    }
 }
