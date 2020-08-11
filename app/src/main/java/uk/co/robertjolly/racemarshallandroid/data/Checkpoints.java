@@ -56,6 +56,7 @@ public class Checkpoints extends Observable {
             //TODO Add Error Here
         } else {
             checkpoints.add(checkpoint);
+            setChanged();
         }
     }
 

@@ -53,6 +53,22 @@ public class checkpointFob {
             }
         });
 
+        checkpoints.addObserver(new Observer() {
+            @Override
+            public void update(Observable observable, Object o) {
+                if (getShouldBeVisible(checkpoints)) {
+                    fobCheckpoint.show();
+                } else {
+                    fobCheckpoint.hide();
+                }
+            }
+        });
+
+        if (getShouldBeVisible(checkpoints)) {
+            fobCheckpoint.show();
+        } else {
+            fobCheckpoint.hide();
+        }
         /*checkpoints.addObserver(new Observer() {
             @Override
             public void update(Observable observable, Object o) {
@@ -61,5 +77,12 @@ public class checkpointFob {
         });*/
     }
 
+    private static boolean getShouldBeVisible(Checkpoints checkpoints) {
+       if (checkpoints.getCheckpointNumberList().size() > 1) {
+           return true;
+       } else {
+           return false;
+       }
+    }
 
 }

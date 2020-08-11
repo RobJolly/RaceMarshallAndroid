@@ -24,6 +24,7 @@ import java.util.Observer;
 import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
 import uk.co.robertjolly.racemarshallandroid.data.Racer;
+import uk.co.robertjolly.racemarshallandroid.data.ReportedRaceTimes;
 import uk.co.robertjolly.racemarshallandroid.data.SelectionsStateManager;
 import uk.co.robertjolly.racemarshallandroid.ui.main.CheckpointGrabber;
 import uk.co.robertjolly.racemarshallandroid.ui.main.SelectionManagerGrabber;
@@ -33,6 +34,14 @@ import com.ikovac.timepickerwithseconds.*; //Note - this is not mine, but an ope
 
 public class ActiveRacerActionFragment extends Fragment implements CheckpointGrabber, SelectionManagerGrabber {
     private SelectionsStateManager selectionsStateManager;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        selectionsStateManager = grabSelectionManager();
+
+    }
 
     @Nullable
     @Override
@@ -103,7 +112,17 @@ public class ActiveRacerActionFragment extends Fragment implements CheckpointGra
         selectionsStateManager.addObserver(new Observer() {
             @Override
             public void update(Observable observable, Object o) {
-                setSelectedRacersText((TextView) getView().findViewById(R.id.selectedRacersTextView));
+                try {
+                    setSelectedRacersText((TextView) getView().findViewById(R.id.selectedRacersTextView));
+                } catch (Exception e) {
+                    //TODO some kind of error here
+                }
+
+
+                getView().findViewById(R.id.inButton).setEnabled(selectionsStateManager.areCompatableIn());
+                getView().findViewById(R.id.outButton).setEnabled(selectionsStateManager.areCompatableOut());
+
+                //setSelectedRacersText((TextView) getView().findViewById(R.id.selectedRacersTextView));
             }
         });
 

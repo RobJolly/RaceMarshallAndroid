@@ -31,13 +31,15 @@ public class RacerTimesFragment extends Fragment implements Observer, Checkpoint
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        checkpoints = grabCheckpoints();
+
        // grabCheckpoints().getCheckpoint(1);
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        checkpoints = grabCheckpoints();
+        //checkpoints = grabCheckpoints();
 
         View view = inflater.inflate(R.layout.racer_times_fragment,container,false);
 

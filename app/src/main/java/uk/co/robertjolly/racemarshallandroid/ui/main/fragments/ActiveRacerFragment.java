@@ -19,6 +19,8 @@ import com.google.common.primitives.Chars;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Observable;
+import java.util.Observer;
 
 import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;

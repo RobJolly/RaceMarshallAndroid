@@ -11,16 +11,23 @@ import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
 public class SelectionsStateManager extends Observable {
     Checkpoints checkpoints;
     ArrayList<Racer> selected;
+    int lastCheckpointSize;
 
-    public SelectionsStateManager(Checkpoints checkpoints) {
+    public SelectionsStateManager(final Checkpoints checkpoints) {
         this.checkpoints = checkpoints;
         selected = new ArrayList<>();
 
+        //TODO Think of a better way to do this without lastCheckpointSize, as this is bad practice and could cause unintended bugs
+        lastCheckpointSize = checkpoints.getCheckpointNumberList().size();
         checkpoints.addObserver(new Observer() {
             @Override
             public void update(Observable observable, Object o) {
-                clearSelected();
-                notifyObservers();
+                if (lastCheckpointSize != checkpoints.getCheckpointNumberList().size()) {
+                    lastCheckpointSize = checkpoints.getCheckpointNumberList().size();
+                } else {
+                    clearSelected();
+                    notifyObservers();
+                }
             }
         });
     }
@@ -175,4 +182,35 @@ public class SelectionsStateManager extends Observable {
     public boolean isSelected(Racer racer) {
         return selected.contains(racer);
     }
+
+    public boolean areCompatableIn() {
+        boolean compatable = true;
+
+        for (Racer racer : selected) {
+            ReportedRaceTimes racerTimes = checkpoints.getCheckpoint(checkpoints.getCurrentCheckpointNumber()).getReportedRaceTime(racer);
+            if (racerTimes.getRaceTimes().getInTime() != null || racerTimes.getRaceTimes().getDroppedOutTime() != null || racerTimes.getRaceTimes().getOutTime() != null || racerTimes.getRaceTimes().getNotStartedTime() != null) {
+                compatable = false;
+                break;
+            }
+        }
+
+        return compatable;
+    }
+
+    public boolean areCompatableOut() {
+        boolean compatable = true;
+
+        for (Racer racer : selected) {
+            ReportedRaceTimes racerTimes = checkpoints.getCheckpoint(checkpoints.getCurrentCheckpointNumber()).getReportedRaceTime(racer);
+            if (racerTimes.getRaceTimes().getDroppedOutTime() != null || racerTimes.getRaceTimes().getOutTime() != null || racerTimes.getRaceTimes().getNotStartedTime() != null) {
+                compatable = false;
+                break;
+            }
+
+        }
+
+        return compatable;
+    }
+
+
 }
