@@ -45,15 +45,18 @@ public class Racer implements Comparable, Parcelable {
         }
     }
 
+    //TODO Java doc this
     @Override
     public int describeContents() {
         return 0;
     }
 
+    //TODO Java doc this
     protected Racer(Parcel in) {
         racerNumber = in.readInt();
     }
 
+    //TODO Java doc this
     public static final Creator<Racer> CREATOR = new Creator<Racer>() {
         @Override
         public Racer createFromParcel(Parcel in) {
@@ -66,6 +69,7 @@ public class Racer implements Comparable, Parcelable {
         }
     };
 
+    //TODO Java doc this
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeInt(racerNumber);

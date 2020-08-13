@@ -16,6 +16,7 @@ import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.ReportedRaceTimes;
 import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
 
+//TODO Java doc this
 public class RecyclerViewHolder extends RecyclerView.ViewHolder {
 
     private Button racerButton;
@@ -28,6 +29,7 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder {
     private ReportedRaceTimes times;
     private boolean manualChange = false;
 
+    //TODO Java doc this
     public RecyclerViewHolder(@NonNull View itemView) {
         super(itemView);
         racerButton = itemView.findViewById(R.id.racerNumberButton);
@@ -39,10 +41,12 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder {
         lowerDivider = itemView.findViewById(R.id.lowerDivider);
     }
 
+    //TODO Java doc this
     public void setRacerButton(String text) {
         racerButton.setText(text);
     }
 
+    //TODO Java doc this
     public void setRacerTimes(ReportedRaceTimes times) {
         setRacerTimeTextBox1(times);
         setRacerTimeTextBox2(times);
@@ -50,6 +54,7 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder {
 
     }
 
+    //TODO Java doc this
     //TODO These set racer time boxes are dodgy, not very object oriented - I should probably fix that.
     private void setRacerTimeTextBox1(ReportedRaceTimes times) {
        if (times.getRaceTimes().getInTime() != null) {
@@ -63,6 +68,7 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder {
        }
     }
 
+    //TODO Java doc this
     private void setRacerTimeTextBox2(ReportedRaceTimes times) {
         if (times.getRaceTimes().getInTime() != null) {
             if (times.getRaceTimes().getOutTime() != null) {
@@ -93,6 +99,7 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
+    //TODO Java doc this
     private void setRacerTimeTextBox3(ReportedRaceTimes times) {
         if (timeTextView2.getText() != "") {
             if ((times.getRaceTimes().getInTime() != null) & (times.getRaceTimes().getOutTime() != null)) {
@@ -107,6 +114,7 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
+    //TODO Java doc this
     public void setCheckBoxListener(final ReportedRaceTimes times) {
         manualChange = true;
         racerReported.setChecked(times.allReported());
@@ -127,10 +135,12 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder {
         });
     }
 
+    //TODO Java doc this
     public void setBoxStylesAndTime(ReportedRaceTimes previousItem, ReportedRaceTimes currentItem) {
 
     }
 
+    //TODO Java doc this
     public void makeInvisible() {
         racerButton.setVisibility(View.INVISIBLE);
         racerReported.setVisibility(View.INVISIBLE);
@@ -141,6 +151,7 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder {
         upperDivider.setVisibility(View.INVISIBLE);
     }
 
+    //TODO Java doc this
     public void makeUninvisible() {
         racerButton.setVisibility(View.VISIBLE);
         racerReported.setVisibility(View.VISIBLE);

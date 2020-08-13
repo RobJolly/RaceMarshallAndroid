@@ -32,25 +32,39 @@ import uk.co.robertjolly.racemarshallandroid.ui.main.customElements.TimeButton;
 
 import com.ikovac.timepickerwithseconds.*; //Note - this is not mine, but an opensource project.
 
-public class ActiveRacerActionFragment extends Fragment implements CheckpointGrabber, SelectionManagerGrabber {
+//TODO Java doc this
+public class ActiveRacerActionFragment extends Fragment implements SelectionManagerGrabber, CheckpointGrabber{
     private SelectionsStateManager selectionsStateManager;
 
+    //TODO Java doc this
+    //TODO Add actions for savedInstanceState != null
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         selectionsStateManager = grabSelectionManager();
 
+        selectionsStateManager.addObserver(new Observer() {
+            @Override
+            public void update(Observable observable, Object o) {
+                try {
+                    setSelectedRacersText((TextView) getView().findViewById(R.id.selectedRacersTextView));
+                } catch (Exception e) {
+                    //TODO some kind of error here
+                }
+
+
+                getView().findViewById(R.id.inButton).setEnabled(selectionsStateManager.areCompatableIn());
+                getView().findViewById(R.id.outButton).setEnabled(selectionsStateManager.areCompatableOut());
+            }
+        });
     }
 
+    //TODO Java doc this
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.active_racers_action_fragment, container, false);
         view.setElevation(12); //doesn't work when set in XML - I'm unsure why, but I should fix this later when I know.
-        //((TextView) view.findViewById(R.id.selectedRacersTextView)).setElevation(6);
-
-        selectionsStateManager = grabSelectionManager();
 
         setSelectedRacersText((TextView) view.findViewById(R.id.selectedRacersTextView));
         Button deselectAllButton = view.findViewById(R.id.deselectAllButton);
@@ -109,37 +123,10 @@ public class ActiveRacerActionFragment extends Fragment implements CheckpointGra
             }
         });
 
-        selectionsStateManager.addObserver(new Observer() {
-            @Override
-            public void update(Observable observable, Object o) {
-                try {
-                    setSelectedRacersText((TextView) getView().findViewById(R.id.selectedRacersTextView));
-                } catch (Exception e) {
-                    //TODO some kind of error here
-                }
-
-
-                getView().findViewById(R.id.inButton).setEnabled(selectionsStateManager.areCompatableIn());
-                getView().findViewById(R.id.outButton).setEnabled(selectionsStateManager.areCompatableOut());
-
-                //setSelectedRacersText((TextView) getView().findViewById(R.id.selectedRacersTextView));
-            }
-        });
-
         return view;
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        //    ((TimeButton) view.findViewById(R.id.timeButton)).startTimer();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
+    //TODO Java doc this
     public void setSelectedRacersText(TextView textView) {
         textView.setText("");
         if (selectionsStateManager.getSelectedCount() > 0) {
@@ -154,11 +141,13 @@ public class ActiveRacerActionFragment extends Fragment implements CheckpointGra
 
     }
 
+    //TODO Javadoc this
     @Override
     public Checkpoints grabCheckpoints() {
         return ((ActiveRacerFragment) getParentFragment()).grabCheckpoints();
     }
 
+    //TODO Javadoc this
     @Override
     public SelectionsStateManager grabSelectionManager() {
         return ((ActiveRacerFragment) getParentFragment()).grabSelectionManager();

@@ -16,8 +16,10 @@ import java.util.Observer;
 import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
 
+//TODO Java doc this
 public class checkpointFob {
 
+    //TODO Java doc this
     public static void createCheckpointFob(View view, final Activity activity, final Checkpoints checkpoints) {
         final FloatingActionButton fobCheckpoint = (FloatingActionButton) view.findViewById(R.id.checkpointsFob);
 
@@ -77,6 +79,7 @@ public class checkpointFob {
         });*/
     }
 
+    //TODO Java doc this
     private static boolean getShouldBeVisible(Checkpoints checkpoints) {
        if (checkpoints.getCheckpointNumberList().size() > 1) {
            return true;

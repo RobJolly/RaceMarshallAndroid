@@ -10,29 +10,35 @@ import java.text.SimpleDateFormat;
 
 import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
 
+//TODO Java doc this
 public class ReportedRaceTimes implements Parcelable {
     @SerializedName("raceTimes")
     private RaceTimes raceTimes;
     @SerializedName("reportedItems")
     private ReportedItems reportedItems;
 
+    //TODO Java doc this
     public ReportedRaceTimes() {
         raceTimes = new RaceTimes();
         reportedItems = new ReportedItems();
     }
 
+    //TODO Java doc this
     public RaceTimes getRaceTimes() {
         return raceTimes;
     }
 
+    //TODO Java doc this
     public ReportedItems getReportedItems() {
         return reportedItems;
     }
 
+    //TODO Java doc this
     public boolean allReported() {
         return (inReportedIfSet() & outReportedIfSet() & droppedOutReportedIfSet() & didNotStartReportedIfSet());
     }
 
+    //TODO Java doc this
     public boolean inReportedIfSet() {
         if (getRaceTimes().getInTime() != null) {
             return (getReportedItems().getReportedItem(TimeTypes.IN));
@@ -41,6 +47,7 @@ public class ReportedRaceTimes implements Parcelable {
         }
     }
 
+    //TODO Java doc this
     public boolean outReportedIfSet() {
         if (getRaceTimes().getOutTime() != null) {
             return (getReportedItems().getReportedItem(TimeTypes.OUT));
@@ -49,6 +56,7 @@ public class ReportedRaceTimes implements Parcelable {
         }
     }
 
+    //TODO Java doc this
     public boolean droppedOutReportedIfSet() {
         if (getRaceTimes().getDroppedOutTime() != null) {
             return (getReportedItems().getReportedItem(TimeTypes.DROPPEDOUT));
@@ -57,6 +65,7 @@ public class ReportedRaceTimes implements Parcelable {
         }
     }
 
+    //TODO Java doc this
     public boolean didNotStartReportedIfSet() {
         if (getRaceTimes().getNotStartedTime() != null) {
             return (getReportedItems().getReportedItem(TimeTypes.DIDNOTSTART));
@@ -65,6 +74,7 @@ public class ReportedRaceTimes implements Parcelable {
         }
     }
 
+    //TODO Java doc this
     public void setAllUnreportedToReported() {
         if (!inReportedIfSet()) {
             getReportedItems().setReportedItem(TimeTypes.IN, true);
@@ -80,6 +90,7 @@ public class ReportedRaceTimes implements Parcelable {
         }
     }
 
+    //TODO Java doc this
     public void setAllReportedToUnreported() {
         getReportedItems().setReportedItem(TimeTypes.IN, false);
         getReportedItems().setReportedItem(TimeTypes.OUT, false);
@@ -87,6 +98,7 @@ public class ReportedRaceTimes implements Parcelable {
         getReportedItems().setReportedItem(TimeTypes.DIDNOTSTART, false);
     }
 
+    //TODO Java doc this
     public String getFormattedDisplayTime(TimeTypes type) {
         String toReturn = "";
         @SuppressLint("SimpleDateFormat") SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
@@ -136,22 +148,26 @@ public class ReportedRaceTimes implements Parcelable {
         return toReturn;
     }
 
+    //TODO Java doc this
     @Override
     public int describeContents() {
         return 0;
     }
 
+    //TODO Java doc this
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeParcelable(raceTimes, i);
         parcel.writeParcelable(reportedItems, i);
     }
 
+    //TODO Java doc this
     protected ReportedRaceTimes(Parcel in) {
         raceTimes = in.readParcelable(RaceTimes.class.getClassLoader());
         reportedItems = in.readParcelable(ReportedItems.class.getClassLoader());
     }
 
+    //TODO Java doc this
     public static final Creator<ReportedRaceTimes> CREATOR = new Creator<ReportedRaceTimes>() {
         @Override
         public ReportedRaceTimes createFromParcel(Parcel in) {

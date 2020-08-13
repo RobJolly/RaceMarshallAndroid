@@ -158,11 +158,13 @@ public class Checkpoint extends Observable implements Parcelable {
         return racerData.keySet();
     }
 
+    //TODO Java doc this
     @Override
     public int describeContents() {
         return 0;
     }
 
+    //TODO Java doc this
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeInt(checkPointNumber);
@@ -173,6 +175,7 @@ public class Checkpoint extends Observable implements Parcelable {
         }
     }
 
+    //TODO Java doc this
     protected Checkpoint(Parcel in) {
         this.checkPointNumber = in.readInt();
         int numberOfRacers = in.readInt();
@@ -187,6 +190,7 @@ public class Checkpoint extends Observable implements Parcelable {
         }
     }
 
+    //TODO Java doc this
     public static final Creator<Checkpoint> CREATOR = new Creator<Checkpoint>() {
         @Override
         public Checkpoint createFromParcel(Parcel in) {

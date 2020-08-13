@@ -1,7 +1,6 @@
 package uk.co.robertjolly.racemarshallandroid.ui.main.adapters;
 
 import android.content.Context;
-import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -10,13 +9,9 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
 import uk.co.robertjolly.racemarshallandroid.data.SelectionsStateManager;
-import uk.co.robertjolly.racemarshallandroid.ui.main.CheckpointGrabber;
 import uk.co.robertjolly.racemarshallandroid.ui.main.fragments.ActiveRacerFragment;
 import uk.co.robertjolly.racemarshallandroid.ui.main.fragments.CheckpointFragment;
 import uk.co.robertjolly.racemarshallandroid.ui.main.fragments.RacerTimesFragment;
@@ -25,14 +20,14 @@ import uk.co.robertjolly.racemarshallandroid.ui.main.fragments.RacerTimesFragmen
  * A [FragmentPagerAdapter] that returns a fragment corresponding to
  * one of the sections/tabs/pages.
  */
-public class SectionsPagerAdapter extends FragmentPagerAdapter implements CheckpointGrabber {
+public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     @StringRes
     private final int[] TAB_TITLES = new int[]{R.string.tab_text_1, R.string.tab_text_2, R.string.tab_text_3};
     private final Fragment[] mFragmentList = getFragments();
     private final Context mContext;
     private Checkpoints checkpoints;
-    private SelectionsStateManager selection;
+    private SelectionsStateManager selectionsStateManager;
 
     /**
      * Constructor for the fragment page adapter.
@@ -40,21 +35,13 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter implements Checkp
      * @param context
      * @param fm
      * @param checkpoints
-     * @param selection
      */
-    public SectionsPagerAdapter(Context context, FragmentManager fm, Checkpoints checkpoints, SelectionsStateManager selection) {
+    public SectionsPagerAdapter(Context context, FragmentManager fm, Checkpoints checkpoints) {
         super(fm);
         mContext = context;
-        this.checkpoints = checkpoints;
-        this.selection = selection;
-       /* ArrayList<Integer> racers = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5));
+        setCheckpoints(checkpoints);
+        setSelectionsStateManager(new SelectionsStateManager(getCheckpoints()));
 
-        this.checkpoints = checkpoints;
-        Bundle racerData = new Bundle();
-        racerData.putIntegerArrayList("racers", racers);
-        mFragmentList[0].setArguments(racerData);*/
-
-       // racers = passedRacers;
     }
 
     /**
@@ -120,16 +107,19 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter implements Checkp
      * Returns the checkpoints from wherever they are stored.
      * @return Checkpoints used in this application.
      */
-    @Override
-    public Checkpoints grabCheckpoints() {
+    public Checkpoints getCheckpoints() {
         return checkpoints;
     }
 
-    /**
-     * Returns the manager for this Sections Page Adapter
-     * @return the manager for this Sections Page Adapter.
-     */
-    public SelectionsStateManager grabSelectionManager() {
-        return selection;
+    //TODO Java doc this
+    public SelectionsStateManager getSelectionsStateManager() {
+        return selectionsStateManager;
     }
+
+    //TODO Java doc this
+    public void setSelectionsStateManager(SelectionsStateManager selectionsStateManager) {
+        this.selectionsStateManager = selectionsStateManager;
+    }
+
+
 }

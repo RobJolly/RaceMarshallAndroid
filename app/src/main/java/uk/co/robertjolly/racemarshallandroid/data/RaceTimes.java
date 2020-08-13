@@ -1,14 +1,10 @@
 package uk.co.robertjolly.racemarshallandroid.data;
 
-import android.annotation.SuppressLint;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -31,6 +27,7 @@ public class RaceTimes implements Parcelable {
     @SerializedName("lastSetTime")
     Date lastSetTime;
 
+    //TODO Java doc this
     public RaceTimes() {
     }
 
@@ -152,6 +149,7 @@ public class RaceTimes implements Parcelable {
         }
     }
 
+    //TODO Java doc this
     protected RaceTimes(Parcel in) {
         long inTime = in.readLong();
         if (inTime == -1) {
@@ -190,6 +188,7 @@ public class RaceTimes implements Parcelable {
 
     }
 
+    //TODO Java doc this
     public static final Creator<RaceTimes> CREATOR = new Creator<RaceTimes>() {
         @Override
         public RaceTimes createFromParcel(Parcel in) {
@@ -202,11 +201,13 @@ public class RaceTimes implements Parcelable {
         }
     };
 
+    //TODO Java doc this
     @Override
     public int describeContents() {
         return 0;
     }
 
+    //TODO Java doc this
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         try {
@@ -234,6 +235,5 @@ public class RaceTimes implements Parcelable {
         } catch (Exception e){
             parcel.writeLong(-1);
         }
-
     }
 }

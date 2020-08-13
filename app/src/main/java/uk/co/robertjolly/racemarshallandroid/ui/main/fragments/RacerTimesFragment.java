@@ -24,9 +24,11 @@ import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.RecyclerViewAdapte
 import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.SectionsPagerAdapter;
 import uk.co.robertjolly.racemarshallandroid.ui.main.customElements.checkpointFob;
 
+//TODO Java doc this
 public class RacerTimesFragment extends Fragment implements Observer, CheckpointGrabber {
     private Checkpoints checkpoints = new Checkpoints();
 
+    //TODO Java doc this
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +38,7 @@ public class RacerTimesFragment extends Fragment implements Observer, Checkpoint
        // grabCheckpoints().getCheckpoint(1);
     }
 
+    //TODO Java doc this
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -67,17 +70,19 @@ public class RacerTimesFragment extends Fragment implements Observer, Checkpoint
         return view;
     }
 
+    //TODO Java doc this
     @Override
     public void update(Observable observable, Object o) {
         //refresh view here
     }
 
+    //TODO Java doc this
     @Override
     public Checkpoints grabCheckpoints() {
 
         ViewPager pager = getActivity().findViewById(R.id.mainViewPager);
         SectionsPagerAdapter adapter = (SectionsPagerAdapter) pager.getAdapter();
-        return adapter.grabCheckpoints();
+        return adapter.getCheckpoints();
        // Checkpoint checkpoint = checkpoints.getCheckpoint(1);
        // int i = 0;
        // return ((SectionsPagerAdapter) Objects.requireNonNull(((ViewPager) Objects.requireNonNull(getActivity()).findViewById(R.id.mainViewPager)).getAdapter())).grabCheckpoints();

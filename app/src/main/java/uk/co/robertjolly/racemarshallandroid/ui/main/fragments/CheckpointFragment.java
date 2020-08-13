@@ -30,13 +30,16 @@ import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
 import uk.co.robertjolly.racemarshallandroid.ui.main.CheckpointGrabber;
 import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.SectionsPagerAdapter;
 
+//TODO Java doc this
 public class CheckpointFragment extends Fragment implements CheckpointGrabber {
 
+    //TODO Java doc this
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
+    //TODO Java doc this
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -78,6 +81,7 @@ public class CheckpointFragment extends Fragment implements CheckpointGrabber {
             }
         });
 
+        //TODO Fix bug whereby racer numbers are not stored in the Java doc.
         Button exportJsonButton = view.findViewById(R.id.exportJsonButton);
         exportJsonButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,9 +102,10 @@ public class CheckpointFragment extends Fragment implements CheckpointGrabber {
         return view;
     }
 
+    //TODO Java doc this
     @Override
     public Checkpoints grabCheckpoints() {
-        return ((SectionsPagerAdapter) Objects.requireNonNull(((ViewPager) Objects.requireNonNull(getActivity()).findViewById(R.id.mainViewPager)).getAdapter())).grabCheckpoints();
+        return ((SectionsPagerAdapter) Objects.requireNonNull(((ViewPager) Objects.requireNonNull(getActivity()).findViewById(R.id.mainViewPager)).getAdapter())).getCheckpoints();
 
     }
 }

@@ -20,9 +20,11 @@ public class Checkpoints extends Observable implements Parcelable {
     @SerializedName("currentCheckpointNumber")
     int currentCheckpointNumber = 1;
 
+    //TODO Java doc this
     public Checkpoints() {
     }
 
+    //TODO Java doc this
     private ArrayList<Checkpoint> getCheckpoints() {
         return checkpoints;
     }
@@ -102,20 +104,24 @@ public class Checkpoints extends Observable implements Parcelable {
         setChanged();
     }
 
+    //TODO Java doc this
     public void setTime(Racer racer, TimeTypes times, Date date) {
         getCheckpoint(getCurrentCheckpointNumber()).setTime(racer, times, date);
         setChanged();
     }
 
+    //TODO Java doc this
     public void clearCheckpoints() {
         checkpoints.clear();
     }
 
+    //TODO Java doc this
     @Override
     public int describeContents() {
         return 0;
     }
 
+    //TODO Java doc this
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeInt(currentCheckpointNumber);
@@ -125,6 +131,7 @@ public class Checkpoints extends Observable implements Parcelable {
         }
     }
 
+    //TODO Java doc this
     protected Checkpoints(Parcel in) {
         currentCheckpointNumber = in.readInt();
         int numberOfCheckpoints = in.readInt();
@@ -136,6 +143,7 @@ public class Checkpoints extends Observable implements Parcelable {
         }
     }
 
+    //TODO Java doc this
     public static final Creator<Checkpoints> CREATOR = new Creator<Checkpoints>() {
         @Override
         public Checkpoints createFromParcel(Parcel in) {

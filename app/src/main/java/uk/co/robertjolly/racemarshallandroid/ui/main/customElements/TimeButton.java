@@ -15,44 +15,52 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+//TODO Java doc this
 @SuppressLint("AppCompatCustomView")
 public class TimeButton extends Button {
     private Date timeSelected;
     private boolean timeOverridden = false;
     private boolean paused = false;
 
-    //constructors
+
+    //TODO Java doc this
     public TimeButton(Context context) {
         super(context);
         startTimer();
         setListener();
     }
 
+    //TODO Java doc this
     public TimeButton(Context context, AttributeSet attrs) {
         super(context, attrs);
         startTimer();
         setListener();
     }
 
-    //getters + setters
+
+    //TODO Java doc this
     private Date getTimeSelected() {
         return timeSelected;
     }
 
+    //TODO Java doc this
     private void setTimeSelected(Date timeSelected) {
         this.timeSelected = timeSelected;
         stopTimer();
         updateText();
     }
 
+    //TODO Java doc this
     private boolean isPaused() {
         return paused;
     }
 
+    //TODO Java doc this
     private void setPaused(boolean paused) {
         this.paused = paused;
     }
 
+    //TODO Java doc this
     public Date getTime() {
         if (isTimeOverriden()) {
             return timeSelected;
@@ -61,15 +69,17 @@ public class TimeButton extends Button {
         }
     }
 
+    //TODO Java doc this
     private boolean isTimeOverriden() {
         return timeOverridden;
     }
 
+    //TODO Java doc this
     private void setTimeOverriden(boolean timeOverriden) {
         this.timeOverridden = timeOverriden;
     }
 
-    //other functions
+    //TODO Java doc this
     private void startTimer() {
         final Runnable runnable = new Runnable() {
             @Override
@@ -87,16 +97,19 @@ public class TimeButton extends Button {
         timeHandler.postDelayed(runnable, 1000);
     }
 
+    //TODO Java doc this
     private void stopTimer() {
         setTimeOverriden(true);
     }
 
+    //TODO Java doc this
     private void resetTimeSelected() {
         this.timeSelected = null;
         setTimeOverriden(false);
         startTimer();
     }
 
+    //TODO Java doc this
     private void updateText() {
         @SuppressLint("SimpleDateFormat") SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
         if (isTimeOverriden() && !isPaused()) {
@@ -106,6 +119,7 @@ public class TimeButton extends Button {
         }
     }
 
+    //TODO Java doc this
     private void setListener() {
         this.setOnClickListener(new View.OnClickListener() {
             @Override

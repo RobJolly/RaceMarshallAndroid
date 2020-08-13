@@ -7,6 +7,7 @@ import com.google.gson.annotations.SerializedName;
 
 import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
 
+//TODO Java doc this
 public class ReportedItems implements Parcelable {
     @SerializedName("inReported")
     boolean inReported;
@@ -17,9 +18,11 @@ public class ReportedItems implements Parcelable {
     @SerializedName("didNotStartReported")
     boolean didNotStartReported;
 
+    //TODO Java doc this
     public ReportedItems() {
     }
 
+    //TODO Java doc this
     public void setReportedItem(TimeTypes toReport, boolean isReported) {
         switch (toReport) {
             case IN :
@@ -39,6 +42,7 @@ public class ReportedItems implements Parcelable {
         }
     }
 
+    //TODO Java doc this
     public boolean getReportedItem(TimeTypes toReport) {
         switch (toReport) {
             case IN :
@@ -55,6 +59,7 @@ public class ReportedItems implements Parcelable {
         }
     }
 
+    //TODO Java doc this
     protected ReportedItems(Parcel in) {
         inReported = in.readByte() != 0;
         outReported = in.readByte() != 0;
@@ -62,6 +67,7 @@ public class ReportedItems implements Parcelable {
         didNotStartReported = in.readByte() != 0;
     }
 
+    //TODO Java doc this
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeByte((byte) (inReported ? 1 : 0));
@@ -70,11 +76,13 @@ public class ReportedItems implements Parcelable {
         dest.writeByte((byte) (didNotStartReported ? 1 : 0));
     }
 
+    //TODO Java doc this
     @Override
     public int describeContents() {
         return 0;
     }
 
+    //TODO Java doc this
     public static final Creator<ReportedItems> CREATOR = new Creator<ReportedItems>() {
         @Override
         public ReportedItems createFromParcel(Parcel in) {

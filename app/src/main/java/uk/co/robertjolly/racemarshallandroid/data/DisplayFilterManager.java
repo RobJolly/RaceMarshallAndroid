@@ -9,7 +9,6 @@ import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.enums.RacerDisplayFilter;
 
 //TODO Implement a static array of racerDisplayFilters, so there's a consistent order - fewer bugs, less code.
-
 /**
  * This handles the filters for which racers to display or not display, on the racer interaction screen
  */

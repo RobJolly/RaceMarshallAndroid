@@ -17,36 +17,37 @@ import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
 import uk.co.robertjolly.racemarshallandroid.data.SelectionsStateManager;
 import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.SectionsPagerAdapter;
 
+//TODO Java doc this
 public class MainActivity extends AppCompatActivity {
 
     private SectionsPagerAdapter pagerAdapter;
     private Checkpoints checkpoints;
-    private SelectionsStateManager selected; //bad practice, but works for now.
+    //private SelectionsStateManager selected; //bad practice, but works for now.
 
+    //TODO Java doc this
     public MainActivity() {
         initialise();
     }
 
+    //TODO Java doc this
     public MainActivity(int contentLayoutId) {
         super(contentLayoutId);
         //initialise();
     }
 
+    //TODO Java doc this
     private void initialise() {
         checkpoints = createRaceData();
-        selected = createSelectionStateManager();
         pagerAdapter = createPagerAdapter();
     }
 
+    //TODO Java doc this
     private SectionsPagerAdapter createPagerAdapter() {
-        SectionsPagerAdapter adapter = new SectionsPagerAdapter(this, getSupportFragmentManager(), getCheckpoints(), getSelected());
+        SectionsPagerAdapter adapter = new SectionsPagerAdapter(this, getSupportFragmentManager(), getCheckpoints());
          return adapter;
     }
 
-    private SelectionsStateManager createSelectionStateManager() {
-        return new SelectionsStateManager(checkpoints);
-    }
-
+    //TODO Java doc this
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,11 +89,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private Checkpoints getCheckpoints() {
+    //TODO Java doc this
+    public Checkpoints getCheckpoints() {
         return checkpoints;
     }
 
-    //here is where I plan to load in or ask for the overall race data. For now this just defaults to 100.
+    //TODO Java doc this
     private Checkpoints createRaceData() {
         Checkpoints loadedCheckpointData = loadCheckpoints();
         Checkpoints checkpoints = new Checkpoints();
@@ -108,10 +110,7 @@ public class MainActivity extends AppCompatActivity {
         return checkpoints;
     }
 
-    public SelectionsStateManager getSelected() {
-        return selected;
-    }
-
+    //TODO Java doc this
     private Checkpoints loadCheckpoints() {
         return null;
     }

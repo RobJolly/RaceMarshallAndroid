@@ -32,15 +32,18 @@ import uk.co.robertjolly.racemarshallandroid.ui.main.SelectionManagerGrabber;
 import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.SectionsPagerAdapter;
 import uk.co.robertjolly.racemarshallandroid.ui.main.customElements.checkpointFob;
 
+//TODO Java doc this
 public class ActiveRacerFragment extends Fragment implements CheckpointGrabber, SelectionManagerGrabber {
     private DisplayFilterManager displayFilterManager = new DisplayFilterManager();
 
+    //TODO Java doc this
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
     }
 
+    //TODO Java doc this
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -77,59 +80,27 @@ public class ActiveRacerFragment extends Fragment implements CheckpointGrabber, 
         return view;
     }
 
-    /*public void createCheckpointFob(View view) {
-        FloatingActionButton fobCheckpoint = (FloatingActionButton) view.findViewById(R.id.checkpointsFob);
-        fobCheckpoint.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
-                dialogBuilder.setTitle(R.string.selectedCheckpoints);
-                dialogBuilder.setCancelable(true);
-
-                final ArrayList<Integer> possibilities = grabCheckpoints().getCheckpointNumberList();
-                CharSequence[] checkpointNumberStrings = new CharSequence[possibilities.size()];
-                int selectedIndex = 0;
-                int count = 0;
-                for (int item : possibilities) {
-                    checkpointNumberStrings[count] = (CharSequence) String.valueOf(item);
-                    if (grabSelectionManager().getCheckpointSelected() == item) {
-                        selectedIndex = count;
-                    }
-                    count++;
-                }
-
-                dialogBuilder.setSingleChoiceItems(checkpointNumberStrings, selectedIndex, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        grabCheckpoints().setCurrentCheckpointNumber(possibilities.get(i));
-                        grabCheckpoints().notifyObservers();
-                        //grabSelectionManager().changeCheckpoint(possibilities.get(i));
-                        //grabSelectionManager().notifyObservers();
-                    }
-                });
-                dialogBuilder.show();
-            }
-        });
-    }*/
-
+    //TODO Java doc this
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
     }
 
+    //TODO Java doc this
     @Override
     public Checkpoints grabCheckpoints() {
-        return ((SectionsPagerAdapter) Objects.requireNonNull(((ViewPager) Objects.requireNonNull(getActivity()).findViewById(R.id.mainViewPager)).getAdapter())).grabCheckpoints();
+        return ((SectionsPagerAdapter) Objects.requireNonNull(((ViewPager) Objects.requireNonNull(getActivity()).findViewById(R.id.mainViewPager)).getAdapter())).getCheckpoints();
     }
 
+    //TODO Java doc this
     @Override
     public SelectionsStateManager grabSelectionManager() {
-        return ((SectionsPagerAdapter) Objects.requireNonNull(((ViewPager) Objects.requireNonNull(getActivity()).findViewById(R.id.mainViewPager)).getAdapter())).grabSelectionManager();
+        return ((SectionsPagerAdapter) Objects.requireNonNull(((ViewPager) Objects.requireNonNull(getActivity()).findViewById(R.id.mainViewPager)).getAdapter())).getSelectionsStateManager();
     }
 
+    //TODO Java doc this
     public DisplayFilterManager grabDisplayFilterManager() {
         return displayFilterManager;
     }
-
 
 }

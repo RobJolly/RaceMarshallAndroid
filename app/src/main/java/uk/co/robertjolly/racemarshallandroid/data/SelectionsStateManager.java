@@ -8,11 +8,13 @@ import java.util.Observer;
 import uk.co.robertjolly.racemarshallandroid.data.enums.RacerDisplayFilter;
 import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
 
+//TODO Java doc this
 public class SelectionsStateManager extends Observable {
     Checkpoints checkpoints;
     ArrayList<Racer> selected;
     int lastCheckpointSize;
 
+    //TODO Java doc this
     public SelectionsStateManager(final Checkpoints checkpoints) {
         this.checkpoints = checkpoints;
         selected = new ArrayList<>();
@@ -32,6 +34,7 @@ public class SelectionsStateManager extends Observable {
         });
     }
 
+    //TODO Java doc this
     public ArrayList<Racer> getShowableList(ArrayList<RacerDisplayFilter> filters) {
         ArrayList<Racer> shouldShow = new ArrayList<>();
         for (Racer racer : checkpoints.getCheckpoint(getCheckpointSelected()).getRacers()) {
@@ -51,19 +54,12 @@ public class SelectionsStateManager extends Observable {
         return shouldShow;
     }
 
+    //TODO Java doc this
     public int getCheckpointSelected() {
         return checkpoints.getCurrentCheckpointNumber();
     }
 
-    /*public void changeCheckpoint(int racerNumber) {
-        if ((getCheckpointSelected() != racerNumber) && ( getAllCheckpoints().getCheckpointNumberList().contains(racerNumber))) {
-            checkpointSelected = racerNumber;
-            checkpoints.setCurrentCheckpointNumber(racerNumber);
-            checkpoints.notifyObservers();
-            clearSelected();
-        }
-    }*/
-
+    //TODO Java doc this
     Boolean shouldShow(RacerDisplayFilter filter, Racer racer) {
         switch (filter) {
             case TOPASS:
@@ -82,46 +78,56 @@ public class SelectionsStateManager extends Observable {
         }
     }
 
+    //TODO Java doc this
     private Boolean toPass(RaceTimes times) {
         return (times.droppedOutTime == null & times.notStartedTime == null & times.inTime == null & times.outTime == null);
     }
 
+    //TODO Java doc this
     private Boolean checkedIn(RaceTimes times) {
         return (times.droppedOutTime == null & times.notStartedTime == null & times.outTime == null & times.inTime != null);
     }
 
+    //TODO Java doc this
     private Boolean checkedOut(RaceTimes times) {
         return (times.droppedOutTime == null & times.notStartedTime == null & times.outTime != null);
     }
 
+    //TODO Java doc this
     private Boolean droppedOut(RaceTimes times) {
         return (times.droppedOutTime != null);
     }
 
+    //TODO Java doc this
     private boolean didNotStart(RaceTimes times) {
         return (times.notStartedTime != null);
     }
 
+    //TODO Java doc this
     public Checkpoint getSelectedCheckpoint() {
         return getAllCheckpoints().getCheckpoint(getCheckpointSelected());
     }
 
+    //TODO Java doc this
     public Checkpoints getAllCheckpoints() {
         return checkpoints;
     }
 
+    //TODO Java doc this
     public void clearSelected() {
         selected.clear();
         setChanged();
         //notifyObservers();
     }
 
+    //TODO Java doc this
     public void addSelected(Racer racer) {
         selected.add(racer);
         setChanged();
         //notifyObservers();
     }
 
+    //TODO Java doc this
     //TODO Combine these into one function, they're functionally identical.
     public void setSelectedPassed(Date passed) {
        for (Racer racer : selected) {
@@ -132,6 +138,7 @@ public class SelectionsStateManager extends Observable {
        getAllCheckpoints().notifyObservers();
     }
 
+    //TODO Java doc this
     //TODO: Move to Checkpoints
     public void setSelectedIn(Date passed) {
         for (Racer racer : selected) {
@@ -143,6 +150,7 @@ public class SelectionsStateManager extends Observable {
         getAllCheckpoints().notifyObservers();
     }
 
+    //TODO Java doc this
     //TODO: Move to checkpoints
     public void setSelectedNotStarted(Date passed) {
         for (Racer racer : selected) {
@@ -154,6 +162,7 @@ public class SelectionsStateManager extends Observable {
         checkpoints.notifyObservers();
     }
 
+    //TODO Java doc this
     //TODO: Move to checkpoints
     public void setSelectedDroppedOut(Date passed) {
         for (Racer racer : selected) {
@@ -165,24 +174,29 @@ public class SelectionsStateManager extends Observable {
         checkpoints.notifyObservers();
     }
 
+    //TODO Java doc this
     public void removeSelected(Racer racer) {
         selected.remove(racer);
         setChanged();
         //notifyObservers();
     }
 
+    //TODO Java doc this
     public int getSelectedCount() {
         return selected.size();
     }
 
+    //TODO Java doc this
     public ArrayList<Racer> getSelected() {
         return selected;
     }
 
+    //TODO Java doc this
     public boolean isSelected(Racer racer) {
         return selected.contains(racer);
     }
 
+    //TODO Java doc this
     public boolean areCompatableIn() {
         boolean compatable = true;
 
@@ -197,6 +211,7 @@ public class SelectionsStateManager extends Observable {
         return compatable;
     }
 
+    //TODO Java doc this
     public boolean areCompatableOut() {
         boolean compatable = true;
 

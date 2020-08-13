@@ -19,12 +19,13 @@ import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
 import uk.co.robertjolly.racemarshallandroid.data.Racer;
 import uk.co.robertjolly.racemarshallandroid.data.ReportedRaceTimes;
 
+//TODO Java doc this
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder> {
     private Checkpoints checkpoints;
     private Context mContext;
     private CheckOffStateManager toDisplay;
 
-   // private ArrayList<Racer> notPassed;
+    //TODO Java doc this
     public RecyclerViewAdapter(Checkpoints passedCheckpoints, Context mContext) {
         this.checkpoints = passedCheckpoints;
         this.mContext = mContext;
@@ -45,6 +46,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
         //notPassed = passedCheckpoint.getAllNotPassed();
     }
 
+    //TODO Java doc this
     @NonNull
     @Override
     public RecyclerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -54,6 +56,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
         return new RecyclerViewHolder(view);
     }
 
+    //TODO Java doc this
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewHolder holder, int position) {
         int size = toDisplay.getListToDisplay().size();
@@ -69,6 +72,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
 
     }
 
+    //TODO Java doc this
     @Override
     public int getItemCount() {
         return toDisplay.getListToDisplay().size() + 2;
