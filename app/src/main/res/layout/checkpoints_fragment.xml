@@ -41,7 +41,7 @@
             android:text="Receive Checkpoint" />
 
         <Button
-            android:id="@+id/button4"
+            android:id="@+id/transferCheckpointButton"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:text="Transfer Checkpoint" />
@@ -70,6 +70,12 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:text="Transfer Data (Audio)" />
+
+        <Button
+            android:id="@+id/exportJsonButton"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="Export Data (As JSON)" />
 
         <TextView
             android:id="@+id/textView4"

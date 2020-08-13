@@ -1,14 +1,19 @@
 package uk.co.robertjolly.racemarshallandroid.data;
 
 import android.annotation.SuppressLint;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.google.gson.annotations.SerializedName;
 
 import java.text.SimpleDateFormat;
 
 import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
 
-public class ReportedRaceTimes {
-
+public class ReportedRaceTimes implements Parcelable {
+    @SerializedName("raceTimes")
     private RaceTimes raceTimes;
+    @SerializedName("reportedItems")
     private ReportedItems reportedItems;
 
     public ReportedRaceTimes() {
@@ -131,4 +136,31 @@ public class ReportedRaceTimes {
         return toReturn;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeParcelable(raceTimes, i);
+        parcel.writeParcelable(reportedItems, i);
+    }
+
+    protected ReportedRaceTimes(Parcel in) {
+        raceTimes = in.readParcelable(RaceTimes.class.getClassLoader());
+        reportedItems = in.readParcelable(ReportedItems.class.getClassLoader());
+    }
+
+    public static final Creator<ReportedRaceTimes> CREATOR = new Creator<ReportedRaceTimes>() {
+        @Override
+        public ReportedRaceTimes createFromParcel(Parcel in) {
+            return new ReportedRaceTimes(in);
+        }
+
+        @Override
+        public ReportedRaceTimes[] newArray(int size) {
+            return new ReportedRaceTimes[size];
+        }
+    };
 }

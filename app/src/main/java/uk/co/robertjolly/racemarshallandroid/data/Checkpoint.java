@@ -1,5 +1,10 @@
 package uk.co.robertjolly.racemarshallandroid.data;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,8 +20,10 @@ import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
  * A numbered checkpoint - Storing information about racers in the race, their given times and if those times
  * have been reported yet.
  */
-public class Checkpoint extends Observable {
+public class Checkpoint extends Observable implements Parcelable {
+    @SerializedName("checkPointNumber")
     int checkPointNumber;
+    @SerializedName("racerData")
     TreeMap<Racer, ReportedRaceTimes> racerData;
 
     /**
@@ -128,6 +135,15 @@ public class Checkpoint extends Observable {
     }
 
     /**
+     * Getter for the race times of a given racer
+     * @param racer racer to get the times for
+     * @return the ReportedRaceTimes associated with the given racer
+     */
+    public ReportedRaceTimes getRacerData(Racer racer) {
+        return racerData.get(racer);
+    }
+
+    /**
      * @param racer the racer for which to get the ReportedRaceTimes for
      * @return the list of ReportedRaceTimes for the given racer
      */
@@ -141,4 +157,45 @@ public class Checkpoint extends Observable {
     public Set<Racer> getRacers() {
         return racerData.keySet();
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(checkPointNumber);
+        parcel.writeInt(racerData.keySet().size());
+        for (Racer racer : racerData.keySet()) {
+            parcel.writeParcelable(racer, i);
+            parcel.writeParcelable(racerData.get(racer), i);
+        }
+    }
+
+    protected Checkpoint(Parcel in) {
+        this.checkPointNumber = in.readInt();
+        int numberOfRacers = in.readInt();
+
+        racerData = new TreeMap<>();
+
+        int count = 0;
+        for (int i = 0; i < numberOfRacers; i++) {
+            Racer racer = in.readParcelable(Racer.class.getClassLoader());
+            ReportedRaceTimes times = in.readParcelable(ReportedRaceTimes.class.getClassLoader());
+            racerData.put(racer, times);
+        }
+    }
+
+    public static final Creator<Checkpoint> CREATOR = new Creator<Checkpoint>() {
+        @Override
+        public Checkpoint createFromParcel(Parcel in) {
+            return new Checkpoint(in);
+        }
+
+        @Override
+        public Checkpoint[] newArray(int size) {
+            return new Checkpoint[size];
+        }
+    };
 }

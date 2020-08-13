@@ -1,20 +1,38 @@
 package uk.co.robertjolly.racemarshallandroid.data;
 
+import android.annotation.SuppressLint;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.google.gson.annotations.SerializedName;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 
 import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
 
+
 /**
  * Function to store In, Out, DroppedOut and NotStarted times, along with the time where a time was
  * last set.
  */
-public class RaceTimes {
+public class RaceTimes implements Parcelable {
+    @SerializedName("inTime")
     Date inTime;
+    @SerializedName("outTime")
     Date outTime;
+    @SerializedName("droppedOutTime")
     Date droppedOutTime;
+    @SerializedName("notStartedTime")
     Date notStartedTime;
-    Date LastSetTime;
+    @SerializedName("lastSetTime")
+    Date lastSetTime;
+
+    public RaceTimes() {
+    }
 
     /**
      * Allows the setting of a given time type, to a given date
@@ -80,7 +98,7 @@ public class RaceTimes {
      * @return The time that a time was last set to the class
      */
     public Date getLastSetTime() {
-        return LastSetTime;
+        return lastSetTime;
     }
 
     /**
@@ -119,7 +137,7 @@ public class RaceTimes {
      * Sets the time that this class last had a date set, to the current time
      */
     private void setLastSetTime() {
-        LastSetTime = Calendar.getInstance().getTime();
+        lastSetTime = Calendar.getInstance().getTime();
     }
 
     /**
@@ -134,4 +152,88 @@ public class RaceTimes {
         }
     }
 
+    protected RaceTimes(Parcel in) {
+        long inTime = in.readLong();
+        if (inTime == -1) {
+            this.inTime = null;
+        } else {
+            this.inTime = new Date(inTime);
+        }
+
+        long outTime = in.readLong();
+        if (outTime == -1) {
+            this.outTime = null;
+        } else {
+            this.outTime = new Date(outTime);
+        }
+
+        long droppedOutTime = in.readLong();
+        if (droppedOutTime == -1) {
+            this.droppedOutTime = null;
+        } else {
+            this.droppedOutTime = new Date(droppedOutTime);
+        }
+
+        long notStartedTime = in.readLong();
+        if (notStartedTime == -1) {
+            this.notStartedTime = null;
+        } else {
+            this.notStartedTime = new Date(notStartedTime);
+        }
+
+        long lastSetTime = in.readLong();
+        if (lastSetTime == -1) {
+            this.lastSetTime = null;
+        } else {
+            this.lastSetTime = new Date(lastSetTime);
+        }
+
+    }
+
+    public static final Creator<RaceTimes> CREATOR = new Creator<RaceTimes>() {
+        @Override
+        public RaceTimes createFromParcel(Parcel in) {
+            return new RaceTimes(in);
+        }
+
+        @Override
+        public RaceTimes[] newArray(int size) {
+            return new RaceTimes[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        try {
+            parcel.writeLong(inTime.getTime());
+        } catch (Exception e){
+            parcel.writeLong(-1);
+        }
+        try {
+            parcel.writeLong(outTime.getTime());
+        } catch (Exception e){
+            parcel.writeLong(-1);
+        }
+        try {
+            parcel.writeLong(droppedOutTime.getTime());
+        } catch (Exception e){
+            parcel.writeLong(-1);
+        }
+        try {
+            parcel.writeLong(notStartedTime.getTime());
+        } catch (Exception e){
+            parcel.writeLong(-1);
+        }
+        try {
+            parcel.writeLong(lastSetTime.getTime());
+        } catch (Exception e){
+            parcel.writeLong(-1);
+        }
+
+    }
 }

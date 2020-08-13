@@ -1,5 +1,10 @@
 package uk.co.robertjolly.racemarshallandroid.data;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Observable;
@@ -9,9 +14,14 @@ import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
 /**
  * Checkpoints is a cass to store multiple checkpoints, with a single main 'active'/focused checkpoint.
  */
-public class Checkpoints extends Observable {
+public class Checkpoints extends Observable implements Parcelable {
+    @SerializedName("checkpoints")
     ArrayList<Checkpoint> checkpoints = new ArrayList<>();
+    @SerializedName("currentCheckpointNumber")
     int currentCheckpointNumber = 1;
+
+    public Checkpoints() {
+    }
 
     private ArrayList<Checkpoint> getCheckpoints() {
         return checkpoints;
@@ -100,4 +110,41 @@ public class Checkpoints extends Observable {
     public void clearCheckpoints() {
         checkpoints.clear();
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(currentCheckpointNumber);
+        parcel.writeInt(checkpoints.size());
+        for (Checkpoint checkpoint : checkpoints) {
+            parcel.writeParcelable(checkpoint, i);
+        }
+    }
+
+    protected Checkpoints(Parcel in) {
+        currentCheckpointNumber = in.readInt();
+        int numberOfCheckpoints = in.readInt();
+        checkpoints.clear();
+
+        for (int i = 0; i < numberOfCheckpoints; i++) {
+            Checkpoint checkpoint = in.readParcelable(Checkpoint.class.getClassLoader());
+            checkpoints.add(checkpoint);
+        }
+    }
+
+    public static final Creator<Checkpoints> CREATOR = new Creator<Checkpoints>() {
+        @Override
+        public Checkpoints createFromParcel(Parcel in) {
+            return new Checkpoints(in);
+        }
+
+        @Override
+        public Checkpoints[] newArray(int size) {
+            return new Checkpoints[size];
+        }
+    };
 }

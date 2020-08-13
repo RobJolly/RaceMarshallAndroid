@@ -1,7 +1,10 @@
 package uk.co.robertjolly.racemarshallandroid.ui.main.fragments;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +16,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import org.json.JSONObject;
 
 import java.util.Objects;
 
@@ -35,7 +43,6 @@ public class CheckpointFragment extends Fragment implements CheckpointGrabber {
         View view = inflater.inflate(R.layout.checkpoints_fragment,container,false);
 
         Button checkpointButton = view.findViewById(R.id.createCheckpointButton);
-
         checkpointButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -68,6 +75,23 @@ public class CheckpointFragment extends Fragment implements CheckpointGrabber {
 
                 final AlertDialog toShow = alertBuilder.create();
                 toShow.show();
+            }
+        });
+
+        Button exportJsonButton = view.findViewById(R.id.exportJsonButton);
+        exportJsonButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //This is code to create an android share event - In this case, the json values of all of the checkpoints are sent.
+                //This means that storing all data, through email or whatever other method the user wishes to use, is possible.
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                String test = new Gson().toJson(grabCheckpoints());
+                sendIntent.putExtra(Intent.EXTRA_TEXT, test); //I need a to-String or JSON creator here
+                sendIntent.setType("text/json");
+                Intent shareIntent = Intent.createChooser(sendIntent, null);
+                startActivity(shareIntent);
+
             }
         });
 

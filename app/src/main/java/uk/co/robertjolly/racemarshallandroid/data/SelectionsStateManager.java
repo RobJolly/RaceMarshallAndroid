@@ -208,7 +208,6 @@ public class SelectionsStateManager extends Observable {
             }
 
         }
-
         return compatable;
     }
 
