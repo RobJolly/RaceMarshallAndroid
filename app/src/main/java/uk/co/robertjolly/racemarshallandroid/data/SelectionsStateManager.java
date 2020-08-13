@@ -1,5 +1,8 @@
 package uk.co.robertjolly.racemarshallandroid.data;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Observable;
@@ -9,7 +12,7 @@ import uk.co.robertjolly.racemarshallandroid.data.enums.RacerDisplayFilter;
 import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
 
 //TODO Java doc this
-public class SelectionsStateManager extends Observable {
+public class SelectionsStateManager extends Observable implements Parcelable {
     Checkpoints checkpoints;
     ArrayList<Racer> selected;
     int lastCheckpointSize;
@@ -21,7 +24,8 @@ public class SelectionsStateManager extends Observable {
 
         //TODO Think of a better way to do this without lastCheckpointSize, as this is bad practice and could cause unintended bugs
         lastCheckpointSize = checkpoints.getCheckpointNumberList().size();
-        checkpoints.addObserver(new Observer() {
+        //TODO Make this observer its own method (called in more than one constructor)
+        getCheckpoints().addObserver(new Observer() {
             @Override
             public void update(Observable observable, Object o) {
                 if (lastCheckpointSize != checkpoints.getCheckpointNumberList().size()) {
@@ -105,11 +109,11 @@ public class SelectionsStateManager extends Observable {
 
     //TODO Java doc this
     public Checkpoint getSelectedCheckpoint() {
-        return getAllCheckpoints().getCheckpoint(getCheckpointSelected());
+        return getCheckpoints().getCheckpoint(getCheckpointSelected());
     }
 
     //TODO Java doc this
-    public Checkpoints getAllCheckpoints() {
+    public Checkpoints getCheckpoints() {
         return checkpoints;
     }
 
@@ -131,30 +135,30 @@ public class SelectionsStateManager extends Observable {
     //TODO Combine these into one function, they're functionally identical.
     public void setSelectedPassed(Date passed) {
        for (Racer racer : selected) {
-           getAllCheckpoints().setTime(racer, TimeTypes.OUT, passed);
+           getCheckpoints().setTime(racer, TimeTypes.OUT, passed);
            //getAllCheckpoints().getCheckpoint(getCheckpointSelected()).setTime(racer, TimeTypes.OUT, passed);
        }
        clearSelected();
-       getAllCheckpoints().notifyObservers();
+       getCheckpoints().notifyObservers();
     }
 
     //TODO Java doc this
     //TODO: Move to Checkpoints
     public void setSelectedIn(Date passed) {
         for (Racer racer : selected) {
-            getAllCheckpoints().setTime(racer, TimeTypes.IN, passed);
+            getCheckpoints().setTime(racer, TimeTypes.IN, passed);
             //getAllCheckpoints().getCheckpoint(getCheckpointSelected()).setTime(racer, TimeTypes.IN, passed);
         }
         //checkpoints.notifyObservers();
         clearSelected();
-        getAllCheckpoints().notifyObservers();
+        getCheckpoints().notifyObservers();
     }
 
     //TODO Java doc this
     //TODO: Move to checkpoints
     public void setSelectedNotStarted(Date passed) {
         for (Racer racer : selected) {
-            getAllCheckpoints().setTime(racer, TimeTypes.DIDNOTSTART, passed);
+            getCheckpoints().setTime(racer, TimeTypes.DIDNOTSTART, passed);
             //getAllCheckpoints().getCheckpoint(getCheckpointSelected()).setTime(racer, TimeTypes.DIDNOTSTART, passed);
         }
         //checkpoints.notifyObservers();
@@ -166,7 +170,7 @@ public class SelectionsStateManager extends Observable {
     //TODO: Move to checkpoints
     public void setSelectedDroppedOut(Date passed) {
         for (Racer racer : selected) {
-            getAllCheckpoints().setTime(racer, TimeTypes.DROPPEDOUT, passed);
+            getCheckpoints().setTime(racer, TimeTypes.DROPPEDOUT, passed);
             //getAllCheckpoints().getCheckpoint(getCheckpointSelected()).setTime(racer, TimeTypes.DROPPEDOUT, passed);
         }
         //checkpoints.notifyObservers();
@@ -227,4 +231,55 @@ public class SelectionsStateManager extends Observable {
     }
 
 
+    protected SelectionsStateManager(Parcel in) {
+        checkpoints = in.readParcelable(Checkpoints.class.getClassLoader());
+        int selectedSize = in.readInt();
+        selected = new ArrayList<>();
+        for (int i = 0; i < selectedSize; i++) {
+            Racer racer = in.readParcelable(Racer.class.getClassLoader());
+            selected.add(racer);
+        }
+        selected = in.createTypedArrayList(Racer.CREATOR);
+        lastCheckpointSize = in.readInt();
+
+        //TODO Make this observer its own method (called in more than one constructor)
+        getCheckpoints().addObserver(new Observer() {
+            @Override
+            public void update(Observable observable, Object o) {
+                if (lastCheckpointSize != checkpoints.getCheckpointNumberList().size()) {
+                    lastCheckpointSize = checkpoints.getCheckpointNumberList().size();
+                } else {
+                    clearSelected();
+                    notifyObservers();
+                }
+            }
+        });
+    }
+
+    public static final Creator<SelectionsStateManager> CREATOR = new Creator<SelectionsStateManager>() {
+        @Override
+        public SelectionsStateManager createFromParcel(Parcel in) {
+            return new SelectionsStateManager(in);
+        }
+
+        @Override
+        public SelectionsStateManager[] newArray(int size) {
+            return new SelectionsStateManager[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeParcelable(checkpoints, i);
+        parcel.writeInt(selected.size());
+        for (Racer racer : selected) {
+            parcel.writeParcelable(racer, i);
+        }
+        parcel.writeInt(lastCheckpointSize);
+    }
 }

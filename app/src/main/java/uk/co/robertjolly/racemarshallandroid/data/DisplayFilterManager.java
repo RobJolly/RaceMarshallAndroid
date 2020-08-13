@@ -1,6 +1,8 @@
 package uk.co.robertjolly.racemarshallandroid.data;
 
 import android.content.res.Resources;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import java.util.ArrayList;
 import java.util.Observable;
@@ -12,8 +14,12 @@ import uk.co.robertjolly.racemarshallandroid.data.enums.RacerDisplayFilter;
 /**
  * This handles the filters for which racers to display or not display, on the racer interaction screen
  */
-public class DisplayFilterManager extends Observable {
-    private ArrayList<RacerDisplayFilter> filterList = implementRacerFilters();
+public class DisplayFilterManager extends Observable implements Parcelable {
+    private ArrayList<RacerDisplayFilter> filterList;
+
+    public DisplayFilterManager() {
+        filterList = implementRacerFilters();
+    }
 
     /**
      * Gets the list of filters
@@ -142,6 +148,43 @@ public class DisplayFilterManager extends Observable {
                     break;
                 default: //do nothing
             }
+        }
+    }
+
+    //TODO Java doc this
+    protected DisplayFilterManager(Parcel in) {
+        int arraySize = in.readInt();
+        filterList = new ArrayList<>();
+        for (int i = 0; i < arraySize; i++) {
+            filterList.add(RacerDisplayFilter.values()[in.readInt()]);
+        }
+    }
+
+    //TODO Java doc this
+    public static final Creator<DisplayFilterManager> CREATOR = new Creator<DisplayFilterManager>() {
+        @Override
+        public DisplayFilterManager createFromParcel(Parcel in) {
+            return new DisplayFilterManager(in);
+        }
+
+        @Override
+        public DisplayFilterManager[] newArray(int size) {
+            return new DisplayFilterManager[size];
+        }
+    };
+
+    //TODO Java doc this
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    //TODO Java doc this
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(filterList.size());
+        for (RacerDisplayFilter filter : filterList) {
+            parcel.writeInt(filter.ordinal());
         }
     }
 }
