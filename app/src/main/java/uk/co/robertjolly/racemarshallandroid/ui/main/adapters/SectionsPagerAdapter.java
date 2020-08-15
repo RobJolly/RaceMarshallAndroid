@@ -1,6 +1,7 @@
 package uk.co.robertjolly.racemarshallandroid.ui.main.adapters;
 
 import android.content.Context;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -8,6 +9,8 @@ import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+
+import java.util.Map;
 
 import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
@@ -24,7 +27,8 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     @StringRes
     private final int[] TAB_TITLES = new int[]{R.string.tab_text_1, R.string.tab_text_2, R.string.tab_text_3};
-    private final Fragment[] mFragmentList = getFragments();
+    private final Fragment[] mFragmentList;
+    //private final Fragment[] mFragmentList = getFragments();
     private final Context mContext;
     private Checkpoints checkpoints;
     private SelectionsStateManager selectionsStateManager;
@@ -41,7 +45,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         mContext = context;
         setCheckpoints(checkpoints);
         setSelectionsStateManager(new SelectionsStateManager(getCheckpoints()));
-
+        mFragmentList = getFragments();
     }
 
     /**
@@ -74,6 +78,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         // Return a PlaceholderFragment (defined as a static inner class below).
         return mFragmentList[position];
     }
+
 
     /**
      * Getter for the names of the tabs.
@@ -121,5 +126,9 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         this.selectionsStateManager = selectionsStateManager;
     }
 
+    @Override
+    public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+        super.destroyItem(container, position, object);
 
+    }
 }

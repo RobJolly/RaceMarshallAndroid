@@ -44,7 +44,7 @@ public class TimeButton extends Button {
     }
 
     //TODO Java doc this
-    private void setTimeSelected(Date timeSelected) {
+    public void setTimeSelected(Date timeSelected) {
         this.timeSelected = timeSelected;
         stopTimer();
         updateText();
@@ -70,7 +70,7 @@ public class TimeButton extends Button {
     }
 
     //TODO Java doc this
-    private boolean isTimeOverriden() {
+    public boolean isTimeOverriden() {
         return timeOverridden;
     }
 

@@ -282,4 +282,8 @@ public class SelectionsStateManager extends Observable implements Parcelable {
         }
         parcel.writeInt(lastCheckpointSize);
     }
+
+    public void setCheckpoints(Checkpoints checkpoints) {
+        this.checkpoints = checkpoints;
+    }
 }

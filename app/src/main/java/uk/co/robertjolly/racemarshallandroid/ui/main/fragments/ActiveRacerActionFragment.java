@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import uk.co.robertjolly.racemarshallandroid.MainActivity;
 import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
 import uk.co.robertjolly.racemarshallandroid.data.Racer;
@@ -42,29 +43,36 @@ public class ActiveRacerActionFragment extends Fragment implements SelectionMana
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         selectionsStateManager = grabSelectionManager();
-
-        selectionsStateManager.addObserver(new Observer() {
-            @Override
-            public void update(Observable observable, Object o) {
-                try {
-                    setSelectedRacersText((TextView) getView().findViewById(R.id.selectedRacersTextView));
-                } catch (Exception e) {
-                    //TODO some kind of error here
-                }
-
-
-                getView().findViewById(R.id.inButton).setEnabled(selectionsStateManager.areCompatableIn());
-                getView().findViewById(R.id.outButton).setEnabled(selectionsStateManager.areCompatableOut());
-            }
-        });
     }
 
     //TODO Java doc this
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.active_racers_action_fragment, container, false);
+        final View view = inflater.inflate(R.layout.active_racers_action_fragment, container, false);
         view.setElevation(12); //doesn't work when set in XML - I'm unsure why, but I should fix this later when I know.
+        if (savedInstanceState != null) {
+            try {
+                long timeLong = savedInstanceState.getLong("timeOverriden");
+                TimeButton timeButton = view.findViewById(R.id.timeButton);
+                timeButton.setTimeSelected(new Date(timeLong));
+            } catch (Exception e) {
+                //can't get lost time, will just have to abandon that.
+            }
+        }
+
+        selectionsStateManager.addObserver(new Observer() {
+            @Override
+            public void update(Observable observable, Object o) {
+                try {
+                    setSelectedRacersText((TextView) view.findViewById(R.id.selectedRacersTextView));
+                } catch (Exception e) {
+                    //TODO some kind of error here
+                }
+                view.findViewById(R.id.inButton).setEnabled(selectionsStateManager.areCompatableIn());
+                view.findViewById(R.id.outButton).setEnabled(selectionsStateManager.areCompatableOut());
+            }
+        });
 
         setSelectedRacersText((TextView) view.findViewById(R.id.selectedRacersTextView));
         Button deselectAllButton = view.findViewById(R.id.deselectAllButton);
@@ -79,7 +87,7 @@ public class ActiveRacerActionFragment extends Fragment implements SelectionMana
         outButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               selectionsStateManager.setSelectedPassed(((TimeButton) getView().findViewById(R.id.timeButton)).getTime());
+               selectionsStateManager.setSelectedPassed(((TimeButton) getActivity().findViewById(R.id.timeButton)).getTime());
                selectionsStateManager.notifyObservers();
             }
         });
@@ -88,7 +96,9 @@ public class ActiveRacerActionFragment extends Fragment implements SelectionMana
         inButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selectionsStateManager.setSelectedIn(((TimeButton) getView().findViewById(R.id.timeButton)).getTime());
+
+                //TimeButton testBtn = view1.findViewById(R.id.timeButton);
+                selectionsStateManager.setSelectedIn(((TimeButton) getActivity().findViewById(R.id.timeButton)).getTime());
                 selectionsStateManager.notifyObservers();
             }
         });
@@ -96,7 +106,7 @@ public class ActiveRacerActionFragment extends Fragment implements SelectionMana
         Button otherActionButton = view.findViewById(R.id.otherActionButton);
         otherActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(final View view) {
                 final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
                 dialogBuilder.setTitle(R.string.otherActions);
                 dialogBuilder.setCancelable(true);
@@ -108,11 +118,11 @@ public class ActiveRacerActionFragment extends Fragment implements SelectionMana
                     public void onClick(DialogInterface dialogInterface, int i) {
                         switch (i) {
                             case 0:
-                                selectionsStateManager.setSelectedDroppedOut(((TimeButton) getView().findViewById(R.id.timeButton)).getTime());
+                                selectionsStateManager.setSelectedDroppedOut(((TimeButton) getActivity().findViewById(R.id.timeButton)).getTime());
                                 selectionsStateManager.notifyObservers();
                                 break;
                             case 1:
-                                selectionsStateManager.setSelectedNotStarted(((TimeButton) getView().findViewById(R.id.timeButton)).getTime());
+                                selectionsStateManager.setSelectedNotStarted(((TimeButton) getActivity().findViewById(R.id.timeButton)).getTime());
                                 selectionsStateManager.notifyObservers();
                                 break;
                             default: //do nothing
@@ -144,12 +154,33 @@ public class ActiveRacerActionFragment extends Fragment implements SelectionMana
     //TODO Javadoc this
     @Override
     public Checkpoints grabCheckpoints() {
-        return ((ActiveRacerFragment) getParentFragment()).grabCheckpoints();
+        MainActivity activity = (MainActivity) getActivity();
+        return activity.getCheckpoints();
+        //return ((ActiveRacerFragment) getParentFragment()).grabCheckpoints();
     }
 
     //TODO Javadoc this
     @Override
     public SelectionsStateManager grabSelectionManager() {
-        return ((ActiveRacerFragment) getParentFragment()).grabSelectionManager();
+        return ((ActiveRacerFragment) getParentFragment()).getSelectionsStateManager();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        try {
+            TimeButton button = (TimeButton) getView().findViewById(R.id.timeButton);
+            if (button.isTimeOverriden()) {
+                outState.putLong("timeOverriden", button.getTime().getTime());
+            }
+        } catch (Exception e) {
+            //Time button just doesn't exist yet, that's fine.
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
     }
 }

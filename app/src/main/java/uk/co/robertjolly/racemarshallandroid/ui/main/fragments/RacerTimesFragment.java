@@ -1,5 +1,6 @@
 package uk.co.robertjolly.racemarshallandroid.ui.main.fragments;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,8 +17,9 @@ import java.util.Objects;
 import java.util.Observable;
 import java.util.Observer;
 
+import uk.co.robertjolly.racemarshallandroid.MainActivity;
 import uk.co.robertjolly.racemarshallandroid.R;
-import uk.co.robertjolly.racemarshallandroid.data.Checkpoint;
+
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
 import uk.co.robertjolly.racemarshallandroid.ui.main.CheckpointGrabber;
 import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.RecyclerViewAdapter;
@@ -32,10 +34,7 @@ public class RacerTimesFragment extends Fragment implements Observer, Checkpoint
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         checkpoints = grabCheckpoints();
-
-       // grabCheckpoints().getCheckpoint(1);
     }
 
     //TODO Java doc this
@@ -54,7 +53,6 @@ public class RacerTimesFragment extends Fragment implements Observer, Checkpoint
             @Override
             public void update(Observable observable, Object o) {
                 recView.getAdapter().notifyDataSetChanged();
-                //recView.getAdapter().notifyDataSetChanged();
             }
         });
 
@@ -79,10 +77,10 @@ public class RacerTimesFragment extends Fragment implements Observer, Checkpoint
     //TODO Java doc this
     @Override
     public Checkpoints grabCheckpoints() {
-
-        ViewPager pager = getActivity().findViewById(R.id.mainViewPager);
-        SectionsPagerAdapter adapter = (SectionsPagerAdapter) pager.getAdapter();
-        return adapter.getCheckpoints();
+        MainActivity activity = (MainActivity) getActivity();
+        return activity.getCheckpoints();
+        //SectionsPagerAdapter adapter = (SectionsPagerAdapter) pager.getAdapter();
+        //return adapter.getCheckpoints();
        // Checkpoint checkpoint = checkpoints.getCheckpoint(1);
        // int i = 0;
        // return ((SectionsPagerAdapter) Objects.requireNonNull(((ViewPager) Objects.requireNonNull(getActivity()).findViewById(R.id.mainViewPager)).getAdapter())).grabCheckpoints();

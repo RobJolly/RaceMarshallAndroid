@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.google.android.material.tabs.TabLayout;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
@@ -50,43 +51,60 @@ public class MainActivity extends AppCompatActivity {
     //TODO Java doc this
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            try {
+                setCheckpoints((Checkpoints) savedInstanceState.get("checkpoints"));
+            } catch (Exception e) { //something clearly gone wrong with the bundle/bad bundle input
+                setCheckpoints(createRaceData());
+            }
+        } else {
+            setCheckpoints(createRaceData());
+        }
+
         setContentView(R.layout.activity_main);
-        initialise();
+
         ViewPager viewPager = findViewById(R.id.mainViewPager);
-   //     ((ViewPager)findViewById(R.id.mainViewPager)).setElevation(12); //Doesn't work when set in XML, unsure why but fix when I know;
+        pagerAdapter = createPagerAdapter();
         viewPager.setAdapter(pagerAdapter);
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
 
-
+        //TODO Change this alert dialog to a dialog fragment - fix bug whereby if screen tilted before input, there will be a crash
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
         alertBuilder.setTitle("Start New race: Please provide this information:");
 
-        final View initialiseCheckpointView = getLayoutInflater().inflate(R.layout.initial_setup_layout, null);
-        alertBuilder.setView(initialiseCheckpointView);
-        alertBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                checkpoints.clearCheckpoints();
-                TextView checkpointNumberTextBox = initialiseCheckpointView.findViewById(R.id.numberOfCheckpoint);
-                TextView racerCountTextBox = initialiseCheckpointView.findViewById(R.id.numberOfRacers);
-                int checkPointNumber = Integer.parseInt(checkpointNumberTextBox.getText().toString());
-                int racerCount = Integer.parseInt(racerCountTextBox.getText().toString());
+        if (checkpoints.getCheckpoint(-1) != null) {
+            final View initialiseCheckpointView = getLayoutInflater().inflate(R.layout.initial_setup_layout, null);
+            alertBuilder.setView(initialiseCheckpointView);
+            alertBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    checkpoints.clearCheckpoints();
+                    TextView checkpointNumberTextBox = initialiseCheckpointView.findViewById(R.id.numberOfCheckpoint);
+                    TextView racerCountTextBox = initialiseCheckpointView.findViewById(R.id.numberOfRacers);
+                    int checkPointNumber = Integer.parseInt(checkpointNumberTextBox.getText().toString());
+                    int racerCount = Integer.parseInt(racerCountTextBox.getText().toString());
 
-                //I need to do some error checking here
-                Checkpoint createdPoint = new Checkpoint(checkPointNumber,racerCount);
-                checkpoints.addCheckpoint(createdPoint);
-                checkpoints.setCurrentCheckpointNumber(checkPointNumber);
-                checkpoints.notifyObservers();
-                //do nothing
-            }
-        });
+                    //I need to do some error checking here
+                    Checkpoint createdPoint = new Checkpoint(checkPointNumber,racerCount);
+                    checkpoints.addCheckpoint(createdPoint);
+                    checkpoints.setCurrentCheckpointNumber(checkPointNumber);
+                    checkpoints.notifyObservers();
+                    //do nothing
+                }
+            });
+            final AlertDialog toShow = alertBuilder.create();
+            toShow.show();
+        }
 
+        super.onCreate(savedInstanceState);
 
-        final AlertDialog toShow = alertBuilder.create();
-        toShow.show();
+    }
 
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable("checkpoints", getCheckpoints());
     }
 
     //TODO Java doc this
@@ -113,5 +131,9 @@ public class MainActivity extends AppCompatActivity {
     //TODO Java doc this
     private Checkpoints loadCheckpoints() {
         return null;
+    }
+
+    public void setCheckpoints(Checkpoints checkpoints) {
+        this.checkpoints = checkpoints;
     }
 }

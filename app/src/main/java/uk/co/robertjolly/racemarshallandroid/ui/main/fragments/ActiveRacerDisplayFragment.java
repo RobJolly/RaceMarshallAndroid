@@ -89,13 +89,12 @@ public class ActiveRacerDisplayFragment extends Fragment implements CheckpointGr
     //TODO Java doc this
     @Override
     public SelectionsStateManager grabSelectionManager() {
-        return ((ActiveRacerFragment) getParentFragment()).grabSelectionManager();
+        return ((ActiveRacerFragment) getParentFragment()).getSelectionsStateManager();
     }
 
     //TODO Java doc this
     public DisplayFilterManager grabDisplayFilterManager() {
-        return ((ActiveRacerFragment) getParentFragment()).grabDisplayFilterManager();
+        return ((ActiveRacerFragment) getParentFragment()).getDisplayFilterManager();
     }
-
 
 }

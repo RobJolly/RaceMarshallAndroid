@@ -33,14 +33,32 @@ import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.SectionsPagerAdapt
 import uk.co.robertjolly.racemarshallandroid.ui.main.customElements.checkpointFob;
 
 //TODO Java doc this
-public class ActiveRacerFragment extends Fragment implements CheckpointGrabber, SelectionManagerGrabber {
-    private DisplayFilterManager displayFilterManager = new DisplayFilterManager();
+public class ActiveRacerFragment extends Fragment implements CheckpointGrabber {
+    private SelectionsStateManager selectionsStateManager;
+    private DisplayFilterManager displayFilterManager;
 
     //TODO Java doc this
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if (savedInstanceState != null) {
+            try {
+                SelectionsStateManager test = (SelectionsStateManager) savedInstanceState.get("selectionsStateManager");
+                test.setCheckpoints(grabCheckpoints());
+                setSelectionsStateManager(test);
+            } catch (Exception e) { //something gone wrong with the bundle - go with the backup loading
+                setSelectionsStateManager(new SelectionsStateManager(grabCheckpoints()));
+            }
+            try {
+                setDisplayFilterManager((DisplayFilterManager) savedInstanceState.get("displayFilterManager"));
+            } catch (Exception e) { //something gone wrong with the bundle - go with the backup loading
+                setDisplayFilterManager(new DisplayFilterManager());
+            }
+        } else {
+            setSelectionsStateManager(new SelectionsStateManager(grabCheckpoints()));
+            setDisplayFilterManager(new DisplayFilterManager());
+        }
     }
 
     //TODO Java doc this
@@ -49,7 +67,6 @@ public class ActiveRacerFragment extends Fragment implements CheckpointGrabber, 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view;
 
-        //find orientation of screen
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             view = inflater.inflate(R.layout.active_racers_portrait_fragment,container,false);
         } else {
@@ -64,11 +81,11 @@ public class ActiveRacerFragment extends Fragment implements CheckpointGrabber, 
                 dialogBuilder.setTitle(R.string.FilterRacers);
                 dialogBuilder.setCancelable(true);
 
-                dialogBuilder.setMultiChoiceItems(grabDisplayFilterManager().getFilterNames(getResources()), grabDisplayFilterManager().getBooleanFilterList(), new DialogInterface.OnMultiChoiceClickListener() {
+                dialogBuilder.setMultiChoiceItems(getDisplayFilterManager().getFilterNames(getResources()), getDisplayFilterManager().getBooleanFilterList(), new DialogInterface.OnMultiChoiceClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i, boolean b) {
-                        grabDisplayFilterManager().changeFilter(i, b);
-                        grabDisplayFilterManager().notifyObservers();
+                        getDisplayFilterManager().changeFilter(i, b);
+                        getDisplayFilterManager().notifyObservers();
                     }
                 });
                 dialogBuilder.show();
@@ -93,14 +110,32 @@ public class ActiveRacerFragment extends Fragment implements CheckpointGrabber, 
     }
 
     //TODO Java doc this
-    @Override
-    public SelectionsStateManager grabSelectionManager() {
-        return ((SectionsPagerAdapter) Objects.requireNonNull(((ViewPager) Objects.requireNonNull(getActivity()).findViewById(R.id.mainViewPager)).getAdapter())).getSelectionsStateManager();
+    public SelectionsStateManager getSelectionsStateManager() {
+        return selectionsStateManager;
     }
 
+    /*
+    public SelectionsStateManager grabSelectionsStateManager() {
+        return ((SectionsPagerAdapter) Objects.requireNonNull(((ViewPager) Objects.requireNonNull(getActivity()).findViewById(R.id.mainViewPager)).getAdapter())).getSelectionsStateManager();
+    }*/
+
     //TODO Java doc this
-    public DisplayFilterManager grabDisplayFilterManager() {
+    public DisplayFilterManager getDisplayFilterManager() {
         return displayFilterManager;
     }
 
+    public void setSelectionsStateManager(SelectionsStateManager selectionsStateManager) {
+        this.selectionsStateManager = selectionsStateManager;
+    }
+
+    public void setDisplayFilterManager(DisplayFilterManager displayFilterManager) {
+        this.displayFilterManager = displayFilterManager;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable("selectionsStateManager", selectionsStateManager);
+        outState.putParcelable("displayFilterManager", displayFilterManager);
+    }
 }
