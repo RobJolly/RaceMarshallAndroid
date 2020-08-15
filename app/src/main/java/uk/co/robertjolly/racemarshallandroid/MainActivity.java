@@ -13,6 +13,11 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
+import java.util.Observable;
+import java.util.Observer;
+
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoint;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
 import uk.co.robertjolly.racemarshallandroid.data.SelectionsStateManager;
@@ -97,6 +102,12 @@ public class MainActivity extends AppCompatActivity {
             toShow.show();
         }
 
+        checkpoints.addObserver(new Observer() {
+            @Override
+            public void update(Observable observable, Object o) {
+                saveData();
+            }
+        });
         super.onCreate(savedInstanceState);
 
     }
@@ -130,10 +141,28 @@ public class MainActivity extends AppCompatActivity {
 
     //TODO Java doc this
     private Checkpoints loadCheckpoints() {
-        return null;
+        try {
+            FileInputStream fileInputStream = this.openFileInput("checkpoints");
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            Checkpoints readInCheckpoints = (Checkpoints) objectInputStream.readObject();
+            objectInputStream.close();
+            fileInputStream.close();
+            return readInCheckpoints;
+        } catch (Exception e) {
+            return null;
+        }
+
     }
 
     public void setCheckpoints(Checkpoints checkpoints) {
         this.checkpoints = checkpoints;
+    }
+
+    public boolean saveData() {
+        try {
+            return getCheckpoints().writeToFile("checkpoints", this);
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

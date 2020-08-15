@@ -3,12 +3,23 @@ package uk.co.robertjolly.racemarshallandroid.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.Serializable;
 
 /**
  * This class stores information about a racer (i.e. Racer Number)
  */
-public class Racer implements Comparable, Parcelable {
+public class Racer implements Comparable, Parcelable, Serializable {
 
     @SerializedName("racerNumber")
     int racerNumber;
@@ -18,14 +29,23 @@ public class Racer implements Comparable, Parcelable {
      * @param racerNumber The number of the racer
      */
     public Racer(int racerNumber) {
-        this.racerNumber = racerNumber;
+        setRacerNumber(racerNumber);
     }
+
 
     /**
      * Getter for the number of the racer
      */
     public int getRacerNumber() {
         return racerNumber;
+    }
+
+    /**
+     * Setter for the racer number
+     * @param racerNumber the number of the racer
+     */
+    private void setRacerNumber(int racerNumber) {
+        this.racerNumber = racerNumber;
     }
 
     /**
@@ -74,4 +94,5 @@ public class Racer implements Comparable, Parcelable {
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeInt(racerNumber);
     }
+
 }

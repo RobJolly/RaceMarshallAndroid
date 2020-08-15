@@ -28,4 +28,37 @@ public class CheckpointsTest {
         testParcel.setDataPosition(0);
         Checkpoints grabbedPoints = new Checkpoints(testParcel);
     }
+
+    @Test
+    public void hasCheckpoint() {
+    }
+
+    @Test
+    public void getCheckpoint() {
+    }
+
+    @Test
+    public void addCheckpoint() {
+    }
+
+    @Test
+    public void getCheckpointNumberList() {
+    }
+
+    @Test
+    public void getCurrentCheckpointNumber() {
+    }
+
+    @Test
+    public void setCurrentCheckpointNumber() {
+    }
+
+    @Test
+    public void setTime() {
+    }
+
+    @Test
+    public void clearCheckpoints() {
+    }
+
 }

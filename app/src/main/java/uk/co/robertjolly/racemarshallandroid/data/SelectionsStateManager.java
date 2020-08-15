@@ -3,6 +3,7 @@ package uk.co.robertjolly.racemarshallandroid.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Observable;
@@ -13,6 +14,7 @@ import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
 
 //TODO Java doc this
 public class SelectionsStateManager extends Observable implements Parcelable {
+
     Checkpoints checkpoints;
     ArrayList<Racer> selected;
     int lastCheckpointSize;
@@ -84,27 +86,27 @@ public class SelectionsStateManager extends Observable implements Parcelable {
 
     //TODO Java doc this
     private Boolean toPass(RaceTimes times) {
-        return (times.droppedOutTime == null & times.notStartedTime == null & times.inTime == null & times.outTime == null);
+        return (times.getDroppedOutTime() == null & times.getNotStartedTime() == null & times.getInTime() == null & times.getOutTime() == null);
     }
 
     //TODO Java doc this
     private Boolean checkedIn(RaceTimes times) {
-        return (times.droppedOutTime == null & times.notStartedTime == null & times.outTime == null & times.inTime != null);
+        return (times.getDroppedOutTime() == null & times.getNotStartedTime() == null & times.getOutTime() == null & times.getInTime() != null);
     }
 
     //TODO Java doc this
     private Boolean checkedOut(RaceTimes times) {
-        return (times.droppedOutTime == null & times.notStartedTime == null & times.outTime != null);
+        return (times.getDroppedOutTime() == null & times.getNotStartedTime() == null & times.getOutTime() != null);
     }
 
     //TODO Java doc this
     private Boolean droppedOut(RaceTimes times) {
-        return (times.droppedOutTime != null);
+        return (times.getDroppedOutTime() != null);
     }
 
     //TODO Java doc this
     private boolean didNotStart(RaceTimes times) {
-        return (times.notStartedTime != null);
+        return (times.getNotStartedTime() != null);
     }
 
     //TODO Java doc this

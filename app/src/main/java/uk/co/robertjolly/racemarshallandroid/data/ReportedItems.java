@@ -5,18 +5,20 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
 
 //TODO Java doc this
-public class ReportedItems implements Parcelable {
+public class ReportedItems implements Parcelable, Serializable {
     @SerializedName("inReported")
-    boolean inReported;
+    private boolean inReported;
     @SerializedName("outReported")
-    boolean outReported;
+    private boolean outReported;
     @SerializedName("droppedOutReported")
-    boolean droppedOutReported;
+    private boolean droppedOutReported;
     @SerializedName("didNotStartReported")
-    boolean didNotStartReported;
+    private boolean didNotStartReported;
 
     //TODO Java doc this
     public ReportedItems() {
