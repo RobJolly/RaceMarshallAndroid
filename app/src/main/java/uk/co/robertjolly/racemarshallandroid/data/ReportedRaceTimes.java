@@ -6,12 +6,13 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 
 import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
 
 //TODO Java doc this
-public class ReportedRaceTimes implements Parcelable {
+public class ReportedRaceTimes implements Parcelable, Serializable {
     @SerializedName("raceTimes")
     private RaceTimes raceTimes;
     @SerializedName("reportedItems")

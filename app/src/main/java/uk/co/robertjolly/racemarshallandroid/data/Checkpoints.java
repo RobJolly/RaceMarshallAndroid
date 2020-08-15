@@ -1,10 +1,17 @@
 package uk.co.robertjolly.racemarshallandroid.data;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Observable;
@@ -14,7 +21,7 @@ import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
 /**
  * Checkpoints is a cass to store multiple checkpoints, with a single main 'active'/focused checkpoint.
  */
-public class Checkpoints extends Observable implements Parcelable {
+public class Checkpoints extends Observable implements Parcelable, Serializable {
     @SerializedName("checkpoints")
     ArrayList<Checkpoint> checkpoints = new ArrayList<>();
     @SerializedName("currentCheckpointNumber")
@@ -155,4 +162,45 @@ public class Checkpoints extends Observable implements Parcelable {
             return new Checkpoints[size];
         }
     };
+
+    //TODO Java doc this
+    //TODO improve this mess of code
+    public boolean writeToFile(String filename, Context context) throws IOException {
+        boolean writeSucsessful = false;
+        FileOutputStream fileOutputStream = null;
+        try {
+            fileOutputStream = context.openFileOutput(filename, Context.MODE_PRIVATE);
+        } catch (Exception e) {
+            //failed to write to file
+        }
+
+        ObjectOutputStream objectOutputStream = null;
+        try {
+            if (fileOutputStream != null) {
+                objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            }
+        } catch (Exception e) {
+            //failed to write to file
+        }
+
+        try {
+            if (objectOutputStream != null) {
+                objectOutputStream.writeObject(this);
+                writeSucsessful = true;
+            }
+        } catch (Exception e) {
+            //failed to write
+        }
+
+        try {
+            if (fileOutputStream != null) {
+                fileOutputStream.close();
+            }
+        } catch (Exception e) {
+            //failed to write
+        }
+
+
+        return writeSucsessful;
+    }
 }

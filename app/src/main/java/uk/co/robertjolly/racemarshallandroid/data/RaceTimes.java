@@ -3,8 +3,10 @@ package uk.co.robertjolly.racemarshallandroid.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -15,17 +17,17 @@ import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
  * Function to store In, Out, DroppedOut and NotStarted times, along with the time where a time was
  * last set.
  */
-public class RaceTimes implements Parcelable {
+public class RaceTimes implements Parcelable, Serializable {
     @SerializedName("inTime")
-    Date inTime;
+    private Date inTime;
     @SerializedName("outTime")
-    Date outTime;
+    private Date outTime;
     @SerializedName("droppedOutTime")
-    Date droppedOutTime;
+    private Date droppedOutTime;
     @SerializedName("notStartedTime")
-    Date notStartedTime;
+    private Date notStartedTime;
     @SerializedName("lastSetTime")
-    Date lastSetTime;
+    private Date lastSetTime;
 
     //TODO Java doc this
     public RaceTimes() {
@@ -236,4 +238,10 @@ public class RaceTimes implements Parcelable {
             parcel.writeLong(-1);
         }
     }
+
+    public String getJsonString() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
+    }
+
 }

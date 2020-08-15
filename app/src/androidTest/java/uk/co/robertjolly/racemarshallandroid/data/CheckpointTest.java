@@ -28,8 +28,8 @@ public class CheckpointTest {
 
         assertEquals(testCheckpoint.getCheckPointNumber(), grabbedPoint.getCheckPointNumber());
         assertEquals(testCheckpoint.getRacerData(new Racer(150)).getRaceTimes().getLastSetTime(), grabbedPoint.getRacerData(new Racer(150)).getRaceTimes().getLastSetTime());
-        assertEquals(testCheckpoint.getRacerData(new Racer(150)).getReportedItems().droppedOutReported, grabbedPoint.getRacerData(new Racer(150)).getReportedItems().droppedOutReported);
+        assertEquals(testCheckpoint.getRacerData(new Racer(150)).getReportedItems().getReportedItem(TimeTypes.DROPPEDOUT), grabbedPoint.getRacerData(new Racer(150)).getReportedItems().getReportedItem(TimeTypes.DROPPEDOUT));
         assertEquals(testCheckpoint.getRacerData(new Racer(3)).getRaceTimes().getLastSetTime(), grabbedPoint.getRacerData(new Racer(3)).getRaceTimes().getLastSetTime());
-        assertEquals(testCheckpoint.getRacerData(new Racer(3)).getReportedItems().outReported, grabbedPoint.getRacerData(new Racer(3)).getReportedItems().outReported);
+        assertEquals(testCheckpoint.getRacerData(new Racer(3)).getReportedItems().getReportedItem(TimeTypes.OUT), grabbedPoint.getRacerData(new Racer(3)).getReportedItems().getReportedItem(TimeTypes.OUT));
     }
 }

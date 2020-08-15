@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -20,7 +21,7 @@ import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
  * A numbered checkpoint - Storing information about racers in the race, their given times and if those times
  * have been reported yet.
  */
-public class Checkpoint extends Observable implements Parcelable {
+public class Checkpoint extends Observable implements Parcelable, Serializable {
     @SerializedName("checkPointNumber")
     int checkPointNumber;
     @SerializedName("racerData")

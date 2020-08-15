@@ -4,6 +4,9 @@ import android.content.res.Resources;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Observable;
 
@@ -14,7 +17,8 @@ import uk.co.robertjolly.racemarshallandroid.data.enums.RacerDisplayFilter;
 /**
  * This handles the filters for which racers to display or not display, on the racer interaction screen
  */
-public class DisplayFilterManager extends Observable implements Parcelable {
+public class DisplayFilterManager extends Observable implements Parcelable, Serializable {
+    @SerializedName("filterList")
     private ArrayList<RacerDisplayFilter> filterList;
 
     public DisplayFilterManager() {
