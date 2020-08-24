@@ -19,14 +19,18 @@
             android:id="@+id/textView2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Checkpoint Number:"
-            android:textSize="18sp" />
+            android:gravity="center"
+            android:text="Checkpoint Number"
+            android:textSize="30sp" />
 
         <EditText
             android:id="@+id/newCheckpointNumber"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="80dp"
             android:ems="10"
-            android:inputType="number" />
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:inputType="number"
+            android:textSize="40sp" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

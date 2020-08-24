@@ -25,7 +25,7 @@ public class Checkpoints extends Observable implements Parcelable, Serializable 
     @SerializedName("checkpoints")
     ArrayList<Checkpoint> checkpoints = new ArrayList<>();
     @SerializedName("currentCheckpointNumber")
-    int currentCheckpointNumber = 1;
+    int currentCheckpointNumber = 0;
 
     //TODO Java doc this
     public Checkpoints() {
@@ -42,10 +42,12 @@ public class Checkpoints extends Observable implements Parcelable, Serializable 
      * @return If the checkpoint is in the list or not.
      */
     public boolean hasCheckpoint(int checkpointNumber) {
-        //Note since the checkpoints are expected to be very low in number (i.e. around 12-20), searching this way is probably fine.
-        for (Checkpoint checkpoint : getCheckpoints()) { //for each checkpoint, check if they match the number input.
-            if (checkpoint.getCheckPointNumber() == checkpointNumber) {
-                return true;
+        if (hasCheckpoints()) {
+            //Note since the checkpoints are expected to be very low in number (i.e. around 12-20), searching this way is probably fine.
+            for (Checkpoint checkpoint : getCheckpoints()) { //for each checkpoint, check if they match the number input.
+                if (checkpoint.getCheckPointNumber() == checkpointNumber) {
+                    return true;
+                }
             }
         }
         return false;
@@ -86,8 +88,10 @@ public class Checkpoints extends Observable implements Parcelable, Serializable 
     public ArrayList<Integer> getCheckpointNumberList() {
         ArrayList<Integer> checkpointNumbers = new ArrayList<>();
         //Note since the checkpoints are expected to be very low in number (i.e. around 12-20), searching this way is probably fine.
-        for (Checkpoint checkpoint : getCheckpoints()) {
-            checkpointNumbers.add(checkpoint.getCheckPointNumber());
+        if (hasCheckpoints()) {
+            for (Checkpoint checkpoint : getCheckpoints()) {
+                checkpointNumbers.add(checkpoint.getCheckPointNumber());
+            }
         }
 
         return checkpointNumbers;
@@ -113,13 +117,15 @@ public class Checkpoints extends Observable implements Parcelable, Serializable 
 
     //TODO Java doc this
     public void setTime(Racer racer, TimeTypes times, Date date) {
-        getCheckpoint(getCurrentCheckpointNumber()).setTime(racer, times, date);
-        setChanged();
+        if ((hasCheckpoints()) && (hasCheckpoint(getCurrentCheckpointNumber()))) {
+            getCheckpoint(getCurrentCheckpointNumber()).setTime(racer, times, date);
+            setChanged();
+        }
     }
 
     //TODO Java doc this
     public void clearCheckpoints() {
-        checkpoints.clear();
+        getCheckpoints().clear();
     }
 
     //TODO Java doc this
@@ -132,8 +138,8 @@ public class Checkpoints extends Observable implements Parcelable, Serializable 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeInt(currentCheckpointNumber);
-        parcel.writeInt(checkpoints.size());
-        for (Checkpoint checkpoint : checkpoints) {
+        parcel.writeInt(getCheckpoints().size());
+        for (Checkpoint checkpoint : getCheckpoints()) {
             parcel.writeParcelable(checkpoint, i);
         }
     }
@@ -142,11 +148,11 @@ public class Checkpoints extends Observable implements Parcelable, Serializable 
     protected Checkpoints(Parcel in) {
         currentCheckpointNumber = in.readInt();
         int numberOfCheckpoints = in.readInt();
-        checkpoints.clear();
+        getCheckpoints().clear();
 
         for (int i = 0; i < numberOfCheckpoints; i++) {
             Checkpoint checkpoint = in.readParcelable(Checkpoint.class.getClassLoader());
-            checkpoints.add(checkpoint);
+            getCheckpoints().add(checkpoint);
         }
     }
 
@@ -203,4 +209,42 @@ public class Checkpoints extends Observable implements Parcelable, Serializable 
 
         return writeSucsessful;
     }
+
+    //TODO Java doc this
+    public boolean hasCheckpoints() {
+        return (getCheckpoints().size() > 0);
+
+    }
+
+    //TODO Java doc this
+    public int getNumberUnreported() {
+        int numberUnreported = 0;
+        for (Checkpoint checkpoint : checkpoints) {
+            numberUnreported = numberUnreported + checkpoint.getNumberUnreported();
+        }
+
+        return numberUnreported;
+    }
+
+    //TODO Java doc this
+    public void clearCheckpointData() {
+        checkpoints.clear();
+        setChanged();
+    }
+
+    //TODO Java doc this
+    public void deleteCheckpoint(int checkpointNumber) {
+        ArrayList<Checkpoint> toRemove = new ArrayList<>();
+        if (getCheckpointNumberList().contains(checkpointNumber)) {
+            for (Checkpoint checkpoint : checkpoints) {
+                if (checkpoint.getCheckPointNumber() == checkpointNumber) {
+                    toRemove.add(checkpoint);
+                }
+            }
+        }
+
+        getCheckpoints().removeAll(toRemove);
+        setChanged();
+    }
+
 }

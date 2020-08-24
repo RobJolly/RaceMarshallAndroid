@@ -1,9 +1,12 @@
 package uk.co.robertjolly.racemarshallandroid;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.service.autofill.FillEventHistory;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.material.tabs.TabLayout;
@@ -28,8 +31,8 @@ public class MainActivity extends AppCompatActivity {
 
     private SectionsPagerAdapter pagerAdapter;
     private Checkpoints checkpoints;
+    private boolean showingDialog = false;
     //private SelectionsStateManager selected; //bad practice, but works for now.
-
     //TODO Java doc this
     public MainActivity() {
         initialise();
@@ -38,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     //TODO Java doc this
     public MainActivity(int contentLayoutId) {
         super(contentLayoutId);
-        //initialise();
+        initialise();
     }
 
     //TODO Java doc this
@@ -71,45 +74,106 @@ public class MainActivity extends AppCompatActivity {
         ViewPager viewPager = findViewById(R.id.mainViewPager);
         pagerAdapter = createPagerAdapter();
         viewPager.setAdapter(pagerAdapter);
+        viewPager.setOffscreenPageLimit(pagerAdapter.getCount()); //bad practice, but a ton of effort to work around
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
 
-        //TODO Change this alert dialog to a dialog fragment - fix bug whereby if screen tilted before input, there will be a crash
-        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
-        alertBuilder.setTitle("Start New race: Please provide this information:");
-
-        if (checkpoints.getCheckpoint(-1) != null) {
-            final View initialiseCheckpointView = getLayoutInflater().inflate(R.layout.initial_setup_layout, null);
-            alertBuilder.setView(initialiseCheckpointView);
-            alertBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    checkpoints.clearCheckpoints();
-                    TextView checkpointNumberTextBox = initialiseCheckpointView.findViewById(R.id.numberOfCheckpoint);
-                    TextView racerCountTextBox = initialiseCheckpointView.findViewById(R.id.numberOfRacers);
-                    int checkPointNumber = Integer.parseInt(checkpointNumberTextBox.getText().toString());
-                    int racerCount = Integer.parseInt(racerCountTextBox.getText().toString());
-
-                    //I need to do some error checking here
-                    Checkpoint createdPoint = new Checkpoint(checkPointNumber,racerCount);
-                    checkpoints.addCheckpoint(createdPoint);
-                    checkpoints.setCurrentCheckpointNumber(checkPointNumber);
-                    checkpoints.notifyObservers();
-                    //do nothing
-                }
-            });
-            final AlertDialog toShow = alertBuilder.create();
-            toShow.show();
+        if (!checkpoints.hasCheckpoints()) {
+            //TODO Change this alert dialog to a dialog fragment - fix bug whereby if screen tilted before input, there will be a crash
+            askForCheckpointsDialog(this);
         }
 
+        final Context context = this;
         checkpoints.addObserver(new Observer() {
             @Override
             public void update(Observable observable, Object o) {
                 saveData();
+
+                if (!checkpoints.hasCheckpoints()) {
+                    askForCheckpointsDialog(context);
+                } else if (!checkpoints.getCheckpointNumberList().contains(checkpoints.getCurrentCheckpointNumber())){
+                    resetSelectedCheckpoint();
+                }
             }
         });
         super.onCreate(savedInstanceState);
 
+    }
+
+    private void askForCheckpointsDialog(final Context context) {
+        //TODO Change this alert dialog to a dialog fragment - fix bug whereby if screen tilted before input, there will be a crash
+        final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
+        alertBuilder.setTitle("Start New race: Please provide this information:");
+        final View initialiseCheckpointView = getLayoutInflater().inflate(R.layout.initial_setup_layout, null);
+        alertBuilder.setView(initialiseCheckpointView);
+        alertBuilder.setCancelable(false);
+        alertBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+        final AlertDialog toShow = alertBuilder.create();
+        toShow.show();
+
+        //Code to select first box and bring up keyboard - and dismiss keyboard on close.
+        toShow.findViewById(R.id.numberOfRacers).requestFocus();
+        InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        toShow.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+            }
+        });
+        Button doneButton = toShow.getButton(DialogInterface.BUTTON_POSITIVE);
+        doneButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TextView checkpointNumberTextBox = initialiseCheckpointView.findViewById(R.id.numberOfCheckpoint);
+                TextView racerCountTextBox = initialiseCheckpointView.findViewById(R.id.numberOfRacers);
+                int checkPointNumber = 0;
+                int racerCount = 0;
+                try {
+                    checkPointNumber = Integer.parseInt(checkpointNumberTextBox.getText().toString());
+                    racerCount = Integer.parseInt(racerCountTextBox.getText().toString());
+                    if (checkPointNumber > -1 && racerCount > -1) {
+                        Checkpoint createdPoint = new Checkpoint(checkPointNumber, racerCount);
+                        checkpoints.addCheckpoint(createdPoint);
+                        checkpoints.setCurrentCheckpointNumber(checkPointNumber);
+                        toShow.dismiss();
+                        checkpoints.notifyObservers();
+                    } else {
+                        showDialogCheckpointError(context);
+                    }
+
+                } catch (Exception e) {
+                    showDialogCheckpointError(context);
+                }
+            }
+
+            private void showDialogCheckpointError(Context context) {
+                final AlertDialog.Builder errorBuilder = new AlertDialog.Builder(context);
+                errorBuilder.setTitle("Error");
+                errorBuilder.setCancelable(true);
+                errorBuilder.setMessage("Sorry, something is wrong with the numbers you input. Both number of racers and the checkpoint number must be positive, whole integers.");
+                errorBuilder.setPositiveButton("Okay", null);
+                errorBuilder.create().show();
+            }
+        });
+        toShow.show();
+    }
+
+    private void resetSelectedCheckpoint() {
+        checkpoints.setCurrentCheckpointNumber(checkpoints.getCheckpointNumberList().get(0));
+        checkpoints.notifyObservers();
+        final AlertDialog.Builder errorBuilder = new AlertDialog.Builder(this);
+        errorBuilder.setTitle("Selected Checkpoint Changed");
+        errorBuilder.setCancelable(true);
+        errorBuilder.setMessage("Your previously selected checkpoint no longer exists. Your selected checkpoint has been changed to checkpoint number: " + getCheckpoints().getCurrentCheckpointNumber());
+        errorBuilder.setPositiveButton("Okay", null);
+        errorBuilder.create().show();
     }
 
     @Override
@@ -128,15 +192,13 @@ public class MainActivity extends AppCompatActivity {
         Checkpoints loadedCheckpointData = loadCheckpoints();
         Checkpoints checkpoints = new Checkpoints();
 
-        if (loadedCheckpointData == null) { //create default checkpoint data
-            checkpoints.addCheckpoint(new Checkpoint(-1, 0));
-            //checkpoints.addCheckpoint(new Checkpoint(2, 150));
-            checkpoints.setCurrentCheckpointNumber(-1);
+        if (loadedCheckpointData != null) { //create default checkpoint data
+            return loadedCheckpointData;
         } else {
-            checkpoints = loadCheckpoints();
+            return new Checkpoints();
         }
 
-        return checkpoints;
+     //   return checkpoints;
     }
 
     //TODO Java doc this
@@ -158,6 +220,7 @@ public class MainActivity extends AppCompatActivity {
         this.checkpoints = checkpoints;
     }
 
+    //TODO Javadoc this
     public boolean saveData() {
         try {
             return getCheckpoints().writeToFile("checkpoints", this);

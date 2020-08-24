@@ -17,7 +17,7 @@ import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
 
 //TODO Java doc this
-public class checkpointFob {
+public class CheckpointFob {
 
     //TODO Java doc this
     public static void createCheckpointFob(View view, final Activity activity, final Checkpoints checkpoints) {
@@ -26,7 +26,7 @@ public class checkpointFob {
         fobCheckpoint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activity);
+                final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activity, R.style.CustomDialogTheme);
                 dialogBuilder.setTitle(R.string.selectedCheckpoints);
                 dialogBuilder.setCancelable(true);
 
@@ -47,8 +47,6 @@ public class checkpointFob {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         checkpoints.setCurrentCheckpointNumber(possibilities.get(i));
                         checkpoints.notifyObservers();
-                        //grabSelectionManager().changeCheckpoint(possibilities.get(i));
-                        //grabSelectionManager().notifyObservers();
                     }
                 });
                 dialogBuilder.show();

@@ -43,6 +43,10 @@ public class ActiveRacerActionFragment extends Fragment implements SelectionMana
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         selectionsStateManager = grabSelectionManager();
+
+        /*if (savedInstanceState != null) {
+            long timeButtonTimeLong = savedInstanceState.getLong("timeOverriden");
+        }*/
     }
 
     //TODO Java doc this

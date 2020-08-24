@@ -203,4 +203,18 @@ public class Checkpoint extends Observable implements Parcelable, Serializable {
             return new Checkpoint[size];
         }
     };
+
+    //TODO Java doc this
+    public int getNumberUnreported() {
+        int notReportedCount = 0;
+        for (ReportedRaceTimes times : racerData.values()) {
+            if (!times.allReported()) { //if all times haven't been reported
+                notReportedCount++;
+            } else if (!times.getRaceTimes().hasPassed()) { //if the racer hasn't yet passed
+                notReportedCount++;
+            }
+        }
+
+        return notReportedCount;
+    }
 }

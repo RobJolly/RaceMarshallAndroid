@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,22 +14,16 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.common.primitives.Chars;
 
-import java.util.ArrayList;
 import java.util.Objects;
-import java.util.Observable;
-import java.util.Observer;
 
 import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
 import uk.co.robertjolly.racemarshallandroid.data.DisplayFilterManager;
 import uk.co.robertjolly.racemarshallandroid.data.SelectionsStateManager;
-import uk.co.robertjolly.racemarshallandroid.data.enums.RacerDisplayFilter;
 import uk.co.robertjolly.racemarshallandroid.ui.main.CheckpointGrabber;
-import uk.co.robertjolly.racemarshallandroid.ui.main.SelectionManagerGrabber;
 import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.SectionsPagerAdapter;
-import uk.co.robertjolly.racemarshallandroid.ui.main.customElements.checkpointFob;
+import uk.co.robertjolly.racemarshallandroid.ui.main.customElements.CheckpointFob;
 
 //TODO Java doc this
 public class ActiveRacerFragment extends Fragment implements CheckpointGrabber {
@@ -77,7 +70,7 @@ public class ActiveRacerFragment extends Fragment implements CheckpointGrabber {
         fobFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+                final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity(), R.style.CustomDialogTheme);
                 dialogBuilder.setTitle(R.string.FilterRacers);
                 dialogBuilder.setCancelable(true);
 
@@ -92,7 +85,7 @@ public class ActiveRacerFragment extends Fragment implements CheckpointGrabber {
             }
         });
 
-        checkpointFob.createCheckpointFob(view, getActivity(), grabCheckpoints());
+        CheckpointFob.createCheckpointFob(view, getActivity(), grabCheckpoints());
 
         return view;
     }

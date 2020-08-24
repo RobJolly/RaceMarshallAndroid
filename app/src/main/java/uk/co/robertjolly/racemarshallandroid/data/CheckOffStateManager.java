@@ -51,13 +51,15 @@ public class CheckOffStateManager extends Observable {
      */
     private ArrayList<Racer> calculateListToDisplay() {
         TreeMap<Racer, ReportedRaceTimes> racersWithTimes;
+        racersWithTimes = new TreeMap<>();
         //gets checkpoints with either IN, OUT, DroppedOut, DidNotStart times, or any combination of the above.
-        racersWithTimes = checkpoints.getCheckpoint(checkpoints.getCurrentCheckpointNumber()).getRacersWithTimes();
-
-        ArrayList<Racer> toReport = new ArrayList<>();
-        for (Racer racer : racersWithTimes.keySet()) {
-            toReport.add(racer); //here's where you'd do the filtering
+        if ((checkpoints.hasCheckpoints()) && (checkpoints.hasCheckpoint(checkpoints.getCurrentCheckpointNumber()))) {
+            racersWithTimes = checkpoints.getCheckpoint(checkpoints.getCurrentCheckpointNumber()).getRacersWithTimes();
         }
+        //racersWithTimes = checkpoints.getCheckpoint(checkpoints.getCurrentCheckpointNumber()).getRacersWithTimes();
+
+        //here's where you'd do the filtering - we don't have any yet
+        ArrayList<Racer> toReport = new ArrayList<>(racersWithTimes.keySet());
 
         //This sorts the list, based on most recent recorded change.
         Collections.sort(toReport, new Comparator<Racer>() {

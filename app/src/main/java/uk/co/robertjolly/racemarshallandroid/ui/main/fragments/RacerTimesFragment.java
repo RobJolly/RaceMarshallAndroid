@@ -1,6 +1,5 @@
 package uk.co.robertjolly.racemarshallandroid.ui.main.fragments;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,9 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
 
-import java.util.Objects;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -23,8 +20,7 @@ import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
 import uk.co.robertjolly.racemarshallandroid.ui.main.CheckpointGrabber;
 import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.RecyclerViewAdapter;
-import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.SectionsPagerAdapter;
-import uk.co.robertjolly.racemarshallandroid.ui.main.customElements.checkpointFob;
+import uk.co.robertjolly.racemarshallandroid.ui.main.customElements.CheckpointFob;
 
 //TODO Java doc this
 public class RacerTimesFragment extends Fragment implements Observer, CheckpointGrabber {
@@ -56,7 +52,7 @@ public class RacerTimesFragment extends Fragment implements Observer, Checkpoint
             }
         });
 
-        checkpointFob.createCheckpointFob(view, getActivity(), checkpoints);
+        CheckpointFob.createCheckpointFob(view, getActivity(), checkpoints);
      /*   allData.addObserver(new Observer() {
             @Override
             public void update(Observable observable, Object o) {

@@ -30,7 +30,7 @@ public class SelectionsStateManager extends Observable implements Parcelable {
         getCheckpoints().addObserver(new Observer() {
             @Override
             public void update(Observable observable, Object o) {
-                if (lastCheckpointSize != checkpoints.getCheckpointNumberList().size()) {
+                if (lastCheckpointSize != checkpoints.getCheckpointNumberList().size() && lastCheckpointSize != 0 && checkpoints.getCheckpointNumberList().size() > 0) {
                     lastCheckpointSize = checkpoints.getCheckpointNumberList().size();
                 } else {
                     clearSelected();
@@ -43,41 +43,44 @@ public class SelectionsStateManager extends Observable implements Parcelable {
     //TODO Java doc this
     public ArrayList<Racer> getShowableList(ArrayList<RacerDisplayFilter> filters) {
         ArrayList<Racer> shouldShow = new ArrayList<>();
-        for (Racer racer : checkpoints.getCheckpoint(getCheckpointSelected()).getRacers()) {
-            boolean shouldSelect = false;
-            // This means that if anything should be shown by a SINGLE selected filter, it's shown.
-            // Regardless of any other filters not selecting it.
-            for (RacerDisplayFilter filter : filters) {
-                if (shouldShow(filter, racer)) {
-                    shouldSelect = true;
-                    break;
+        if ((getCheckpoints().hasCheckpoints()) && (getCheckpoints().hasCheckpoint(getCheckpointSelected()))) {
+            for (Racer racer : getCheckpoints().getCheckpoint(getCheckpointSelected()).getRacers()) {
+                boolean shouldSelect = false;
+                // This means that if anything should be shown by a SINGLE selected filter, it's shown.
+                // Regardless of any other filters not selecting it.
+                for (RacerDisplayFilter filter : filters) {
+                    if (shouldShow(filter, racer)) {
+                        shouldSelect = true;
+                        break;
+                    }
+                }
+                if (shouldSelect) {
+                    shouldShow.add(racer);
                 }
             }
-            if (shouldSelect) {
-                shouldShow.add(racer);
-            }
         }
+
         return shouldShow;
     }
 
     //TODO Java doc this
     public int getCheckpointSelected() {
-        return checkpoints.getCurrentCheckpointNumber();
+        return getCheckpoints().getCurrentCheckpointNumber();
     }
 
     //TODO Java doc this
     Boolean shouldShow(RacerDisplayFilter filter, Racer racer) {
         switch (filter) {
             case TOPASS:
-                return toPass(checkpoints.getCheckpoint(getCheckpointSelected()).getReportedRaceTime(racer).getRaceTimes());
+                return toPass(getCheckpoints().getCheckpoint(getCheckpointSelected()).getReportedRaceTime(racer).getRaceTimes());
             case CHECKEDIN:
-                return checkedIn(checkpoints.getCheckpoint(getCheckpointSelected()).getReportedRaceTime(racer).getRaceTimes());
+                return checkedIn(getCheckpoints().getCheckpoint(getCheckpointSelected()).getReportedRaceTime(racer).getRaceTimes());
             case CHECKEDOUT:
-                return checkedOut(checkpoints.getCheckpoint(getCheckpointSelected()).getReportedRaceTime(racer).getRaceTimes());
+                return checkedOut(getCheckpoints().getCheckpoint(getCheckpointSelected()).getReportedRaceTime(racer).getRaceTimes());
             case DROPPEDOUT:
-                return droppedOut(checkpoints.getCheckpoint(getCheckpointSelected()).getReportedRaceTime(racer).getRaceTimes());
+                return droppedOut(getCheckpoints().getCheckpoint(getCheckpointSelected()).getReportedRaceTime(racer).getRaceTimes());
             case DIDNOTSTART:
-                return didNotStart(checkpoints.getCheckpoint(getCheckpointSelected()).getReportedRaceTime(racer).getRaceTimes());
+                return didNotStart(getCheckpoints().getCheckpoint(getCheckpointSelected()).getReportedRaceTime(racer).getRaceTimes());
             default:
                 //TODO Error here
                 return null;
@@ -121,14 +124,14 @@ public class SelectionsStateManager extends Observable implements Parcelable {
 
     //TODO Java doc this
     public void clearSelected() {
-        selected.clear();
+        getSelected().clear();
         setChanged();
         //notifyObservers();
     }
 
     //TODO Java doc this
     public void addSelected(Racer racer) {
-        selected.add(racer);
+        getSelected().add(racer);
         setChanged();
         //notifyObservers();
     }
@@ -136,7 +139,7 @@ public class SelectionsStateManager extends Observable implements Parcelable {
     //TODO Java doc this
     //TODO Combine these into one function, they're functionally identical.
     public void setSelectedPassed(Date passed) {
-       for (Racer racer : selected) {
+       for (Racer racer : getSelected()) {
            getCheckpoints().setTime(racer, TimeTypes.OUT, passed);
            //getAllCheckpoints().getCheckpoint(getCheckpointSelected()).setTime(racer, TimeTypes.OUT, passed);
        }

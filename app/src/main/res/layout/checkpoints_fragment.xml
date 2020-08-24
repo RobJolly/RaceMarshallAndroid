@@ -8,25 +8,22 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="#7CB342">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <TextView
-                android:id="@+id/textView4"
+                android:id="@+id/textView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Start New Race"
+                android:background="#43A047"
+                android:elevation="4dp"
+                android:text="Checkpoints"
                 android:textSize="24sp" />
-
-            <View
-                android:id="@+id/divider3"
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:background="?android:attr/listDivider" />
 
             <Button
                 android:id="@+id/createCheckpointButton"
@@ -35,42 +32,31 @@
                 android:text="Create Checkpoint" />
 
             <Button
-                android:id="@+id/transferCheckpointButton"
+                android:id="@+id/deleteCheckpointButton"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:text="Transfer Checkpoint" />
-
-            <View
-                android:id="@+id/divider2"
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:background="?android:attr/listDivider" />
+                android:text="Delete Checkpoint" />
 
             <TextView
                 android:id="@+id/textView3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="#43A047"
+                android:elevation="4dp"
                 android:text="Data Transfer"
                 android:textSize="24sp" />
 
             <Button
-                android:id="@+id/button7"
+                android:id="@+id/transferCheckpointButton"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:text="Delete All (New Race)" />
+                android:text="Transfer Checkpoint" />
 
             <Button
-                android:id="@+id/button5"
+                android:id="@+id/receiveCheckpointButton"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:text="Receive Checkpoint" />
-
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Checkpoints"
-                android:textSize="24sp" />
 
             <Button
                 android:id="@+id/exportJsonButton"
@@ -78,23 +64,20 @@
                 android:layout_height="60dp"
                 android:text="Export Data (As JSON)" />
 
-            <View
-                android:id="@+id/divider"
+            <TextView
+                android:id="@+id/textView4"
                 android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:background="?android:attr/listDivider" />
+                android:layout_height="wrap_content"
+                android:background="#43A047"
+                android:elevation="4dp"
+                android:text="Start New Race"
+                android:textSize="24sp" />
 
             <Button
-                android:id="@+id/button6"
+                android:id="@+id/deleteAllCheckpoints"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:text="Delete Checkpoint" />
-
-            <Button
-                android:id="@+id/button8"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:text="Transfer Data (Audio)" />
+                android:text="Delete All (New Race)" />
         </LinearLayout>
     </ScrollView>
 
