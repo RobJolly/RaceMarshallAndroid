@@ -47,9 +47,6 @@ public class ActiveRacerActionFragment extends Fragment implements SelectionMana
         super.onCreate(savedInstanceState);
         selectionsStateManager = grabSelectionManager();
 
-        /*if (savedInstanceState != null) {
-            long timeButtonTimeLong = savedInstanceState.getLong("timeOverriden");
-        }*/
     }
 
     //TODO Java doc this
@@ -60,9 +57,13 @@ public class ActiveRacerActionFragment extends Fragment implements SelectionMana
         view.setElevation(12); //doesn't work when set in XML - I'm unsure why, but I should fix this later when I know.
         if (savedInstanceState != null) {
             try {
-                long timeLong = savedInstanceState.getLong("timeOverriden");
-                TimeButton timeButton = view.findViewById(R.id.timeButton);
-                timeButton.setTimeSelected(new Date(timeLong));
+                boolean hasTime = savedInstanceState.getBoolean("hasTime");
+                if (hasTime) {
+                   Long timeLong = savedInstanceState.getLong("timeOverriden");
+                   TimeButton timeButton = view.findViewById(R.id.timeButton);
+                   timeButton.setTimeSelected(new Date(timeLong));
+
+                }
             } catch (Exception e) {
                 //can't get lost time, will just have to abandon that.
             }
@@ -178,6 +179,7 @@ public class ActiveRacerActionFragment extends Fragment implements SelectionMana
         try {
             TimeButton button = (TimeButton) getView().findViewById(R.id.timeButton);
             if (button.isTimeOverriden()) {
+                outState.putBoolean("hasTime", button.isTimeOverriden());
                 outState.putLong("timeOverriden", button.getTime().getTime());
             }
         } catch (Exception e) {
