@@ -3,6 +3,8 @@ package uk.co.robertjolly.racemarshallandroid.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -95,4 +97,9 @@ public class Racer implements Comparable, Parcelable, Serializable {
         parcel.writeInt(racerNumber);
     }
 
+    @NonNull
+    @Override
+    public String toString() {
+        return String.valueOf(racerNumber);
+    }
 }
