@@ -174,8 +174,6 @@ public class CheckpointFragment extends Fragment implements CheckpointGrabber {
                 service.startScan();
                 alertBuilder = new AlertDialog.Builder(getContext());
                 createAlertDialog();
-
-
             }
         });
 

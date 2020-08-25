@@ -104,9 +104,9 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder {
         if (timeTextView2.getText() != "") {
             if ((times.getRaceTimes().getInTime() != null) & (times.getRaceTimes().getOutTime() != null)) {
                 if (times.getRaceTimes().getDroppedOutTime() != null) {
-                    times.getFormattedDisplayTime(TimeTypes.DROPPEDOUT);
-                } else {
-                    times.getFormattedDisplayTime(TimeTypes.DIDNOTSTART);
+                    timeTextView3.setText(times.getFormattedDisplayTime(TimeTypes.DROPPEDOUT));
+                } else if (times.getRaceTimes().getNotStartedTime() != null){
+                    timeTextView3.setText(times.getFormattedDisplayTime(TimeTypes.DIDNOTSTART));
                 }
             }
         } else {

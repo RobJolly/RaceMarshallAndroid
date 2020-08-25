@@ -1,17 +1,12 @@
 package uk.co.robertjolly.racemarshallandroid.miscClasses;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
-import android.content.Context;
-import android.os.Parcelable;
 import android.util.Log;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -19,8 +14,6 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.Observable;
 import java.util.UUID;
-
-import javax.annotation.Nullable;
 
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoint;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
