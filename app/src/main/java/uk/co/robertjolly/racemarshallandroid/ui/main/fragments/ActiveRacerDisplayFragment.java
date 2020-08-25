@@ -1,5 +1,6 @@
 package uk.co.robertjolly.racemarshallandroid.ui.main.fragments;
 
+import android.app.FragmentManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,9 +10,11 @@ import android.widget.GridView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
 
 import java.util.ArrayList;
 
+import uk.co.robertjolly.racemarshallandroid.MainActivity;
 import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
 import uk.co.robertjolly.racemarshallandroid.data.DisplayFilterManager;
@@ -19,6 +22,7 @@ import uk.co.robertjolly.racemarshallandroid.data.SelectionsStateManager;
 import uk.co.robertjolly.racemarshallandroid.ui.main.CheckpointGrabber;
 import uk.co.robertjolly.racemarshallandroid.ui.main.SelectionManagerGrabber;
 import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.RaceGridViewAdapter;
+import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.SectionsPagerAdapter;
 
 //TODO Java doc this
 public class ActiveRacerDisplayFragment extends Fragment implements CheckpointGrabber, SelectionManagerGrabber {
@@ -30,6 +34,7 @@ public class ActiveRacerDisplayFragment extends Fragment implements CheckpointGr
     //TODO Add actions for savedInstanceState != null
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
 
         setSelectionsStateManager(grabSelectionManager());
@@ -89,11 +94,17 @@ public class ActiveRacerDisplayFragment extends Fragment implements CheckpointGr
     //TODO Java doc this
     @Override
     public SelectionsStateManager grabSelectionManager() {
-        return ((ActiveRacerFragment) getParentFragment()).getSelectionsStateManager();
+        //return ((SectionsPagerAdapter) (((ViewPager) (getActivity()).findViewById(R.id.mainViewPager))).getAdapter()).getSelectionsStateManager();
+         return ((ActiveRacerFragment) getParentFragment()).getSelectionsStateManager();
     }
 
     //TODO Java doc this
     public DisplayFilterManager grabDisplayFilterManager() {
+        //return ((SectionsPagerAdapter) (((ViewPager) (getActivity()).findViewById(R.id.mainViewPager))).getAdapter());
+
+        //(ActiveRacerFragment) getActivity().getFragmentManager().findFragmentById(R.id.get)
+        //return ((ActiveRacerFragment) getActivity().getFragmentManager().findFragmentByTag("ActiveRacerFragment")).getDisplayFilterManager();
+        //MainActivity activity = (MainActivity) getActivity();
         return ((ActiveRacerFragment) getParentFragment()).getDisplayFilterManager();
     }
 

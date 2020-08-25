@@ -38,6 +38,7 @@ public class RaceGridViewAdapter extends BaseAdapter {
         setDisplayFilterManager(displayFilterManager);
         toShow = selectionsStateManager.getShowableList(getDisplayFilterManager().getFilterList()); //Setting filters here - change later
 
+
         selectionsStateManager.addObserver(new Observer() {
             @Override
             public void update(Observable observable, Object o) {

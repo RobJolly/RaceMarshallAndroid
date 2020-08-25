@@ -33,7 +33,6 @@ public class ActiveRacerFragment extends Fragment implements CheckpointGrabber {
     //TODO Java doc this
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
 
         if (savedInstanceState != null) {
             try {
@@ -52,6 +51,8 @@ public class ActiveRacerFragment extends Fragment implements CheckpointGrabber {
             setSelectionsStateManager(new SelectionsStateManager(grabCheckpoints()));
             setDisplayFilterManager(new DisplayFilterManager());
         }
+        super.onCreate(savedInstanceState);
+
     }
 
     //TODO Java doc this
@@ -59,12 +60,12 @@ public class ActiveRacerFragment extends Fragment implements CheckpointGrabber {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view;
-
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             view = inflater.inflate(R.layout.active_racers_portrait_fragment,container,false);
         } else {
             view = inflater.inflate(R.layout.active_racers_sideways_fragment,container,false);
         }
+        view.setTag("ActiveRacerFragment");
 
         FloatingActionButton fobFilter = (FloatingActionButton) view.findViewById(R.id.filterFob);
         fobFilter.setOnClickListener(new View.OnClickListener() {

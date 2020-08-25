@@ -48,12 +48,17 @@ public class RacerTimesFragment extends Fragment implements Observer, Checkpoint
         checkpoints.addObserver(new Observer() {
             @Override
             public void update(Observable observable, Object o) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        recView.getAdapter().notifyDataSetChanged();
-                    }
-                });
+                try {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            recView.getAdapter().notifyDataSetChanged();
+                        }
+                    });
+                } catch (Exception e) {
+
+                }
+                //recView.getAdapter().notifyDataSetChanged();
             }
         });
 

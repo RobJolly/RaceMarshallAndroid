@@ -32,6 +32,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     private final Context mContext;
     private Checkpoints checkpoints;
     private SelectionsStateManager selectionsStateManager;
+    public int[] fragId;
 
     /**
      * Constructor for the fragment page adapter.
@@ -55,9 +56,13 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
      */
     private Fragment[] getFragments() {
         Fragment[] allTabs = new Fragment[3];
+        int[] fragID = new int[3];
         allTabs[0] = new ActiveRacerFragment();
+        fragID[0] = allTabs[0].getId();
         allTabs[1] = new RacerTimesFragment();
+        fragID[1] = allTabs[1].getId();
         allTabs[2] = new CheckpointFragment();
+        fragID[2] = allTabs[2].getId();
 
         //pass racer data
      //   Bundle racerData = new Bundle();
@@ -131,4 +136,6 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         super.destroyItem(container, position, object);
 
     }
+
+
 }

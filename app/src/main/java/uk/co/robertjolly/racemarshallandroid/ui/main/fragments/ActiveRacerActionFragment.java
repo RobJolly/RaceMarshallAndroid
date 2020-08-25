@@ -13,11 +13,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -29,6 +31,7 @@ import uk.co.robertjolly.racemarshallandroid.data.ReportedRaceTimes;
 import uk.co.robertjolly.racemarshallandroid.data.SelectionsStateManager;
 import uk.co.robertjolly.racemarshallandroid.ui.main.CheckpointGrabber;
 import uk.co.robertjolly.racemarshallandroid.ui.main.SelectionManagerGrabber;
+import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.SectionsPagerAdapter;
 import uk.co.robertjolly.racemarshallandroid.ui.main.customElements.TimeButton;
 
 import com.ikovac.timepickerwithseconds.*; //Note - this is not mine, but an opensource project.
@@ -160,7 +163,6 @@ public class ActiveRacerActionFragment extends Fragment implements SelectionMana
     public Checkpoints grabCheckpoints() {
         MainActivity activity = (MainActivity) getActivity();
         return activity.getCheckpoints();
-        //return ((ActiveRacerFragment) getParentFragment()).grabCheckpoints();
     }
 
     //TODO Javadoc this
