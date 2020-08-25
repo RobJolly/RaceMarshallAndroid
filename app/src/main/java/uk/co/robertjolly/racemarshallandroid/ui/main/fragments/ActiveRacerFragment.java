@@ -132,4 +132,6 @@ public class ActiveRacerFragment extends Fragment implements CheckpointGrabber {
         outState.putParcelable("selectionsStateManager", selectionsStateManager);
         outState.putParcelable("displayFilterManager", displayFilterManager);
     }
+
+
 }

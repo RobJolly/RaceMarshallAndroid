@@ -4,7 +4,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.service.autofill.FillEventHistory;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -36,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
     private Checkpoints checkpoints;
     private boolean showingDialog = false;
     private ArrayList<BroadcastReceiver> registeredReceivers = new ArrayList<>();
+    private Observer askDialog;
+
     //private SelectionsStateManager selected; //bad practice, but works for now.
     //TODO Java doc this
     public MainActivity() {
@@ -88,18 +92,22 @@ public class MainActivity extends AppCompatActivity {
         }
 
         final Context context = this;
-        checkpoints.addObserver(new Observer() {
+        askDialog = new Observer() {
             @Override
             public void update(Observable observable, Object o) {
                 saveData();
 
                 if (!checkpoints.hasCheckpoints()) {
-                    askForCheckpointsDialog(context);
+                    if (!showingDialog) {
+                        askForCheckpointsDialog(context);
+                    }
                 } else if (!checkpoints.getCheckpointNumberList().contains(checkpoints.getCurrentCheckpointNumber())){
                     resetSelectedCheckpoint();
                 }
             }
-        });
+        };
+
+        checkpoints.addObserver(askDialog);
         super.onCreate(savedInstanceState);
 
     }
@@ -119,7 +127,6 @@ public class MainActivity extends AppCompatActivity {
         });
         final AlertDialog toShow = alertBuilder.create();
         toShow.show();
-
         //Code to select first box and bring up keyboard - and dismiss keyboard on close.
         toShow.findViewById(R.id.numberOfRacers).requestFocus();
         InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -247,5 +254,16 @@ public class MainActivity extends AppCompatActivity {
     public void addReceiver(BroadcastReceiver broadcastReceiver, IntentFilter intentFilter) {
         registeredReceivers.add(broadcastReceiver);
         this.registerReceiver(broadcastReceiver, intentFilter);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState, @NonNull PersistableBundle outPersistentState) {
+        super.onSaveInstanceState(outState, outPersistentState);
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        checkpoints.deleteObserver(askDialog);
+        super.onConfigurationChanged(newConfig);
     }
 }
