@@ -1,7 +1,9 @@
 package uk.co.robertjolly.racemarshallandroid;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.service.autofill.FillEventHistory;
 import android.view.View;
@@ -18,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -32,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private SectionsPagerAdapter pagerAdapter;
     private Checkpoints checkpoints;
     private boolean showingDialog = false;
+    private ArrayList<BroadcastReceiver> registeredReceivers = new ArrayList<>();
     //private SelectionsStateManager selected; //bad practice, but works for now.
     //TODO Java doc this
     public MainActivity() {
@@ -127,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
                 inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
             }
         });
+
         Button doneButton = toShow.getButton(DialogInterface.BUTTON_POSITIVE);
         doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -227,5 +232,20 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        unregisterReceivers();
+       super.onDestroy();
+    }
+
+    public void unregisterReceivers() {
+
+    }
+
+    public void addReceiver(BroadcastReceiver broadcastReceiver, IntentFilter intentFilter) {
+        registeredReceivers.add(broadcastReceiver);
+        this.registerReceiver(broadcastReceiver, intentFilter);
     }
 }

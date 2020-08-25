@@ -1,11 +1,15 @@
 package uk.co.robertjolly.racemarshallandroid.ui.main.fragments;
 
 
+import android.Manifest;
 import android.app.AlertDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,24 +22,136 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
+import com.github.douglasjunior.bluetoothclassiclibrary.BluetoothClassicService;
+import com.github.douglasjunior.bluetoothclassiclibrary.BluetoothConfiguration;
+import com.github.douglasjunior.bluetoothclassiclibrary.BluetoothService;
+import com.github.douglasjunior.bluetoothclassiclibrary.BluetoothStatus;
+import com.github.douglasjunior.bluetoothclassiclibrary.BluetoothWriter;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.UUID;
 
 import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoint;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
+import uk.co.robertjolly.racemarshallandroid.miscClasses.RaceMarshallBluetoothComponent;
 import uk.co.robertjolly.racemarshallandroid.ui.main.CheckpointGrabber;
 import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.SectionsPagerAdapter;
 
 //TODO Java doc this
 public class CheckpointFragment extends Fragment implements CheckpointGrabber {
-
+    private BluetoothConfiguration config = new BluetoothConfiguration();
+    private BluetoothService service;
+    private BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+    private ArrayList<BluetoothDevice> deviceList = new ArrayList<>();
+    private AlertDialog deviceDialog;
+    private AlertDialog.Builder alertBuilder;
+    private AlertDialog notifyDialog;
+    private RaceMarshallBluetoothComponent raceMarshallBluetoothComponent;
+    private UUID uuidReceive = UUID.fromString("10879b40-da59-4450-b507-f0a2b26a229c");
+    private AlertDialog.Builder notifyBuilder;
     //TODO Java doc this
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        deviceList.addAll(bluetoothAdapter.getBondedDevices());
+
+
+        raceMarshallBluetoothComponent = new RaceMarshallBluetoothComponent(getActivity(), grabCheckpoints());
+        checkPermissions();
+
+        //Configure bluetooth library from: https://github.com/douglasjunior/AndroidBluetoothLibrary
+        config.context = getContext();
+        config.bluetoothServiceClass = BluetoothClassicService.class;
+        config.bufferSize = 1024;
+        config.characterDelimiter = '\n';
+        config.deviceName = "Your App Name";
+        config.callListenersInMainThread = true;
+        config.uuid = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb"); // Required
+        BluetoothService.init(config);
+        service = BluetoothService.getDefaultInstance();
+        service.setOnScanCallback(new BluetoothService.OnBluetoothScanCallback() {
+            @Override
+            public void onDeviceDiscovered(BluetoothDevice device, int rssi) {
+                Log.e("FOUND DEVICE: ", device.getName());
+                if (!deviceList.contains(device)) {
+                    deviceList.add(device);
+                    if (deviceDialog != null) {
+                        deviceDialog.dismiss();
+                        createAlertDialog();
+                    }
+                }
+
+            }
+
+            @Override
+            public void onStartScan() {
+            }
+
+            @Override
+            public void onStopScan() {
+            }
+        });
+
+        service.setOnEventCallback(new BluetoothService.OnBluetoothEventCallback() {
+            @Override
+            public void onDataRead(byte[] buffer, int length) {
+                Log.e("READ", "READING DATA");
+            }
+
+            @Override
+            public void onStatusChange(BluetoothStatus status) {
+                if (status == BluetoothStatus.CONNECTED) {
+                    BluetoothWriter writer = new BluetoothWriter(service);
+                    writer.write("test");
+                }
+            }
+
+            @Override
+            public void onDeviceName(String deviceName) {
+            }
+
+            @Override
+            public void onToast(String message) {
+            }
+
+            @Override
+            public void onDataWrite(byte[] buffer) {
+            }
+        });
+
+        notifyBuilder = new AlertDialog.Builder(getContext());
+        notifyDialog = notifyBuilder.create();
+
+        raceMarshallBluetoothComponent.addObserver(new Observer() {
+            @Override
+            public void update(Observable observable, Object o) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        grabCheckpoints().notifyObservers();
+                        AlertDialog.Builder notifyBuilder = new AlertDialog.Builder(getContext());
+                        notifyDialog.dismiss();
+                        if (raceMarshallBluetoothComponent.isReading()) {
+                            raceMarshallBluetoothComponent.setReading(false);
+                            notifyBuilder.setMessage("Received Checkpoint");
+
+                        } else if (raceMarshallBluetoothComponent.isWriting()) {
+                            raceMarshallBluetoothComponent.setWriting(false);
+                            notifyBuilder.setMessage("Sent Checkpoint");
+                        }
+                        notifyDialog = notifyBuilder.create();
+                        notifyDialog.show();
+                    }
+                });
+            }
+        });
+
+
     }
 
     //TODO Java doc this
@@ -49,7 +165,78 @@ public class CheckpointFragment extends Fragment implements CheckpointGrabber {
         setExportJSONButton(view);
         setDeleteAllButton(view);
         setDeleteCheckpointButton(view);
+
+        final Button transferCheckpoint = view.findViewById(R.id.transferCheckpointButton);
+
+        transferCheckpoint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                service.startScan();
+                alertBuilder = new AlertDialog.Builder(getContext());
+                createAlertDialog();
+
+
+            }
+        });
+
+        final Button receiveCheckpoint = view.findViewById(R.id.receiveCheckpointButton);
+        receiveCheckpoint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                makeDiscoverable();
+                raceMarshallBluetoothComponent.startListening();
+                notifyBuilder.setMessage("Waiting for checkpoint to be sent..");
+                notifyBuilder.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                       raceMarshallBluetoothComponent.stopListening();
+                       raceMarshallBluetoothComponent.setReading(false);
+                    }
+                });
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        notifyDialog = notifyBuilder.create();
+                        notifyDialog.show();
+                    }
+                });
+            }
+        });
         return view;
+    }
+
+    private void createAlertDialog() {
+        String[] deviceNames = new String[deviceList.size()];
+        int count = 0;
+        for (BluetoothDevice device : deviceList) {
+            deviceNames[count] = device.getName();
+            count++;
+        }
+        alertBuilder.setItems(deviceNames, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                raceMarshallBluetoothComponent.startConnecting(deviceList.get(i), uuidReceive);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        notifyBuilder.setMessage("Trying to send checkpoint");
+                        notifyBuilder.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                raceMarshallBluetoothComponent.stopConnecting();
+                                raceMarshallBluetoothComponent.stopConnection();
+                            }
+                        });
+                        notifyDialog = notifyBuilder.create();
+                        notifyDialog.show();
+                    }
+                });
+                //deviceList.get(i)
+            }
+        });
+        deviceDialog = alertBuilder.create();
+        deviceDialog.show();
     }
 
     private void setDeleteAllButton(View view) {
@@ -220,4 +407,30 @@ public class CheckpointFragment extends Fragment implements CheckpointGrabber {
         return ((SectionsPagerAdapter) Objects.requireNonNull(((ViewPager) Objects.requireNonNull(getActivity()).findViewById(R.id.mainViewPager)).getAdapter())).getCheckpoints();
 
     }
+
+    private void makeDiscoverable() {
+        Intent makeDiscoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+        makeDiscoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 120);
+        startActivity(makeDiscoverableIntent);
+    }
+
+
+    private ArrayList<BluetoothDevice> searchBluetoothDevices() {
+        return null;
+    }
+
+    /**
+     * This checks to make sure that bluetooth permissions are adequate for what's needed
+     */
+    private void checkPermissions() {
+        int permissionCheck = getActivity().checkSelfPermission("Manifest.permission.ACCESS_FINE_LOCATION");
+        permissionCheck += getActivity().checkSelfPermission("Manifest.permission.ACCESS_COARSE_LOCATION");
+        permissionCheck += getActivity().checkSelfPermission("Manifest.permission.BLUETOOTH");
+        permissionCheck += getActivity().checkSelfPermission("Manifest.permission.BLUETOOTH_ADMIN");
+        if (permissionCheck != 0) {
+            this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN}, 0);
+        }
+
+    }
+
 }
