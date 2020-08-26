@@ -95,13 +95,13 @@ public class RaceGridViewAdapter extends BaseAdapter {
                 if (getSelectionsStateManager().isSelected(getToShow().get(i))) { //if button is selected - blue colour
                     thisButton.getBackground().setColorFilter(Color.BLUE, PorterDuff.Mode.MULTIPLY);
                 } else if (getSelectionsStateManager().getSelectedCheckpoint().getRacerData(getToShow().get(i)).getRaceTimes().getDroppedOutTime() != null) {
-                    thisButton.getBackground().setColorFilter(Color.DKGRAY, PorterDuff.Mode.MULTIPLY);
+                    thisButton.getBackground().setColorFilter(Color.parseColor("#5E35B1"), PorterDuff.Mode.MULTIPLY);
                 } else if (getSelectionsStateManager().getSelectedCheckpoint().getRacerData(getToShow().get(i)).getRaceTimes().getNotStartedTime() != null) {
-                    thisButton.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.MULTIPLY);
+                    thisButton.getBackground().setColorFilter(Color.parseColor("#5E35B1"), PorterDuff.Mode.MULTIPLY);
                 } else if (getSelectionsStateManager().getSelectedCheckpoint().getRacerData(getToShow().get(i)).getRaceTimes().getOutTime() != null) {
-                    thisButton.getBackground().setColorFilter(Color.LTGRAY, PorterDuff.Mode.MULTIPLY);
+                    thisButton.getBackground().setColorFilter(Color.parseColor("#D81B60"), PorterDuff.Mode.MULTIPLY);
                 } else if (getSelectionsStateManager().getSelectedCheckpoint().getRacerData(getToShow().get(i)).getRaceTimes().getInTime() != null) {
-                    thisButton.getBackground().setColorFilter(Color.YELLOW, PorterDuff.Mode.MULTIPLY);
+                    thisButton.getBackground().setColorFilter(Color.parseColor("#FDD835"), PorterDuff.Mode.MULTIPLY);
                 } else {
                     thisButton.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY);
                 }
