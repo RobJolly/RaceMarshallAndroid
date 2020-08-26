@@ -1,13 +1,10 @@
 package uk.co.robertjolly.racemarshallandroid;
 
 //Open-source android libraries: https://source.android.com/. Apache 2.0.
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
