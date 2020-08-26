@@ -9,8 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 //General/default java libraries: https://docs.oracle.com/javase/7/docs/api/index.html
-import java.util.Observable;
-import java.util.Observer;
 
 //Projects own classes.
 import uk.co.robertjolly.racemarshallandroid.R;
@@ -23,7 +21,6 @@ import uk.co.robertjolly.racemarshallandroid.data.ReportedRaceTimes;
  */
 public class RacerTimesRecyclerViewAdapter extends RecyclerView.Adapter<RacerTimesRecyclerViewHolder> {
     private Checkpoints checkpoints;
-    private Context mContext;
     private CheckOffStateManager toDisplay;
 
     /**
@@ -33,14 +30,10 @@ public class RacerTimesRecyclerViewAdapter extends RecyclerView.Adapter<RacerTim
      */
     public RacerTimesRecyclerViewAdapter(Checkpoints passedCheckpoints, Context mContext) {
         this.checkpoints = passedCheckpoints;
-        this.mContext = mContext;
         toDisplay = new CheckOffStateManager(checkpoints, null);
-        checkpoints.addObserver(new Observer() {
-            @Override
-            public void update(Observable observable, Object o) {
-                toDisplay = new CheckOffStateManager(checkpoints, null);
-                notifyDataSetChanged();
-            }
+        checkpoints.addObserver((observable, o) -> {
+            toDisplay = new CheckOffStateManager(checkpoints, null);
+            notifyDataSetChanged();
         });
     }
 

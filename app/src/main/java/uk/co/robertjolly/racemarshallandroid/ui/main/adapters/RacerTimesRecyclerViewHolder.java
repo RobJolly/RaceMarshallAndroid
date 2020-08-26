@@ -5,7 +5,6 @@ import android.graphics.Paint;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -205,17 +204,14 @@ public class RacerTimesRecyclerViewHolder extends RecyclerView.ViewHolder {
         racerReported.setChecked(times.allReported());
         manualChange = false;
 
-        racerReported.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (!manualChange) {
-                    if (b) {
-                        times.setAllUnreportedToReported();
-                    } else {
-                        times.setAllReportedToUnreported();
-                    }
-                    setRacerTimes(times);
+        racerReported.setOnCheckedChangeListener((compoundButton, b) -> {
+            if (!manualChange) {
+                if (b) {
+                    times.setAllUnreportedToReported();
+                } else {
+                    times.setAllReportedToUnreported();
                 }
+                setRacerTimes(times);
             }
         });
     }

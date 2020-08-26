@@ -1,7 +1,6 @@
 package uk.co.robertjolly.racemarshallandroid.miscClasses;
 
 //Open-source android libraries: https://source.android.com/. Apache 2.0.
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
@@ -31,7 +30,6 @@ public class RaceMarshallBluetoothComponent extends Observable {
     private connectionCreatorThread connectionCreatorThread;
     private BluetoothDevice bluetoothDevice;
     private UUID deviceUUID;
-    private String appName = "RaceMarshallAndroid";
     private UUID uuidReceive = UUID.fromString("baeed2bb-a07c-486c-a57b-ad6d1c4d5de3");
     private ConnectedThread connectedThread;
     private Checkpoints checkpoints;
@@ -60,8 +58,9 @@ public class RaceMarshallBluetoothComponent extends Observable {
             BluetoothServerSocket tmp = null;
             reading = true;
             try {
+                String appName = "RaceMarshallAndroid";
                 tmp = bluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord(appName, uuidReceive);
-                Log.e("ACThread", "Created Accepting thread sucsessfully");
+                Log.e("ACThread", "Created Accepting thread successfully");
             } catch (Exception e) {
                 Log.e("ACThread", "Failed to create accepting thread");
             }
@@ -132,7 +131,7 @@ public class RaceMarshallBluetoothComponent extends Observable {
             } catch (Exception e){
                 try {
                     Log.e("Error", "Failed to connect to the bluetooth socket");
-                    bluetoothSocket.close();;
+                    bluetoothSocket.close();
                 } catch (Exception e2) {
                    Log.e("Error", "Failed to close the bluetooth socket after a failed connection");
                 }
@@ -146,7 +145,7 @@ public class RaceMarshallBluetoothComponent extends Observable {
          */
         public void cancel() {
             try {
-                bluetoothSocket.close();;
+                bluetoothSocket.close();
             } catch (Exception e) {
                Log.e("Error", "Failed to close the bluetooth socket while connecting to another device");
             }
@@ -158,13 +157,8 @@ public class RaceMarshallBluetoothComponent extends Observable {
      */
     public synchronized void startListening() {
         stopConnecting();
-        if (listeningThread == null) {
-            listeningThread = new listeningThread();
-            listeningThread.start();
-        } else {
-            listeningThread = new listeningThread();
-            listeningThread.start();
-        }
+        listeningThread = new listeningThread();
+        listeningThread.start();
     }
 
     /**

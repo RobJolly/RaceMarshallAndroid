@@ -15,6 +15,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Observable;
 import javax.annotation.Nullable;
 
@@ -82,7 +83,7 @@ public class Checkpoints extends Observable implements Parcelable, Serializable 
      */
     public void addCheckpoint(Checkpoint checkpoint) {
         if (hasCheckpoint(checkpoint.getCheckPointNumber())) {
-            Log.w("Warning", "Checkpoint already exists. Cannot be added. Checkpoint number is: " + String.valueOf(checkpoint.getCheckPointNumber()));
+            Log.w("Warning", "Checkpoint already exists. Cannot be added. Checkpoint number is: " + checkpoint.getCheckPointNumber());
         } else {
             checkpoints.add(checkpoint);
             setChanged();
@@ -114,7 +115,7 @@ public class Checkpoints extends Observable implements Parcelable, Serializable 
             toReturn = this.getCheckpoint(getCurrentCheckpointNumber());
         } catch (Exception e) {
             //Checkpoint doesn't exist for w/e reason, don't need to do anything, but log it.
-            Log.w("Warning", "Currently selected checkpoint cannot be found. Checkpoint selected is: " + String.valueOf(getCurrentCheckpointNumber()));
+            Log.w("Warning", "Currently selected checkpoint cannot be found. Checkpoint selected is: " + getCurrentCheckpointNumber());
         }
         return toReturn;
     }
@@ -145,12 +146,12 @@ public class Checkpoints extends Observable implements Parcelable, Serializable 
     public void setTime(Racer racer, TimeTypes times, Date date) {
         if (hasCheckpoints()) {
             try {
-                getCurrentSelectedCheckpoint().setTime(racer, times, date);
+                Objects.requireNonNull(getCurrentSelectedCheckpoint()).setTime(racer, times, date);
                 setChanged();
             } catch (Exception e) {
-                Log.e("Error", "Attempted to set time when no currently selected checkpoint exists. Selected checkpoint number is: " + String.valueOf(getCheckpointNumberList()));
+                Log.e("Error", "Attempted to set time when no currently selected checkpoint exists. Selected checkpoint number is: " + getCheckpointNumberList());
             }
-            getCurrentSelectedCheckpoint().setTime(racer, times, date);
+            Objects.requireNonNull(getCurrentSelectedCheckpoint()).setTime(racer, times, date);
             setChanged();
         } else {
             Log.w("Warning", "No checkpoints are stored at this time. Cannot set the time.");
@@ -168,8 +169,8 @@ public class Checkpoints extends Observable implements Parcelable, Serializable 
 
     /**
      * Function to write the contents of the class to the given parcel
-     * @param parcel
-     * @param i
+     * @param parcel parcel in which to write
+     * @param i flags
      */
     @Override
     public void writeToParcel(Parcel parcel, int i) {
@@ -183,7 +184,7 @@ public class Checkpoints extends Observable implements Parcelable, Serializable 
 
     /**
      * Constructor to create class from the contents of the given parcel.
-     * @param in
+     * @param in parcel from which to construct
      */
     protected Checkpoints(Parcel in) {
         setCurrentCheckpointNumber(in.readInt());

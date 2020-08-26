@@ -9,7 +9,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Observable;
-import java.util.Observer;
+
 import javax.annotation.Nullable;
 
 //Projects own classes.
@@ -36,15 +36,12 @@ public class SelectionsStateManager extends Observable implements Parcelable { /
 
         //TODO Make this observer its own method (called in more than one constructor)
         //observer to check whether or not the checkpoints data have changed in such a way to mandate notifying observers
-        getCheckpoints().addObserver(new Observer() {
-            @Override
-            public void update(Observable observable, Object o) {
-                if (lastCheckpointSize != checkpoints.getCheckpointNumberList().size() && lastCheckpointSize != 0 && checkpoints.getCheckpointNumberList().size() > 0) {
-                    lastCheckpointSize = checkpoints.getCheckpointNumberList().size();
-                } else {
-                    clearSelected();
-                    notifyObservers();
-                }
+        getCheckpoints().addObserver((observable, o) -> {
+            if (lastCheckpointSize != checkpoints.getCheckpointNumberList().size() && lastCheckpointSize != 0 && checkpoints.getCheckpointNumberList().size() > 0) {
+                lastCheckpointSize = checkpoints.getCheckpointNumberList().size();
+            } else {
+                clearSelected();
+                notifyObservers();
             }
         });
     }
@@ -73,7 +70,7 @@ public class SelectionsStateManager extends Observable implements Parcelable { /
                 }
             }
         } else {
-            Log.e("Error", "No selected checkpoint from which to show racers. Selected checkpoint is: " + String.valueOf(getCheckpointSelected()));
+            Log.e("Error", "No selected checkpoint from which to show racers. Selected checkpoint is: " + getCheckpointSelected());
         }
 
         return shouldShow;
@@ -252,7 +249,7 @@ public class SelectionsStateManager extends Observable implements Parcelable { /
             selected.remove(racer);
             setChanged();
         } else {
-            Log.w("Warning", "A racer has been attempted to be removed from selected that does not exist. Racer Number: " + String.valueOf(racer.getRacerNumber()));
+            Log.w("Warning", "A racer has been attempted to be removed from selected that does not exist. Racer Number: " + racer.getRacerNumber());
         }
     }
 
@@ -285,7 +282,7 @@ public class SelectionsStateManager extends Observable implements Parcelable { /
      * Finds out whether not not all of the selected racers can be set as checked in, based on their current set times.
      * @return whether not not all of the selected racers can be set as checked in, based on their current set times
      */
-    public boolean areCompatableIn() {
+    public boolean areCompatibleIn() {
         boolean compatable = true;
 
         for (Racer racer : selected) {
@@ -351,15 +348,12 @@ public class SelectionsStateManager extends Observable implements Parcelable { /
         lastCheckpointSize = in.readInt();
 
         //TODO Make this observer its own method (called in more than one constructor)
-        getCheckpoints().addObserver(new Observer() {
-            @Override
-            public void update(Observable observable, Object o) {
-                if (lastCheckpointSize != checkpoints.getCheckpointNumberList().size()) {
-                    lastCheckpointSize = checkpoints.getCheckpointNumberList().size();
-                } else {
-                    clearSelected();
-                    notifyObservers();
-                }
+        getCheckpoints().addObserver((observable, o) -> {
+            if (lastCheckpointSize != checkpoints.getCheckpointNumberList().size()) {
+                lastCheckpointSize = checkpoints.getCheckpointNumberList().size();
+            } else {
+                clearSelected();
+                notifyObservers();
             }
         });
     }

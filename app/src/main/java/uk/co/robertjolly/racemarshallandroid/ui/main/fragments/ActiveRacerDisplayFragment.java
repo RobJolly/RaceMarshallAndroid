@@ -11,6 +11,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 //Projects own classes.
+import java.util.Objects;
+
 import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
 import uk.co.robertjolly.racemarshallandroid.data.DisplayFilterManager;
@@ -44,7 +46,7 @@ public class ActiveRacerDisplayFragment extends Fragment implements CheckpointGr
         View view = inflater.inflate(R.layout.active_racers_display_fragment, container, false);
         view.setElevation(0); //doesn't work when set in XML - I'm unsure why, but I should fix this later when I know.
 
-        final GridView gridView = ((GridView) view.findViewById(R.id.gridView));
+        final GridView gridView = view.findViewById(R.id.gridView);
         final RaceGridViewAdapter raceGridViewAdapter = new RaceGridViewAdapter(gridView.getContext(), getSelectionsStateManager(), getDisplayFilterManager());
         gridView.setAdapter(raceGridViewAdapter);
         return view;
@@ -83,14 +85,14 @@ public class ActiveRacerDisplayFragment extends Fragment implements CheckpointGr
     //TODO Java doc this
     @Override
     public Checkpoints grabCheckpoints() {
-        return ((ActiveRacerFragment) getParentFragment()).grabCheckpoints();
+        return ((ActiveRacerFragment) Objects.requireNonNull(getParentFragment())).grabCheckpoints();
     }
 
     //TODO Java doc this
     @Override
     public SelectionsStateManager grabSelectionManager() {
         //return ((SectionsPagerAdapter) (((ViewPager) (getActivity()).findViewById(R.id.mainViewPager))).getAdapter()).getSelectionsStateManager();
-         return ((ActiveRacerFragment) getParentFragment()).getSelectionsStateManager();
+         return ((ActiveRacerFragment) Objects.requireNonNull(getParentFragment())).getSelectionsStateManager();
     }
 
     //TODO Java doc this
@@ -100,7 +102,7 @@ public class ActiveRacerDisplayFragment extends Fragment implements CheckpointGr
         //(ActiveRacerFragment) getActivity().getFragmentManager().findFragmentById(R.id.get)
         //return ((ActiveRacerFragment) getActivity().getFragmentManager().findFragmentByTag("ActiveRacerFragment")).getDisplayFilterManager();
         //MainActivity activity = (MainActivity) getActivity();
-        return ((ActiveRacerFragment) getParentFragment()).getDisplayFilterManager();
+        return ((ActiveRacerFragment) Objects.requireNonNull(getParentFragment())).getDisplayFilterManager();
     }
 
 }

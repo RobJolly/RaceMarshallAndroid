@@ -136,7 +136,7 @@ public class ReportedRaceTimes implements Parcelable, Serializable {
     /**
      * Gets a time, of the given type, in the HH:mm:ss format, with words representing the given time type,
      * (e.g. in for checked in, dropped out for dropped out, etc.), with the words representing the given time type
-     * bracketed if the given type has also been reported. The formatted time is seperated from the descriptor by ": ".
+     * bracketed if the given type has also been reported. The formatted time is separated from the descriptor by ": ".
      * An example of a string produced would be: "(dropped out): 12:42:33"
      * @param type The type of the time to find
      * @return String representing time formatted as explained above. Empty String if specified time isn't set.

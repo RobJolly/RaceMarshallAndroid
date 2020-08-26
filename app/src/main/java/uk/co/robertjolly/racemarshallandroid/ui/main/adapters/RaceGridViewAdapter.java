@@ -13,8 +13,6 @@ import android.widget.Button;
 //General/default java libraries: https://docs.oracle.com/javase/7/docs/api/index.html
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.Observable;
-import java.util.Observer;
 
 //Projects own classes.
 import uk.co.robertjolly.racemarshallandroid.data.DisplayFilterManager;
@@ -46,20 +44,15 @@ public class RaceGridViewAdapter extends BaseAdapter {
         toShow = selectionsStateManager.getShowableList(getDisplayFilterManager().getFilterList());
 
 
-        selectionsStateManager.addObserver(new Observer() { //observer to change the grid, if selections has changed
-            @Override
-            public void update(Observable observable, Object o) {
-                toShow = getSelectionsStateManager().getShowableList(getDisplayFilterManager().getFilterList());
-                notifyDataSetChanged();
-            }
+        //observer to change the grid, if selections has changed
+        selectionsStateManager.addObserver((observable, o) -> {
+            toShow = getSelectionsStateManager().getShowableList(getDisplayFilterManager().getFilterList());
+            notifyDataSetChanged();
         });
 
-        getDisplayFilterManager().addObserver(new Observer() {
-            @Override
-            public void update(Observable observable, Object o) { //observer to change the grid, if filters have changed
-                toShow = getSelectionsStateManager().getShowableList(getDisplayFilterManager().getFilterList());
-                notifyDataSetChanged();
-            }
+        getDisplayFilterManager().addObserver((observable, o) -> { //observer to change the grid, if filters have changed
+            toShow = getSelectionsStateManager().getShowableList(getDisplayFilterManager().getFilterList());
+            notifyDataSetChanged();
         });
 
     }
@@ -133,22 +126,19 @@ public class RaceGridViewAdapter extends BaseAdapter {
                 //set the button text to the racer number
                 thisButton.setText(String.valueOf(toShow.get(i).getRacerNumber()));
 
-                thisButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        ArrayList<Racer> toShow = getToShow();
-                        if (getSelectionsStateManager().isSelected(toShow.get(i))) {
-                            getSelectionsStateManager().removeSelected(toShow.get(i));
-                            thisButton.getBackground().clearColorFilter();
-                        } else {
-                            getSelectionsStateManager().addSelected(toShow.get(i));
-                            thisButton.getBackground().setColorFilter(Color.BLUE, PorterDuff.Mode.MULTIPLY);
-                        }
-                        getSelectionsStateManager().notifyObservers();
+                thisButton.setOnClickListener(view1 -> {
+                    ArrayList<Racer> toShow = getToShow();
+                    if (getSelectionsStateManager().isSelected(toShow.get(i))) {
+                        getSelectionsStateManager().removeSelected(toShow.get(i));
+                        thisButton.getBackground().clearColorFilter();
+                    } else {
+                        getSelectionsStateManager().addSelected(toShow.get(i));
+                        thisButton.getBackground().setColorFilter(Color.BLUE, PorterDuff.Mode.MULTIPLY);
                     }
+                    getSelectionsStateManager().notifyObservers();
                 });
             } catch (Exception e) {
-                Log.e("ERROR", "Button at index " + String.valueOf(i) + " Could not be created correctly. It has been made invisible.");
+                Log.e("ERROR", "Button at index " + i + " Could not be created correctly. It has been made invisible.");
                 thisButton.setVisibility(View.INVISIBLE);
             }
 

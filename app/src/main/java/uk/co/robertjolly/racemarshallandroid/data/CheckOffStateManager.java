@@ -3,10 +3,8 @@ package uk.co.robertjolly.racemarshallandroid.data;
 //General/default java libraries: https://docs.oracle.com/javase/7/docs/api/index.html
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.Observable;
-import java.util.Observer;
 import java.util.TreeMap;
 
 /**
@@ -15,7 +13,6 @@ import java.util.TreeMap;
  */
 public class CheckOffStateManager extends Observable {
     private Checkpoints checkpoints;
-    private DisplayFilterManager filters;
 
     /**
      * Constructor - The list of possible checkpoints, and the list of filters, to be applied to the
@@ -25,14 +22,10 @@ public class CheckOffStateManager extends Observable {
      */
     public CheckOffStateManager(Checkpoints checkpoints, DisplayFilterManager filters) {
         this.checkpoints = checkpoints;
-        this.filters = filters;
 
-        checkpoints.addObserver(new Observer() {
-            @Override
-            public void update(Observable observable, Object o) {
-                setChanged();
-                notifyObservers();
-            }
+        checkpoints.addObserver((observable, o) -> {
+            setChanged();
+            notifyObservers();
         });
     }
 
@@ -63,20 +56,17 @@ public class CheckOffStateManager extends Observable {
         ArrayList<Racer> toReport = new ArrayList<>(racersWithTimes.keySet());
 
         //This sorts the list, based on most recent recorded change.
-        Collections.sort(toReport, new Comparator<Racer>() {
-            @Override
-            public int compare(Racer racer, Racer t1) {
-                Date racerDate = checkpoints.getCheckpoint(checkpoints.getCurrentCheckpointNumber()).getReportedRaceTime(racer).getRaceTimes().getLastSetTime();
-                Date racer2Date = checkpoints.getCheckpoint(checkpoints.getCurrentCheckpointNumber()).getReportedRaceTime(t1).getRaceTimes().getLastSetTime();
+        Collections.sort(toReport, (racer, t1) -> {
+            Date racerDate = checkpoints.getCheckpoint(checkpoints.getCurrentCheckpointNumber()).getReportedRaceTime(racer).getRaceTimes().getLastSetTime();
+            Date racer2Date = checkpoints.getCheckpoint(checkpoints.getCurrentCheckpointNumber()).getReportedRaceTime(t1).getRaceTimes().getLastSetTime();
 
 
-                if (racerDate.after(racer2Date)) {
-                    return -1;
-                } else if (racerDate.before(racer2Date)){
-                    return 1;
-                } else {
-                    return Integer.compare(racer.getRacerNumber(), t1.getRacerNumber());
-                }
+            if (racerDate.after(racer2Date)) {
+                return -1;
+            } else if (racerDate.before(racer2Date)){
+                return 1;
+            } else {
+                return Integer.compare(racer.getRacerNumber(), t1.getRacerNumber());
             }
         });
 

@@ -2,8 +2,8 @@ package uk.co.robertjolly.racemarshallandroid.ui.main.fragments;
 
 //Open-source android libraries: https://source.android.com/. Apache 2.0.
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +15,7 @@ import androidx.fragment.app.Fragment;
 
 //General/default java libraries: https://docs.oracle.com/javase/7/docs/api/index.html
 import java.util.Date;
-import java.util.Observable;
-import java.util.Observer;
+import java.util.Objects;
 
 //Projects own classes.
 import uk.co.robertjolly.racemarshallandroid.MainActivity;
@@ -51,87 +50,68 @@ public class ActiveRacerActionFragment extends Fragment implements SelectionMana
             try {
                 boolean hasTime = savedInstanceState.getBoolean("hasTime");
                 if (hasTime) {
-                   Long timeLong = savedInstanceState.getLong("timeOverriden");
+                   long timeLong = savedInstanceState.getLong("timeOverriden");
                    TimeButton timeButton = view.findViewById(R.id.timeButton);
                    timeButton.setTimeSelected(new Date(timeLong));
 
                 }
             } catch (Exception e) {
-                //can't get lost time, will just have to abandon that.
+                Log.e("Error", "Can't get time from the saved Instance state -- This means the time button hasn't been set");
             }
         }
 
-        selectionsStateManager.addObserver(new Observer() {
-            @Override
-            public void update(Observable observable, Object o) {
-                try {
-                    setSelectedRacersText((TextView) view.findViewById(R.id.selectedRacersTextView));
-                } catch (Exception e) {
-                    //TODO some kind of error here
-                }
-                view.findViewById(R.id.inButton).setEnabled(selectionsStateManager.areCompatableIn());
-                view.findViewById(R.id.outButton).setEnabled(selectionsStateManager.areCompatableOut());
-                view.findViewById(R.id.otherActionButton).setEnabled(selectionsStateManager.areCompatableOther());
+        selectionsStateManager.addObserver((observable, o) -> {
+            try {
+                setSelectedRacersText(view.findViewById(R.id.selectedRacersTextView));
+            } catch (Exception e) {
+                //TODO some kind of error here
             }
+            view.findViewById(R.id.inButton).setEnabled(selectionsStateManager.areCompatibleIn());
+            view.findViewById(R.id.outButton).setEnabled(selectionsStateManager.areCompatableOut());
+            view.findViewById(R.id.otherActionButton).setEnabled(selectionsStateManager.areCompatableOther());
         });
 
-        setSelectedRacersText((TextView) view.findViewById(R.id.selectedRacersTextView));
+        setSelectedRacersText(view.findViewById(R.id.selectedRacersTextView));
         Button deselectAllButton = view.findViewById(R.id.deselectAllButton);
-        deselectAllButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                selectionsStateManager.clearSelected();
-                selectionsStateManager.notifyObservers();
-            }
+        deselectAllButton.setOnClickListener(view14 -> {
+            selectionsStateManager.clearSelected();
+            selectionsStateManager.notifyObservers();
         });
         Button outButton = view.findViewById(R.id.outButton);
-        outButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-               selectionsStateManager.setSelectedPassed(((TimeButton) getActivity().findViewById(R.id.timeButton)).getTime());
-               selectionsStateManager.notifyObservers();
-            }
+        outButton.setOnClickListener(view13 -> {
+           selectionsStateManager.setSelectedPassed(((TimeButton) Objects.requireNonNull(getActivity()).findViewById(R.id.timeButton)).getTime());
+           selectionsStateManager.notifyObservers();
         });
 
         Button inButton = view.findViewById(R.id.inButton);
-        inButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        inButton.setOnClickListener(view12 -> {
 
-                //TimeButton testBtn = view1.findViewById(R.id.timeButton);
-                selectionsStateManager.setSelectedIn(((TimeButton) getActivity().findViewById(R.id.timeButton)).getTime());
-                selectionsStateManager.notifyObservers();
-            }
+            selectionsStateManager.setSelectedIn(((TimeButton) Objects.requireNonNull(getActivity()).findViewById(R.id.timeButton)).getTime());
+            selectionsStateManager.notifyObservers();
         });
 
         Button otherActionButton = view.findViewById(R.id.otherActionButton);
-        otherActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-                final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
-                dialogBuilder.setTitle(R.string.otherActions);
-                dialogBuilder.setCancelable(true);
-                
+        otherActionButton.setOnClickListener(view1 -> {
+            final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+            dialogBuilder.setTitle(R.string.otherActions);
+            dialogBuilder.setCancelable(true);
 
-                String[] options = {getResources().getString(R.string.droppedOut), getResources().getString(R.string.didNotStart), getResources().getString(R.string.cancel)};
-                dialogBuilder.setItems(options, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        switch (i) {
-                            case 0:
-                                selectionsStateManager.setSelectedDroppedOut(((TimeButton) getActivity().findViewById(R.id.timeButton)).getTime());
-                                selectionsStateManager.notifyObservers();
-                                break;
-                            case 1:
-                                selectionsStateManager.setSelectedNotStarted(((TimeButton) getActivity().findViewById(R.id.timeButton)).getTime());
-                                selectionsStateManager.notifyObservers();
-                                break;
-                            default: //do nothing
-                        }
-                    }
-                });
-                dialogBuilder.show();
-            }
+
+            String[] options = {getResources().getString(R.string.droppedOut), getResources().getString(R.string.didNotStart), getResources().getString(R.string.cancel)};
+            dialogBuilder.setItems(options, (dialogInterface, i) -> {
+                switch (i) {
+                    case 0:
+                        selectionsStateManager.setSelectedDroppedOut(((TimeButton) Objects.requireNonNull(getActivity()).findViewById(R.id.timeButton)).getTime());
+                        selectionsStateManager.notifyObservers();
+                        break;
+                    case 1:
+                        selectionsStateManager.setSelectedNotStarted(((TimeButton) Objects.requireNonNull(getActivity()).findViewById(R.id.timeButton)).getTime());
+                        selectionsStateManager.notifyObservers();
+                        break;
+                    default: //do nothing
+                }
+            });
+            dialogBuilder.show();
         });
 
         return view;
@@ -142,7 +122,7 @@ public class ActiveRacerActionFragment extends Fragment implements SelectionMana
         textView.setText("");
         if (selectionsStateManager.getSelectedCount() > 0) {
             for (Racer racer : selectionsStateManager.getSelected()) {
-                textView.append(String.valueOf(racer.getRacerNumber()) + ",");
+                textView.append(racer.getRacerNumber() + ",");
                 //TODO add a text trimming function in here, to prevent the textView from being overfilled
             }
             textView.setText(textView.getText().subSequence(0, textView.length()-1));
@@ -156,13 +136,13 @@ public class ActiveRacerActionFragment extends Fragment implements SelectionMana
     @Override
     public Checkpoints grabCheckpoints() {
         MainActivity activity = (MainActivity) getActivity();
-        return activity.getCheckpoints();
+        return Objects.requireNonNull(activity).getCheckpoints();
     }
 
     //TODO Javadoc this
     @Override
     public SelectionsStateManager grabSelectionManager() {
-        return ((ActiveRacerFragment) getParentFragment()).getSelectionsStateManager();
+        return ((ActiveRacerFragment) Objects.requireNonNull(getParentFragment())).getSelectionsStateManager();
     }
 
     @Override
@@ -170,7 +150,7 @@ public class ActiveRacerActionFragment extends Fragment implements SelectionMana
         super.onSaveInstanceState(outState);
 
         try {
-            TimeButton button = (TimeButton) getView().findViewById(R.id.timeButton);
+            TimeButton button = Objects.requireNonNull(getView()).findViewById(R.id.timeButton);
             if (button.isTimeOverriden()) {
                 outState.putBoolean("hasTime", button.isTimeOverriden());
                 outState.putLong("timeOverriden", button.getTime().getTime());

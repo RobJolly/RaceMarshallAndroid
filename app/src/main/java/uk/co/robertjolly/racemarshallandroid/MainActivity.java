@@ -25,7 +25,6 @@ import com.google.android.material.tabs.TabLayout;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
-import java.util.Observable;
 import java.util.Observer;
 
 //Projects own classes.
@@ -62,8 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
     //TODO Java doc this
     private MainTabsSectionsPagerAdapter createPagerAdapter() {
-        MainTabsSectionsPagerAdapter adapter = new MainTabsSectionsPagerAdapter(this, getSupportFragmentManager(), getCheckpoints());
-         return adapter;
+        return new MainTabsSectionsPagerAdapter(this, getSupportFragmentManager(), getCheckpoints());
     }
 
     //TODO Java doc this
@@ -94,18 +92,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
         final Context context = this;
-        askDialog = new Observer() {
-            @Override
-            public void update(Observable observable, Object o) {
-                saveData();
+        askDialog = (observable, o) -> {
+            saveData();
 
-                if (!checkpoints.hasCheckpoints()) {
-                    if (!showingDialog) {
-                        askForCheckpointsDialog(context);
-                    }
-                } else if (!checkpoints.getCheckpointNumberList().contains(checkpoints.getCurrentCheckpointNumber())){
-                    resetSelectedCheckpoint();
+            if (!checkpoints.hasCheckpoints()) {
+                if (!showingDialog) {
+                    askForCheckpointsDialog(context);
                 }
+            } else if (!checkpoints.getCheckpointNumberList().contains(checkpoints.getCurrentCheckpointNumber())){
+                resetSelectedCheckpoint();
             }
         };
 
@@ -121,11 +116,8 @@ public class MainActivity extends AppCompatActivity {
         final View initialiseCheckpointView = getLayoutInflater().inflate(R.layout.initial_setup_layout, null);
         alertBuilder.setView(initialiseCheckpointView);
         alertBuilder.setCancelable(false);
-        alertBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
+        alertBuilder.setPositiveButton("Done", (dialogInterface, i) -> {
 
-            }
         });
         final AlertDialog toShow = alertBuilder.create();
         toShow.show();
@@ -133,12 +125,9 @@ public class MainActivity extends AppCompatActivity {
         toShow.findViewById(R.id.numberOfRacers).requestFocus();
         InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-        toShow.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialogInterface) {
-                InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-            }
+        toShow.setOnDismissListener(dialogInterface -> {
+            InputMethodManager inputMethodManager1 = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager1.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
         });
 
         Button doneButton = toShow.getButton(DialogInterface.BUTTON_POSITIVE);

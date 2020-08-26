@@ -59,15 +59,15 @@ public class Checkpoint extends Observable implements Parcelable, Serializable {
                 if (reportedItems != null) {
                     return reportedItems.getReportedItem(type);
                 } else {
-                    Log.w("Warning", "The racers ReportedItems are null. Racer number: " + String.valueOf(racerNumber));
+                    Log.w("Warning", "The racers ReportedItems are null. Racer number: " + racerNumber);
                     return false;
                 }
             } else {
-                Log.w("Warning", "The racers ReportedRaceTimes are null. Racer number: " + String.valueOf(racerNumber));
+                Log.w("Warning", "The racers ReportedRaceTimes are null. Racer number: " + racerNumber);
                 return false;
             }
         } else {
-            Log.w("Warning", "The Racer doesn't exist. Racer number: " + String.valueOf(racerNumber));
+            Log.w("Warning", "The Racer doesn't exist. Racer number: " + racerNumber);
             return false;
         }
     }
@@ -138,7 +138,7 @@ public class Checkpoint extends Observable implements Parcelable, Serializable {
                 Log.e("Error", "The given racers does not have any ReportedRacerTimes, unexpectedly");
             }
         } else {
-            Log.e("Error", "The given racer doesn't exist to setTime. Racer Number: " + String.valueOf(racer.getRacerNumber()));
+            Log.e("Error", "The given racer doesn't exist to setTime. Racer Number: " + racer.getRacerNumber());
         }
     }
 
@@ -156,7 +156,7 @@ public class Checkpoint extends Observable implements Parcelable, Serializable {
                     setTimes.put(racer, racerData.get(racer));
                 }
             } else {
-                Log.e("Error", "One of the given racers does not have any ReportedRacerTimes. Racer Number: " + String.valueOf(racer.getRacerNumber()));
+                Log.e("Error", "One of the given racers does not have any ReportedRacerTimes. Racer Number: " + racer.getRacerNumber());
             }
         }
 

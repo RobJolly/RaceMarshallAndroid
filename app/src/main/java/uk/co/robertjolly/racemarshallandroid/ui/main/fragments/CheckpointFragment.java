@@ -34,8 +34,6 @@ import com.google.gson.Gson;
 //General/default java libraries: https://docs.oracle.com/javase/7/docs/api/index.html
 import java.util.ArrayList;
 import java.util.Objects;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.UUID;
 
 //Projects own classes.
@@ -131,29 +129,21 @@ public class CheckpointFragment extends Fragment implements CheckpointGrabber {
         notifyBuilder = new AlertDialog.Builder(getContext());
         notifyDialog = notifyBuilder.create();
 
-        raceMarshallBluetoothComponent.addObserver(new Observer() {
-            @Override
-            public void update(Observable observable, Object o) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        grabCheckpoints().notifyObservers();
-                        AlertDialog.Builder notifyBuilder = new AlertDialog.Builder(getContext());
-                        notifyDialog.dismiss();
-                        if (raceMarshallBluetoothComponent.isReading()) {
-                            raceMarshallBluetoothComponent.setReading(false);
-                            notifyBuilder.setMessage("Received Checkpoint");
+        raceMarshallBluetoothComponent.addObserver((observable, o) -> Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+            grabCheckpoints().notifyObservers();
+            AlertDialog.Builder notifyBuilder = new AlertDialog.Builder(getContext());
+            notifyDialog.dismiss();
+            if (raceMarshallBluetoothComponent.isReading()) {
+                raceMarshallBluetoothComponent.setReading(false);
+                notifyBuilder.setMessage("Received Checkpoint");
 
-                        } else if (raceMarshallBluetoothComponent.isWriting()) {
-                            raceMarshallBluetoothComponent.setWriting(false);
-                            notifyBuilder.setMessage("Sent Checkpoint");
-                        }
-                        notifyDialog = notifyBuilder.create();
-                        notifyDialog.show();
-                    }
-                });
+            } else if (raceMarshallBluetoothComponent.isWriting()) {
+                raceMarshallBluetoothComponent.setWriting(false);
+                notifyBuilder.setMessage("Sent Checkpoint");
             }
-        });
+            notifyDialog = notifyBuilder.create();
+            notifyDialog.show();
+        }));
 
 
     }
@@ -172,38 +162,26 @@ public class CheckpointFragment extends Fragment implements CheckpointGrabber {
 
         final Button transferCheckpoint = view.findViewById(R.id.transferCheckpointButton);
 
-        transferCheckpoint.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                service.startScan();
-                alertBuilder = new AlertDialog.Builder(getContext());
-                createAlertDialog();
-            }
+        transferCheckpoint.setOnClickListener(view12 -> {
+            service.startScan();
+            alertBuilder = new AlertDialog.Builder(getContext());
+            createAlertDialog();
         });
 
         final Button receiveCheckpoint = view.findViewById(R.id.receiveCheckpointButton);
-        receiveCheckpoint.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                makeDiscoverable();
-                raceMarshallBluetoothComponent.startListening();
-                notifyBuilder.setMessage("Waiting for checkpoint to be sent..");
-                notifyBuilder.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                       raceMarshallBluetoothComponent.stopListening();
-                       raceMarshallBluetoothComponent.setReading(false);
-                    }
-                });
+        receiveCheckpoint.setOnClickListener(view1 -> {
+            makeDiscoverable();
+            raceMarshallBluetoothComponent.startListening();
+            notifyBuilder.setMessage("Waiting for checkpoint to be sent..");
+            notifyBuilder.setPositiveButton("Cancel", (dialogInterface, i) -> {
+                raceMarshallBluetoothComponent.stopListening();
+                raceMarshallBluetoothComponent.setReading(false);
+            });
 
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        notifyDialog = notifyBuilder.create();
-                        notifyDialog.show();
-                    }
-                });
-            }
+            Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+                notifyDialog = notifyBuilder.create();
+                notifyDialog.show();
+            });
         });
         return view;
     }
@@ -215,27 +193,18 @@ public class CheckpointFragment extends Fragment implements CheckpointGrabber {
             deviceNames[count] = device.getName();
             count++;
         }
-        alertBuilder.setItems(deviceNames, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                raceMarshallBluetoothComponent.startConnecting(deviceList.get(i), uuidReceive);
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        notifyBuilder.setMessage("Trying to send checkpoint");
-                        notifyBuilder.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                raceMarshallBluetoothComponent.stopConnecting();
-                                raceMarshallBluetoothComponent.stopConnection();
-                            }
-                        });
-                        notifyDialog = notifyBuilder.create();
-                        notifyDialog.show();
-                    }
+        alertBuilder.setItems(deviceNames, (dialogInterface, i) -> {
+            raceMarshallBluetoothComponent.startConnecting(deviceList.get(i), uuidReceive);
+            Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+                notifyBuilder.setMessage("Trying to send checkpoint");
+                notifyBuilder.setPositiveButton("Cancel", (dialogInterface1, i1) -> {
+                    raceMarshallBluetoothComponent.stopConnecting();
+                    raceMarshallBluetoothComponent.stopConnection();
                 });
-                //deviceList.get(i)
-            }
+                notifyDialog = notifyBuilder.create();
+                notifyDialog.show();
+            });
+            //deviceList.get(i)
         });
         deviceDialog = alertBuilder.create();
         deviceDialog.show();
@@ -243,163 +212,130 @@ public class CheckpointFragment extends Fragment implements CheckpointGrabber {
 
     private void setDeleteAllButton(View view) {
         final Button deleteAll = view.findViewById(R.id.deleteAllCheckpoints);
-        deleteAll.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final AlertDialog.Builder warnUser = new AlertDialog.Builder(getContext());
-                String warningString = "This will delete all data. There are currently " + String.valueOf(grabCheckpoints().getNumberUnpassedOrUnreported()) + " unreported or unpassed racers.";
-                warnUser.setTitle("Warning:");
-                warnUser.setCancelable(true);
-                warnUser.setMessage(warningString);
-                warnUser.setPositiveButton("Cancel", null);
-                warnUser.setNegativeButton("Delete All", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        grabCheckpoints().clearCheckpointData();
-                        grabCheckpoints().notifyObservers();
-                    }
-                });
-                AlertDialog warnUserDialog = warnUser.create();
-                warnUserDialog.show();
+        deleteAll.setOnClickListener(view1 -> {
+            final AlertDialog.Builder warnUser = new AlertDialog.Builder(getContext());
+            String warningString = "This will delete all data. There are currently " + grabCheckpoints().getNumberUnpassedOrUnreported() + " unreported or unpassed racers.";
+            warnUser.setTitle("Warning:");
+            warnUser.setCancelable(true);
+            warnUser.setMessage(warningString);
+            warnUser.setPositiveButton("Cancel", null);
+            warnUser.setNegativeButton("Delete All", (dialogInterface, i) -> {
+                grabCheckpoints().clearCheckpointData();
+                grabCheckpoints().notifyObservers();
+            });
+            AlertDialog warnUserDialog = warnUser.create();
+            warnUserDialog.show();
 
-            }
         });
     }
 
     private void setDeleteCheckpointButton(View view) {
         final Button deleteCheckpoint = view.findViewById(R.id.deleteCheckpointButton);
-        deleteCheckpoint.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity(), R.style.CustomDialogTheme);
-                dialogBuilder.setTitle("Delete Checkpoint:");
-                dialogBuilder.setCancelable(true);
-                final ArrayList<Integer> possibilities = grabCheckpoints().getCheckpointNumberList();
-                final CharSequence[] checkpointNumberStrings = new CharSequence[possibilities.size()];
-                int count = 0;
-                for (int item : possibilities) {
-                    checkpointNumberStrings[count] = (CharSequence) String.valueOf(item);
-                    count++;
-                }
-
-                dialogBuilder.setItems(checkpointNumberStrings, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        final AlertDialog.Builder doubleCheckBuilder = new AlertDialog.Builder(getActivity());
-                        doubleCheckBuilder.setTitle("Are you sure?");
-                        doubleCheckBuilder.setMessage("You are about to delete checkpoint " + checkpointNumberStrings[i] + ". This cannot be reversed. There are " + String.valueOf(grabCheckpoints().getCheckpoint(possibilities.get(i)).getNumberUnreportedAndUnpassedRacers()) + " Unreported or Unpassed racers in this checkpoint");
-                        doubleCheckBuilder.setPositiveButton("Cancel", null);
-                        final int selectedItem = i;
-                        doubleCheckBuilder.setNegativeButton("Confirm", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                grabCheckpoints().deleteCheckpoint(possibilities.get(selectedItem));
-                                grabCheckpoints().notifyObservers();
-                            }
-                        });
-                        doubleCheckBuilder.setCancelable(true);
-                        doubleCheckBuilder.create().show();
-                    }
-                });
-
-                dialogBuilder.create().show();
+        deleteCheckpoint.setOnClickListener(view1 -> {
+            final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity(), R.style.CustomDialogTheme);
+            dialogBuilder.setTitle("Delete Checkpoint:");
+            dialogBuilder.setCancelable(true);
+            final ArrayList<Integer> possibilities = grabCheckpoints().getCheckpointNumberList();
+            final CharSequence[] checkpointNumberStrings = new CharSequence[possibilities.size()];
+            int count = 0;
+            for (int item : possibilities) {
+                checkpointNumberStrings[count] = String.valueOf(item);
+                count++;
             }
+
+            dialogBuilder.setItems(checkpointNumberStrings, (dialogInterface, i) -> {
+                final AlertDialog.Builder doubleCheckBuilder = new AlertDialog.Builder(getActivity());
+                doubleCheckBuilder.setTitle("Are you sure?");
+                doubleCheckBuilder.setMessage("You are about to delete checkpoint " + checkpointNumberStrings[i] + ". This cannot be reversed. There are " + grabCheckpoints().getCheckpoint(possibilities.get(i)).getNumberUnreportedAndUnpassedRacers() + " Unreported or Unpassed racers in this checkpoint");
+                doubleCheckBuilder.setPositiveButton("Cancel", null);
+                final int selectedItem = i;
+                doubleCheckBuilder.setNegativeButton("Confirm", (dialogInterface1, i1) -> {
+                    grabCheckpoints().deleteCheckpoint(possibilities.get(selectedItem));
+                    grabCheckpoints().notifyObservers();
+                });
+                doubleCheckBuilder.setCancelable(true);
+                doubleCheckBuilder.create().show();
+            });
+
+            dialogBuilder.create().show();
         });
     }
 
     private void setExportJSONButton(View view) {
         Button exportJsonButton = view.findViewById(R.id.exportJsonButton);
-        exportJsonButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //This is code to create an android share event - In this case, the json values of all of the checkpoints are sent.
-                //This means that storing all data, through email or whatever other method the user wishes to use, is possible.
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                String test = new Gson().toJson(grabCheckpoints());
-                sendIntent.putExtra(Intent.EXTRA_TEXT, test); //I need a to-String or JSON creator here
-                sendIntent.setType("text/json");
-                Intent shareIntent = Intent.createChooser(sendIntent, null);
-                startActivity(shareIntent);
+        exportJsonButton.setOnClickListener(view1 -> {
+            //This is code to create an android share event - In this case, the json values of all of the checkpoints are sent.
+            //This means that storing all data, through email or whatever other method the user wishes to use, is possible.
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            String test = new Gson().toJson(grabCheckpoints());
+            sendIntent.putExtra(Intent.EXTRA_TEXT, test); //I need a to-String or JSON creator here
+            sendIntent.setType("text/json");
+            Intent shareIntent = Intent.createChooser(sendIntent, null);
+            startActivity(shareIntent);
 
-            }
         });
     }
 
     private void setNewCheckpointButton(View view) {
         Button checkpointButton = view.findViewById(R.id.createCheckpointButton);
-        checkpointButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(getContext());
-                final View addNewCheckpointView = getLayoutInflater().inflate(R.layout.create_new_checkpoint, null);
-                alertBuilder.setView(addNewCheckpointView);
-                alertBuilder.setPositiveButton("Add Checkpoint", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+        checkpointButton.setOnClickListener(view12 -> {
+            final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(getContext());
+            final View addNewCheckpointView = getLayoutInflater().inflate(R.layout.create_new_checkpoint, null);
+            alertBuilder.setView(addNewCheckpointView);
+            alertBuilder.setPositiveButton("Add Checkpoint", (dialogInterface, i) -> {
 
+            });
+
+            alertBuilder.setNegativeButton("Cancel", (dialogInterface, i) -> {
+
+            });
+
+
+            final AlertDialog toShow = alertBuilder.create();
+            toShow.show();
+            toShow.findViewById(R.id.newCheckpointNumber).requestFocus();
+
+            //Code to bring up keyboard, and dismiss it on dialog close
+            InputMethodManager inputMethodManager = (InputMethodManager) Objects.requireNonNull(getContext()).getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+            toShow.setOnDismissListener(dialogInterface -> {
+                InputMethodManager inputMethodManager1 = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager1.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+            });
+
+            Button createButtonAction = toShow.getButton(DialogInterface.BUTTON_POSITIVE);
+            createButtonAction.setOnClickListener(view1 -> {
+                //TODO add error checking here
+                TextView checkpointNumberTextBox = addNewCheckpointView.findViewById(R.id.newCheckpointNumber);
+
+                try {
+                    int checkPointNumber = Integer.parseInt(checkpointNumberTextBox.getText().toString());
+                    //I need to do some error checking hereCheckpoint
+                    if (grabCheckpoints().hasCheckpoint(checkPointNumber)) {
+                        final AlertDialog.Builder errorMessage = new AlertDialog.Builder(getContext(), R.style.CustomDialogTheme);
+                        errorMessage.setTitle("Error");
+                        errorMessage.setCancelable(true);
+                        errorMessage.setMessage("That checkpoint already exists and cannot be created.");
+                        errorMessage.setPositiveButton("Okay", null);
+                        errorMessage.create().show();
+                    } else {
+                        Checkpoint createdPoint = new Checkpoint(checkPointNumber, grabCheckpoints().getCheckpoint(grabCheckpoints().getCurrentCheckpointNumber()).getRacers().size());
+                        grabCheckpoints().addCheckpoint(createdPoint);
+                        grabCheckpoints().notifyObservers();
+                        toShow.dismiss();
                     }
-                });
-
-                alertBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                    }
-                });
-
-
-                final AlertDialog toShow = alertBuilder.create();
-                toShow.show();
-                toShow.findViewById(R.id.newCheckpointNumber).requestFocus();
-
-                //Code to bring up keyboard, and dismiss it on dialog close
-                InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-                toShow.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialogInterface) {
-                        InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                        inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-                    }
-                });
-
-                Button createButtonAction = toShow.getButton(DialogInterface.BUTTON_POSITIVE);
-                createButtonAction.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        //TODO add error checking here
-                        TextView checkpointNumberTextBox = addNewCheckpointView.findViewById(R.id.newCheckpointNumber);
-
-                        try {
-                            int checkPointNumber = Integer.parseInt(checkpointNumberTextBox.getText().toString());
-                            //I need to do some error checking hereCheckpoint
-                            if (grabCheckpoints().hasCheckpoint(checkPointNumber)) {
-                                final AlertDialog.Builder errorMessage = new AlertDialog.Builder(getContext(), R.style.CustomDialogTheme);
-                                errorMessage.setTitle("Error");
-                                errorMessage.setCancelable(true);
-                                errorMessage.setMessage("That checkpoint already exists and cannot be created.");
-                                errorMessage.setPositiveButton("Okay", null);
-                                errorMessage.create().show();
-                            } else {
-                                Checkpoint createdPoint = new Checkpoint(checkPointNumber,grabCheckpoints().getCheckpoint(grabCheckpoints().getCurrentCheckpointNumber()).getRacers().size());
-                                grabCheckpoints().addCheckpoint(createdPoint);
-                                grabCheckpoints().notifyObservers();
-                                toShow.dismiss();
-                            }
-                        } catch (Exception e) {
-                            final AlertDialog.Builder errorMessage = new AlertDialog.Builder(getContext(), R.style.CustomDialogTheme);
-                            errorMessage.setTitle("Error");
-                            errorMessage.setCancelable(true);
-                            errorMessage.setMessage("Invalid Checkpoint Input. The checkpoint must be a whole integer.");
-                            errorMessage.setPositiveButton("Okay", null);
-                            errorMessage.create().show();
-                        }
+                } catch (Exception e) {
+                    final AlertDialog.Builder errorMessage = new AlertDialog.Builder(getContext(), R.style.CustomDialogTheme);
+                    errorMessage.setTitle("Error");
+                    errorMessage.setCancelable(true);
+                    errorMessage.setMessage("Invalid Checkpoint Input. The checkpoint must be a whole integer.");
+                    errorMessage.setPositiveButton("Okay", null);
+                    errorMessage.create().show();
+                }
 
 
-                    }
-                });
-            }
+            });
         });
     }
 
@@ -425,7 +361,7 @@ public class CheckpointFragment extends Fragment implements CheckpointGrabber {
      * This checks to make sure that bluetooth permissions are adequate for what's needed
      */
     private void checkPermissions() {
-        int permissionCheck = getActivity().checkSelfPermission("Manifest.permission.ACCESS_FINE_LOCATION");
+        int permissionCheck = Objects.requireNonNull(getActivity()).checkSelfPermission("Manifest.permission.ACCESS_FINE_LOCATION");
         permissionCheck += getActivity().checkSelfPermission("Manifest.permission.ACCESS_COARSE_LOCATION");
         permissionCheck += getActivity().checkSelfPermission("Manifest.permission.BLUETOOTH");
         permissionCheck += getActivity().checkSelfPermission("Manifest.permission.BLUETOOTH_ADMIN");

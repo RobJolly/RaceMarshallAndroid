@@ -2,6 +2,7 @@ package uk.co.robertjolly.racemarshallandroid.ui.main.fragments;
 
 //Open-source android libraries: https://source.android.com/. Apache 2.0.
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 //General/default java libraries: https://docs.oracle.com/javase/7/docs/api/index.html
+import java.util.Objects;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -21,7 +23,7 @@ import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
 import uk.co.robertjolly.racemarshallandroid.ui.main.CheckpointGrabber;
 import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.RacerTimesRecyclerViewAdapter;
-import uk.co.robertjolly.racemarshallandroid.ui.main.customElements.CheckpointFob;
+import uk.co.robertjolly.racemarshallandroid.ui.main.customElements.CheckpointFab;
 
 //TODO Java doc this
 public class RacerTimesFragment extends Fragment implements Observer, CheckpointGrabber {
@@ -46,50 +48,36 @@ public class RacerTimesFragment extends Fragment implements Observer, Checkpoint
         recView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recView.setAdapter(new RacerTimesRecyclerViewAdapter(checkpoints, this.getContext()));
 
-        checkpoints.addObserver(new Observer() {
-            @Override
-            public void update(Observable observable, Object o) {
-                try {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            recView.getAdapter().notifyDataSetChanged();
-                        }
-                    });
-                } catch (Exception e) {
-
-                }
-                //recView.getAdapter().notifyDataSetChanged();
+        checkpoints.addObserver((observable, o) -> {
+            try {
+                Objects.requireNonNull(getActivity()).runOnUiThread(() -> Objects.requireNonNull(recView.getAdapter()).notifyDataSetChanged());
+            } catch (Exception e) {
+                Log.w("Warning", "Cold not notify the recycler view of the checkpoint update.");
             }
         });
 
-        CheckpointFob.createCheckpointFob(view, getActivity(), checkpoints);
-     /*   allData.addObserver(new Observer() {
-            @Override
-            public void update(Observable observable, Object o) {
-                //reload view here
-            }
-        });*/
-
+        CheckpointFab.createCheckpointFob(view, getActivity(), checkpoints);
 
         return view;
     }
 
-    //TODO Java doc this
+    /**
+     * Required function for fragment
+     * @param observable -
+     * @param o -
+     */
     @Override
     public void update(Observable observable, Object o) {
         //refresh view here
     }
 
-    //TODO Java doc this
+    /**
+     * Grabber for the checkpoints. Grabs this from MainActivity
+     * @return Checkpoints grabbed from MainActivity
+     */
     @Override
     public Checkpoints grabCheckpoints() {
-        MainActivity activity = (MainActivity) getActivity();
-        return activity.getCheckpoints();
-        //SectionsPagerAdapter adapter = (SectionsPagerAdapter) pager.getAdapter();
-        //return adapter.getCheckpoints();
-       // Checkpoint checkpoint = checkpoints.getCheckpoint(1);
-       // int i = 0;
-       // return ((SectionsPagerAdapter) Objects.requireNonNull(((ViewPager) Objects.requireNonNull(getActivity()).findViewById(R.id.mainViewPager)).getAdapter())).grabCheckpoints();
+        MainActivity activity = (MainActivity) getActivity(); //Yes, this is not ideal. For my purposes it works.
+        return Objects.requireNonNull(activity).getCheckpoints();
     }
 }

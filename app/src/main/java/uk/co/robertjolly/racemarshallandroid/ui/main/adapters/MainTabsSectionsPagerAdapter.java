@@ -34,12 +34,12 @@ public class MainTabsSectionsPagerAdapter extends FragmentPagerAdapter {
     /**
      * Constructor for the fragment page adapter.
      *
-     * @param context
-     * @param fm
-     * @param checkpoints
+     * @param context context
+     * @param fm fragment manager
+     * @param checkpoints checkpoints which will be sent and grabbed from all over the app.
      */
     public MainTabsSectionsPagerAdapter(Context context, FragmentManager fm, Checkpoints checkpoints) {
-        super(fm);
+        super(fm); //don't have a choice about using this.
         mContext = context;
         setCheckpoints(checkpoints);
         setSelectionsStateManager(new SelectionsStateManager(getCheckpoints()));

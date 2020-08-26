@@ -2,13 +2,12 @@ package uk.co.robertjolly.racemarshallandroid.ui.main.fragments;
 
 //Open-source android libraries: https://source.android.com/. Apache 2.0.
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -28,7 +27,7 @@ import uk.co.robertjolly.racemarshallandroid.data.DisplayFilterManager;
 import uk.co.robertjolly.racemarshallandroid.data.SelectionsStateManager;
 import uk.co.robertjolly.racemarshallandroid.ui.main.CheckpointGrabber;
 import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.MainTabsSectionsPagerAdapter;
-import uk.co.robertjolly.racemarshallandroid.ui.main.customElements.CheckpointFob;
+import uk.co.robertjolly.racemarshallandroid.ui.main.customElements.CheckpointFab;
 
 //TODO Java doc this
 public class ActiveRacerFragment extends Fragment implements CheckpointGrabber {
@@ -42,7 +41,7 @@ public class ActiveRacerFragment extends Fragment implements CheckpointGrabber {
         if (savedInstanceState != null) {
             try {
                 SelectionsStateManager test = (SelectionsStateManager) savedInstanceState.get("selectionsStateManager");
-                test.setCheckpoints(grabCheckpoints());
+                Objects.requireNonNull(test).setCheckpoints(grabCheckpoints());
                 setSelectionsStateManager(test);
             } catch (Exception e) { //something gone wrong with the bundle - go with the backup loading
                 setSelectionsStateManager(new SelectionsStateManager(grabCheckpoints()));
@@ -72,35 +71,23 @@ public class ActiveRacerFragment extends Fragment implements CheckpointGrabber {
         }
         view.setTag("ActiveRacerFragment");
 
-        FloatingActionButton fobFilter = (FloatingActionButton) view.findViewById(R.id.filterFob);
-        fobFilter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity(), R.style.CustomDialogTheme);
-                dialogBuilder.setTitle(R.string.FilterRacers);
-                dialogBuilder.setCancelable(true);
+        FloatingActionButton fobFilter = view.findViewById(R.id.filterFob);
+        fobFilter.setOnClickListener(view1 -> {
+            final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity(), R.style.CustomDialogTheme);
+            dialogBuilder.setTitle(R.string.FilterRacers);
+            dialogBuilder.setCancelable(true);
 
-                dialogBuilder.setMultiChoiceItems(getDisplayFilterManager().getFilterNames(getResources()), getDisplayFilterManager().getBooleanFilterList(), new DialogInterface.OnMultiChoiceClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i, boolean b) {
-                        getDisplayFilterManager().changeFilter(i, b);
-                        getDisplayFilterManager().notifyObservers();
-                    }
-                });
-                AlertDialog fobDialog = dialogBuilder.create();
+            dialogBuilder.setMultiChoiceItems(getDisplayFilterManager().getFilterNames(getResources()), getDisplayFilterManager().getBooleanFilterList(), (dialogInterface, i, b) -> {
+                getDisplayFilterManager().changeFilter(i, b);
+                getDisplayFilterManager().notifyObservers();
+            });
+            AlertDialog fobDialog = dialogBuilder.create();
 
-                fobDialog.show();
+            fobDialog.show();
 
-                ListView listView = fobDialog.getListView();
-                //int count = listView.getChildCount();
-                //fobDialog.getOwnerActivity().
-                //Button checkIn = (Button) listView.getItemAtPosition(0);
-               // fobDialog.getListView().findViewsWithText(viewArrayList, getResources().getString(R.string.checkedIn), 0);
-               // int i = 0;
-            }
         });
 
-        CheckpointFob.createCheckpointFob(view, getActivity(), grabCheckpoints());
+        CheckpointFab.createCheckpointFob(view, getActivity(), grabCheckpoints());
 
         return view;
     }
@@ -122,10 +109,6 @@ public class ActiveRacerFragment extends Fragment implements CheckpointGrabber {
         return selectionsStateManager;
     }
 
-    /*
-    public SelectionsStateManager grabSelectionsStateManager() {
-        return ((SectionsPagerAdapter) Objects.requireNonNull(((ViewPager) Objects.requireNonNull(getActivity()).findViewById(R.id.mainViewPager)).getAdapter())).getSelectionsStateManager();
-    }*/
 
     //TODO Java doc this
     public DisplayFilterManager getDisplayFilterManager() {

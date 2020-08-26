@@ -143,7 +143,7 @@ public class DisplayFilterManager extends Observable implements Parcelable, Seri
                         setChanged();
                     break;
                 default:
-                    Log.w("Warning", "Filter attempting to be changed that is out of index. Index: " + String.valueOf(i));
+                    Log.w("Warning", "Filter attempting to be changed that is out of index. Index: " + i);
             }
         } else {
             switch (i) {
@@ -168,7 +168,7 @@ public class DisplayFilterManager extends Observable implements Parcelable, Seri
                     setChanged();
                     break;
                 default:
-                    Log.w("Warning", "Filter attempting to be changed that is out of index. Index: " + String.valueOf(i));
+                    Log.w("Warning", "Filter attempting to be changed that is out of index. Index: " + i);
             }
         }
     }
