@@ -9,8 +9,6 @@ import java.util.Random;
 
 import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
 
-import static org.junit.Assert.*;
-
 public class CheckpointsTest {
 
     @Test

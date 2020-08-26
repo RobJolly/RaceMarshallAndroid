@@ -8,12 +8,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-//import android.R;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
+//Documentation: https://developer.android.com/reference/com/google/android/material/floatingactionbutton/FloatingActionButton
+//Android material components, https://github.com/material-components/material-components-android, Apache 2.0 License.
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Objects;

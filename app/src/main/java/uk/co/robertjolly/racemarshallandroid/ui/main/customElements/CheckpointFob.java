@@ -1,12 +1,12 @@
 package uk.co.robertjolly.racemarshallandroid.ui.main.customElements;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.security.keystore.StrongBoxUnavailableException;
 import android.view.View;
 
+//Documentation: https://developer.android.com/reference/com/google/android/material/floatingactionbutton/FloatingActionButton
+//Android material components, https://github.com/material-components/material-components-android, Apache 2.0 License.
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;

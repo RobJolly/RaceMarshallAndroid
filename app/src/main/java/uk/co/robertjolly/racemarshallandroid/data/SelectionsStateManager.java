@@ -3,7 +3,6 @@ package uk.co.robertjolly.racemarshallandroid.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Observable;
@@ -13,7 +12,7 @@ import uk.co.robertjolly.racemarshallandroid.data.enums.RacerDisplayFilter;
 import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
 
 //TODO Java doc this
-public class SelectionsStateManager extends Observable implements Parcelable {
+public class SelectionsStateManager extends Observable implements Parcelable { //Not Serializable as shouldn't be saved long-term
 
     Checkpoints checkpoints;
     ArrayList<Racer> selected;

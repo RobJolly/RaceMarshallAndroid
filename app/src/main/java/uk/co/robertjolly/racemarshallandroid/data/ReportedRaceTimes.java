@@ -1,9 +1,11 @@
 package uk.co.robertjolly.racemarshallandroid.data;
 
 import android.annotation.SuppressLint;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
+//From https://github.com/google/gson. Apache 2.0 license.
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;

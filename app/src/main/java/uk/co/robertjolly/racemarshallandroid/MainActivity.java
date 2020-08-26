@@ -7,12 +7,13 @@ import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.PersistableBundle;
-import android.service.autofill.FillEventHistory;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+//Documentation: https://developer.android.com/reference/com/google/android/material/tabs/TabLayout
+//Android material components, https://github.com/material-components/material-components-android, Apache 2.0 License.
 import com.google.android.material.tabs.TabLayout;
 
 import androidx.annotation.NonNull;
@@ -28,7 +29,6 @@ import java.util.Observer;
 
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoint;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
-import uk.co.robertjolly.racemarshallandroid.data.SelectionsStateManager;
 import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.SectionsPagerAdapter;
 
 //TODO Java doc this

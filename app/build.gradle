@@ -34,6 +34,9 @@ repositories {
     maven {
         url "https://jitpack.io"
     }
+    maven {
+        url "https://maven.google.com"
+    }
 }
 
 dependencies {
@@ -50,4 +53,5 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'com.github.douglasjunior.AndroidBluetoothLibrary:BluetoothClassicLibrary:0.3.5'
     implementation 'com.afollestad.material-dialogs:lifecycle:3.3.0'
+    implementation 'com.google.android.gms:play-services-oss-licenses:17.0.0'
 }

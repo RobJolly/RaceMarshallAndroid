@@ -3,7 +3,7 @@ package uk.co.robertjolly.racemarshallandroid.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.gson.Gson;
+//From https://github.com/google/gson. Apache 2.0 license.
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;

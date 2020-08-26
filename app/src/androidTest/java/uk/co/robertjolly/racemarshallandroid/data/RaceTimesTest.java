@@ -1,11 +1,14 @@
 package uk.co.robertjolly.racemarshallandroid.data;
 
 import android.os.Parcel;
+
 import org.junit.Test;
-import java.util.Date;
-import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
 import static org.junit.Assert.*;
+
+import java.util.Date;
 import java.util.Random;
+
+import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
 
 public class RaceTimesTest {
 

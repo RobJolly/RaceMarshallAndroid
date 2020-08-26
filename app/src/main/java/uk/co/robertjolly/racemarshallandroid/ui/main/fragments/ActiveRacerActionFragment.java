@@ -1,7 +1,6 @@
 package uk.co.robertjolly.racemarshallandroid.ui.main.fragments;
 
 import android.app.AlertDialog;
-import android.app.SearchManager;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,13 +12,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.viewpager.widget.ViewPager;
 
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
-import java.util.Objects;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -27,14 +21,10 @@ import uk.co.robertjolly.racemarshallandroid.MainActivity;
 import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
 import uk.co.robertjolly.racemarshallandroid.data.Racer;
-import uk.co.robertjolly.racemarshallandroid.data.ReportedRaceTimes;
 import uk.co.robertjolly.racemarshallandroid.data.SelectionsStateManager;
 import uk.co.robertjolly.racemarshallandroid.ui.main.CheckpointGrabber;
 import uk.co.robertjolly.racemarshallandroid.ui.main.SelectionManagerGrabber;
-import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.SectionsPagerAdapter;
 import uk.co.robertjolly.racemarshallandroid.ui.main.customElements.TimeButton;
-
-import com.ikovac.timepickerwithseconds.*; //Note - this is not mine, but an opensource project.
 
 //TODO Java doc this
 public class ActiveRacerActionFragment extends Fragment implements SelectionManagerGrabber, CheckpointGrabber{

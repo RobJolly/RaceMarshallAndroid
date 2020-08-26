@@ -8,7 +8,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.Button;;
 
-
+//From https://github.com/IvanKovac/TimePickerWithSeconds. Open Source, no pre-made license. Use and change freely, no requirement for attribution. No guarantee.
 import com.ikovac.timepickerwithseconds.MyTimePickerDialog;
 
 import java.text.SimpleDateFormat;
