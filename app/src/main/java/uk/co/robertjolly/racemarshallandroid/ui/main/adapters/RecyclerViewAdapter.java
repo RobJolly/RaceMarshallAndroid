@@ -1,16 +1,18 @@
 package uk.co.robertjolly.racemarshallandroid.ui.main.adapters;
 
+//Open-source android libraries: https://source.android.com/. Apache 2.0.
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+//General/default java libraries: https://docs.oracle.com/javase/7/docs/api/index.html
 import java.util.Observable;
 import java.util.Observer;
 
+//Projects own classes.
 import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.CheckOffStateManager;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;

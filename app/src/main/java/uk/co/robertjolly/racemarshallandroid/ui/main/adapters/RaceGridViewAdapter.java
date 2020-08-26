@@ -1,5 +1,6 @@
 package uk.co.robertjolly.racemarshallandroid.ui.main.adapters;
 
+//Open-source android libraries: https://source.android.com/. Apache 2.0.
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -8,10 +9,12 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 
+//General/default java libraries: https://docs.oracle.com/javase/7/docs/api/index.html
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
+//Projects own classes.
 import uk.co.robertjolly.racemarshallandroid.data.DisplayFilterManager;
 import uk.co.robertjolly.racemarshallandroid.data.Racer;
 import uk.co.robertjolly.racemarshallandroid.data.SelectionsStateManager;

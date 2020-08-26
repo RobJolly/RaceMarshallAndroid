@@ -1,15 +1,16 @@
 package uk.co.robertjolly.racemarshallandroid.ui.main.fragments;
 
+//Open-source android libraries: https://source.android.com/. Apache 2.0.
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+//Projects own classes.
 import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
 import uk.co.robertjolly.racemarshallandroid.data.DisplayFilterManager;

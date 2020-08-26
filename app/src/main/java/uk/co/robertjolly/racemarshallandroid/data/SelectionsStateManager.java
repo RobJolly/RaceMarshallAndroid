@@ -1,13 +1,16 @@
 package uk.co.robertjolly.racemarshallandroid.data;
 
+//Open-source android libraries: https://source.android.com/. Apache 2.0.
 import android.os.Parcel;
 import android.os.Parcelable;
 
+//General/default java libraries: https://docs.oracle.com/javase/7/docs/api/index.html
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Observable;
 import java.util.Observer;
 
+//Projects own classes.
 import uk.co.robertjolly.racemarshallandroid.data.enums.RacerDisplayFilter;
 import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
 

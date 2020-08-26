@@ -1,5 +1,6 @@
 package uk.co.robertjolly.racemarshallandroid.ui.main.customElements;
 
+//Open-source android libraries: https://source.android.com/. Apache 2.0.
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -9,10 +10,12 @@ import android.view.View;
 //Android material components, https://github.com/material-components/material-components-android, Apache 2.0 License.
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+//General/default java libraries: https://docs.oracle.com/javase/7/docs/api/index.html
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
+//Projects own classes.
 import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
 

@@ -1,5 +1,6 @@
 package uk.co.robertjolly.racemarshallandroid.ui.main.customElements;
 
+//Open-source android libraries: https://source.android.com/. Apache 2.0.
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,6 +12,7 @@ import android.widget.Button;;
 //From https://github.com/IvanKovac/TimePickerWithSeconds. Open Source, no pre-made license. Use and change freely, no requirement for attribution. No guarantee.
 import com.ikovac.timepickerwithseconds.MyTimePickerDialog;
 
+//General/default java libraries: https://docs.oracle.com/javase/7/docs/api/index.html
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;

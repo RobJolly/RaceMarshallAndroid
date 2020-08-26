@@ -1,5 +1,6 @@
 package uk.co.robertjolly.racemarshallandroid.data;
 
+//Open-source android libraries: https://source.android.com/. Apache 2.0.
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -8,15 +9,16 @@ import android.util.Log;
 //From https://github.com/google/gson. Apache 2.0 license.
 import com.google.gson.annotations.SerializedName;
 
+//General/default java libraries: https://docs.oracle.com/javase/7/docs/api/index.html
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Observable;
-
 import javax.annotation.Nullable;
 
+//Projects own classes.
 import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
 
 /**

@@ -1,5 +1,6 @@
 package uk.co.robertjolly.racemarshallandroid.miscClasses;
 
+//Open-source android libraries: https://source.android.com/. Apache 2.0.
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -7,6 +8,7 @@ import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 
+//General/default java libraries: https://docs.oracle.com/javase/7/docs/api/index.html
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -15,6 +17,7 @@ import java.io.OutputStream;
 import java.util.Observable;
 import java.util.UUID;
 
+//Projects own classes.
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoint;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
 

@@ -1,5 +1,6 @@
 package uk.co.robertjolly.racemarshallandroid.ui.main.fragments;
 
+//Open-source android libraries: https://source.android.com/. Apache 2.0.
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
@@ -8,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -18,8 +18,10 @@ import androidx.viewpager.widget.ViewPager;
 //Android material components, https://github.com/material-components/material-components-android, Apache 2.0 License.
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+//General/default java libraries: https://docs.oracle.com/javase/7/docs/api/index.html
 import java.util.Objects;
 
+//Projects own classes.
 import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
 import uk.co.robertjolly.racemarshallandroid.data.DisplayFilterManager;

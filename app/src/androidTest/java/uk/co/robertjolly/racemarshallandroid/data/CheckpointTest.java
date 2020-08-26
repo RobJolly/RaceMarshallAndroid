@@ -1,13 +1,17 @@
 package uk.co.robertjolly.racemarshallandroid.data;
 
+//Open-source android libraries: https://source.android.com/. Apache 2.0.
 import android.os.Parcel;
 
+//Junit: https://junit.org/junit5/. Eclipse Public License - v 2.0.
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+//General/default java libraries: https://docs.oracle.com/javase/7/docs/api/index.html
 import java.util.Date;
 import java.util.Random;
 
+//Projects own classes.
 import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
 
 public class CheckpointTest {

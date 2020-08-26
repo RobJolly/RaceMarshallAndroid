@@ -1,13 +1,16 @@
 package uk.co.robertjolly.racemarshallandroid.data;
 
+//Open-source android libraries: https://source.android.com/. Apache 2.0.
 import android.os.Parcel;
 import android.os.Parcelable;
 
 //From https://github.com/google/gson. Apache 2.0 license.
 import com.google.gson.annotations.SerializedName;
 
+//General/default java libraries: https://docs.oracle.com/javase/7/docs/api/index.html
 import java.io.Serializable;
 
+//Projects own classes.
 import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
 
 //TODO Java doc this

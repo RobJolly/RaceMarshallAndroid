@@ -1,5 +1,6 @@
 package uk.co.robertjolly.racemarshallandroid.ui.main;
 
+//Open-source android libraries: https://source.android.com/. Apache 2.0.
 import androidx.arch.core.util.Function;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

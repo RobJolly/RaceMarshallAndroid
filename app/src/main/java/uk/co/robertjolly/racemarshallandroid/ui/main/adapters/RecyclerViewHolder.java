@@ -1,15 +1,16 @@
 package uk.co.robertjolly.racemarshallandroid.ui.main.adapters;
 
+//Open-source android libraries: https://source.android.com/. Apache 2.0.
 import android.graphics.Paint;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+//Projects own classes.
 import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.ReportedRaceTimes;
 import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;

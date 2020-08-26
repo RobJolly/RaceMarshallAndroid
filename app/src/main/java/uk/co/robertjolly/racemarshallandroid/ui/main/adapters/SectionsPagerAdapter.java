@@ -1,8 +1,8 @@
 package uk.co.robertjolly.racemarshallandroid.ui.main.adapters;
 
+//Open-source android libraries: https://source.android.com/. Apache 2.0.
 import android.content.Context;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
+//Projects own classes.
 import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
 import uk.co.robertjolly.racemarshallandroid.data.SelectionsStateManager;

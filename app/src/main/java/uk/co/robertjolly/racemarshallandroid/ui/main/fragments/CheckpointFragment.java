@@ -1,6 +1,6 @@
 package uk.co.robertjolly.racemarshallandroid.ui.main.fragments;
 
-
+//Open-source android libraries: https://source.android.com/. Apache 2.0.
 import android.Manifest;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -32,12 +31,14 @@ import com.github.douglasjunior.bluetoothclassiclibrary.BluetoothWriter;
 //From https://github.com/google/gson. Apache 2.0 license.
 import com.google.gson.Gson;
 
+//General/default java libraries: https://docs.oracle.com/javase/7/docs/api/index.html
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.UUID;
 
+//Projects own classes.
 import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoint;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;

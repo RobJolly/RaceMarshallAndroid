@@ -1,17 +1,18 @@
 package uk.co.robertjolly.racemarshallandroid.ui.main;
 
+//Open-source android libraries: https://source.android.com/. Apache 2.0.
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+//Projects own classes.
 import uk.co.robertjolly.racemarshallandroid.R;
 
 //TODO Delete this

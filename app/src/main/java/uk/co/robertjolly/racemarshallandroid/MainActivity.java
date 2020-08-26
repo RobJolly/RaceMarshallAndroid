@@ -1,5 +1,6 @@
 package uk.co.robertjolly.racemarshallandroid;
 
+//Open-source android libraries: https://source.android.com/. Apache 2.0.
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,22 +12,23 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
+import androidx.appcompat.app.AlertDialog;
+import androidx.viewpager.widget.ViewPager;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
 
 //Documentation: https://developer.android.com/reference/com/google/android/material/tabs/TabLayout
 //Android material components, https://github.com/material-components/material-components-android, Apache 2.0 License.
 import com.google.android.material.tabs.TabLayout;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.app.AppCompatActivity;
-
+//General/default java libraries: https://docs.oracle.com/javase/7/docs/api/index.html
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
+//Projects own classes.
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoint;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
 import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.SectionsPagerAdapter;
