@@ -15,7 +15,7 @@ import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
 import uk.co.robertjolly.racemarshallandroid.data.SelectionsStateManager;
 import uk.co.robertjolly.racemarshallandroid.ui.main.fragments.ActiveRacerFragment;
-import uk.co.robertjolly.racemarshallandroid.ui.main.fragments.CheckpointFragment;
+import uk.co.robertjolly.racemarshallandroid.ui.main.fragments.SettingsFragment;
 import uk.co.robertjolly.racemarshallandroid.ui.main.fragments.RacerTimesFragment;
 
 /**
@@ -57,7 +57,7 @@ public class MainTabsSectionsPagerAdapter extends FragmentPagerAdapter {
         fragID[0] = allTabs[0].getId();
         allTabs[1] = new RacerTimesFragment();
         fragID[1] = allTabs[1].getId();
-        allTabs[2] = new CheckpointFragment();
+        allTabs[2] = new SettingsFragment();
         fragID[2] = allTabs[2].getId();
 
         return allTabs;

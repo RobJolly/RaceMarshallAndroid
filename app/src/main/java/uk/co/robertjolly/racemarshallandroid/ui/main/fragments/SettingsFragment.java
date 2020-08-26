@@ -5,7 +5,6 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,7 +12,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -44,8 +42,12 @@ import uk.co.robertjolly.racemarshallandroid.miscClasses.RaceMarshallBluetoothCo
 import uk.co.robertjolly.racemarshallandroid.ui.main.CheckpointGrabber;
 import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.MainTabsSectionsPagerAdapter;
 
-//TODO Java doc this
-public class CheckpointFragment extends Fragment implements CheckpointGrabber {
+/**
+ * This is the fragment concerned with 'settings' and Misc. Activities.
+ * Such as: Transfer of checkpoints, creation of new checkpoints, deletion of all data and the
+ * exporting of data.
+ */
+public class SettingsFragment extends Fragment implements CheckpointGrabber {
     private BluetoothConfiguration config = new BluetoothConfiguration();
     private BluetoothService service;
     private BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -56,17 +58,54 @@ public class CheckpointFragment extends Fragment implements CheckpointGrabber {
     private RaceMarshallBluetoothComponent raceMarshallBluetoothComponent;
     private UUID uuidReceive = UUID.fromString("baeed2bb-a07c-486c-a57b-ad6d1c4d5de3");
     private AlertDialog.Builder notifyBuilder;
-    //TODO Java doc this
+
+    /**
+     * This is the function that is called on the creation of the Fragment to initialise the fragment.
+     * @param savedInstanceState The saved data from the previous instance of this fragment, if any has been saved.
+     */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         deviceList.addAll(bluetoothAdapter.getBondedDevices());
 
-
+        //this is the bit that handles the bluetooth functionality of the device.
         raceMarshallBluetoothComponent = new RaceMarshallBluetoothComponent(grabCheckpoints());
         checkPermissions();
+        setupBluetoothServiceAndConfig();
 
-        //Configure bluetooth library from: https://github.com/douglasjunior/AndroidBluetoothLibrary
+        notifyBuilder = new AlertDialog.Builder(getContext());
+        notifyDialog = notifyBuilder.create();
+
+        //this is run when a new checkpoint has been added or a checkpoint has been transmitted.
+        raceMarshallBluetoothComponent.addObserver((observable, o) -> Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+            grabCheckpoints().notifyObservers();
+            AlertDialog.Builder notifyBuilder = new AlertDialog.Builder(getContext());
+            notifyDialog.dismiss();
+            if (raceMarshallBluetoothComponent.isReading()) {
+                raceMarshallBluetoothComponent.setReading(false);
+                notifyBuilder.setMessage("Received Checkpoint");
+
+            } else if (raceMarshallBluetoothComponent.isWriting()) {
+                raceMarshallBluetoothComponent.setWriting(false);
+                notifyBuilder.setMessage("Sent Checkpoint");
+            }
+            notifyDialog = notifyBuilder.create();
+            notifyDialog.show();
+        }));
+    }
+
+    /**
+     * This is the setup function for config and service.
+     * These two are from a library that i'm using to scan for devices via bluetooth.
+     */
+    private void setupBluetoothServiceAndConfig() {
+        //TODO add code ensuring that there is bluetooth here.
+
+        /* Configure bluetooth library from: https://github.com/douglasjunior/AndroidBluetoothLibrary
+         * I'm using this as an easy way to find bluetooth devices. Because doing it manually is a pain.
+         * /It saves a lot of work. The code outside of onDeviceDiscovered is not my own, but provided in
+         the library github project.
+         */
         config.context = getContext();
         config.bluetoothServiceClass = BluetoothClassicService.class;
         config.bufferSize = 1024;
@@ -79,7 +118,6 @@ public class CheckpointFragment extends Fragment implements CheckpointGrabber {
         service.setOnScanCallback(new BluetoothService.OnBluetoothScanCallback() {
             @Override
             public void onDeviceDiscovered(BluetoothDevice device, int rssi) {
-                Log.e("FOUND DEVICE: ", device.getName());
                 if (!deviceList.contains(device)) {
                     deviceList.add(device);
                     if (deviceDialog != null) {
@@ -90,15 +128,26 @@ public class CheckpointFragment extends Fragment implements CheckpointGrabber {
 
             }
 
+            /**
+             * Required by the library.
+             * Ran on the start of the scan.
+             */
             @Override
             public void onStartScan() {
             }
 
+            /**
+             * Required by the library.
+             * Ran on the start of the end of the scan.
+             */
             @Override
             public void onStopScan() {
             }
         });
 
+        /*
+         * This is default behaviour.
+         */
         service.setOnEventCallback(new BluetoothService.OnBluetoothEventCallback() {
             @Override
             public void onDataRead(byte[] buffer, int length) {
@@ -125,49 +174,36 @@ public class CheckpointFragment extends Fragment implements CheckpointGrabber {
             public void onDataWrite(byte[] buffer) {
             }
         });
-
-        notifyBuilder = new AlertDialog.Builder(getContext());
-        notifyDialog = notifyBuilder.create();
-
-        raceMarshallBluetoothComponent.addObserver((observable, o) -> Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
-            grabCheckpoints().notifyObservers();
-            AlertDialog.Builder notifyBuilder = new AlertDialog.Builder(getContext());
-            notifyDialog.dismiss();
-            if (raceMarshallBluetoothComponent.isReading()) {
-                raceMarshallBluetoothComponent.setReading(false);
-                notifyBuilder.setMessage("Received Checkpoint");
-
-            } else if (raceMarshallBluetoothComponent.isWriting()) {
-                raceMarshallBluetoothComponent.setWriting(false);
-                notifyBuilder.setMessage("Sent Checkpoint");
-            }
-            notifyDialog = notifyBuilder.create();
-            notifyDialog.show();
-        }));
-
-
     }
 
-    //TODO Java doc this
+    /**
+     * This is ran before it is shown to the user. This concerns itself with setting actions of
+     * various buttons
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.checkpoints_fragment,container,false);
 
         setNewCheckpointButton(view);
-        //TODO Fix bug whereby racer numbers are not stored in the JSON file.
         setExportJSONButton(view);
         setDeleteAllButton(view);
         setDeleteCheckpointButton(view);
+        setTransferCheckpointButton(view);
+        setReceiveCheckpointButton(view);
+        return view;
+    }
 
-        final Button transferCheckpoint = view.findViewById(R.id.transferCheckpointButton);
-
-        transferCheckpoint.setOnClickListener(view12 -> {
-            service.startScan();
-            alertBuilder = new AlertDialog.Builder(getContext());
-            createAlertDialog();
-        });
-
+    /**
+     * This sets the actions for the receive checkpoint button.
+     * This makes it wait to be contacted by another device, to receive a checkpoint.
+     * @param view The view in which R.id.receiveCheckpointButton exists.
+     */
+    private void setReceiveCheckpointButton(View view) {
         final Button receiveCheckpoint = view.findViewById(R.id.receiveCheckpointButton);
         receiveCheckpoint.setOnClickListener(view1 -> {
             makeDiscoverable();
@@ -183,10 +219,37 @@ public class CheckpointFragment extends Fragment implements CheckpointGrabber {
                 notifyDialog.show();
             });
         });
-        return view;
     }
 
+    /**
+     * This sets the actions of the setTransferCheckpointButton.
+     * Starts scanning for a device and allows the user to pick which device to transmit data to
+     * (and which checkpoint to send)
+     * @param view The view in which R.id.transferCheckpointButton exists.
+     */
+    private void setTransferCheckpointButton(View view) {
+        final Button transferCheckpoint = view.findViewById(R.id.transferCheckpointButton);
+
+        transferCheckpoint.setOnClickListener(view12 -> {
+            service.startScan();
+            alertBuilder = new AlertDialog.Builder(getContext());
+            createAlertDialog();
+        });
+    }
+
+    /**
+     * This sets the actions of the setTransferCheckpointButton.
+     * Starts scanning for a device and allows the user to pick which device to transmit data to
+     * (and which checkpoint to send).
+     */
     private void createAlertDialog() {
+        //TODO Make this a recycle view
+        /*
+         *  As it's less complicated at this stage, i'm using a dialog. This is not ideal, as this dialog has to be
+         *  un and re-made everytime we find a new device. This would be impractical in crowded enviroments and is rather
+         *  irritating to the user.
+         */
+
         String[] deviceNames = new String[deviceList.size()];
         int count = 0;
         for (BluetoothDevice device : deviceList) {
@@ -196,7 +259,7 @@ public class CheckpointFragment extends Fragment implements CheckpointGrabber {
         alertBuilder.setItems(deviceNames, (dialogInterface, i) -> {
             raceMarshallBluetoothComponent.startConnecting(deviceList.get(i), uuidReceive);
             Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
-                notifyBuilder.setMessage("Trying to send checkpoint");
+                notifyBuilder.setMessage("Trying to send checkpoint. If this takes more than a few seconds, it has likely failed, and should be cancelled.");
                 notifyBuilder.setPositiveButton("Cancel", (dialogInterface1, i1) -> {
                     raceMarshallBluetoothComponent.stopConnecting();
                     raceMarshallBluetoothComponent.stopConnection();
@@ -204,15 +267,21 @@ public class CheckpointFragment extends Fragment implements CheckpointGrabber {
                 notifyDialog = notifyBuilder.create();
                 notifyDialog.show();
             });
-            //deviceList.get(i)
+
         });
         deviceDialog = alertBuilder.create();
         deviceDialog.show();
     }
 
+    /**
+     * This sets the actions of the deleteAllButton.
+     * The purpose of this button is to delete all checkpoints upon user request.
+     * @param view The view in which R.id.deleteAllCheckpoints is contained.
+     */
     private void setDeleteAllButton(View view) {
         final Button deleteAll = view.findViewById(R.id.deleteAllCheckpoints);
         deleteAll.setOnClickListener(view1 -> {
+            //This warning is to make sure that the user intended to delete everything.
             final AlertDialog.Builder warnUser = new AlertDialog.Builder(getContext());
             String warningString = "This will delete all data. There are currently " + grabCheckpoints().getNumberUnpassedOrUnreported() + " unreported or unpassed racers.";
             warnUser.setTitle("Warning:");
@@ -225,16 +294,21 @@ public class CheckpointFragment extends Fragment implements CheckpointGrabber {
             });
             AlertDialog warnUserDialog = warnUser.create();
             warnUserDialog.show();
-
         });
     }
 
+    /**
+     * This sets the actions of the deleteCheckpointButton.
+     * The purpose of this button is to delete a single checkpoints upon user request.
+     * @param view The view in which R.id.deleteCheckpointButton is contained.
+     */
     private void setDeleteCheckpointButton(View view) {
         final Button deleteCheckpoint = view.findViewById(R.id.deleteCheckpointButton);
         deleteCheckpoint.setOnClickListener(view1 -> {
             final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity(), R.style.CustomDialogTheme);
             dialogBuilder.setTitle("Delete Checkpoint:");
             dialogBuilder.setCancelable(true);
+            //gets a list of checkpoints
             final ArrayList<Integer> possibilities = grabCheckpoints().getCheckpointNumberList();
             final CharSequence[] checkpointNumberStrings = new CharSequence[possibilities.size()];
             int count = 0;
@@ -243,6 +317,7 @@ public class CheckpointFragment extends Fragment implements CheckpointGrabber {
                 count++;
             }
 
+            //adds another dialog to ensure that the user intended to delete the checkpoint.
             dialogBuilder.setItems(checkpointNumberStrings, (dialogInterface, i) -> {
                 final AlertDialog.Builder doubleCheckBuilder = new AlertDialog.Builder(getActivity());
                 doubleCheckBuilder.setTitle("Are you sure?");
@@ -261,6 +336,11 @@ public class CheckpointFragment extends Fragment implements CheckpointGrabber {
         });
     }
 
+    /**
+     * This sets the actions of the export to json button. The purpose of this button is to allow
+     * the user to share all data stored in the app via the android share feature, in JSON format.
+     * @param view The view which contains R.id.exportJsonButton
+     */
     private void setExportJSONButton(View view) {
         Button exportJsonButton = view.findViewById(R.id.exportJsonButton);
         exportJsonButton.setOnClickListener(view1 -> {
@@ -273,22 +353,28 @@ public class CheckpointFragment extends Fragment implements CheckpointGrabber {
             sendIntent.setType("text/json");
             Intent shareIntent = Intent.createChooser(sendIntent, null);
             startActivity(shareIntent);
-
         });
     }
 
+    /**
+     * This sets the actions of the set new checkpoint button. The purpose of this button is to allow
+     * the user to create a new checkpoint
+     * @param view
+     */
     private void setNewCheckpointButton(View view) {
         Button checkpointButton = view.findViewById(R.id.createCheckpointButton);
         checkpointButton.setOnClickListener(view12 -> {
+            //TODO Add logic to ensure the keyboard is closed upon closure of this dialog.
             final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(getContext());
             final View addNewCheckpointView = getLayoutInflater().inflate(R.layout.create_new_checkpoint, null);
             alertBuilder.setView(addNewCheckpointView);
             alertBuilder.setPositiveButton("Add Checkpoint", (dialogInterface, i) -> {
-
+                //Purposely blank due to limitations that exist before the button is shown to user
+                //This is set later
             });
 
             alertBuilder.setNegativeButton("Cancel", (dialogInterface, i) -> {
-
+                //cancel doesn't need to do anything.
             });
 
 
@@ -296,14 +382,17 @@ public class CheckpointFragment extends Fragment implements CheckpointGrabber {
             toShow.show();
             toShow.findViewById(R.id.newCheckpointNumber).requestFocus();
 
+            //commented out for now due to causing errors.
+            /*
             //Code to bring up keyboard, and dismiss it on dialog close
             InputMethodManager inputMethodManager = (InputMethodManager) Objects.requireNonNull(getContext()).getSystemService(Context.INPUT_METHOD_SERVICE);
             inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
             toShow.setOnDismissListener(dialogInterface -> {
                 InputMethodManager inputMethodManager1 = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                 inputMethodManager1.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-            });
+            });*/
 
+            //creates the actions for the addNewCheckpoint button dialog.
             Button createButtonAction = toShow.getButton(DialogInterface.BUTTON_POSITIVE);
             createButtonAction.setOnClickListener(view1 -> {
                 //TODO add error checking here
@@ -311,7 +400,7 @@ public class CheckpointFragment extends Fragment implements CheckpointGrabber {
 
                 try {
                     int checkPointNumber = Integer.parseInt(checkpointNumberTextBox.getText().toString());
-                    //I need to do some error checking hereCheckpoint
+                    //errors to the user if the checkpoint already exists
                     if (grabCheckpoints().hasCheckpoint(checkPointNumber)) {
                         final AlertDialog.Builder errorMessage = new AlertDialog.Builder(getContext(), R.style.CustomDialogTheme);
                         errorMessage.setTitle("Error");
@@ -319,13 +408,14 @@ public class CheckpointFragment extends Fragment implements CheckpointGrabber {
                         errorMessage.setMessage("That checkpoint already exists and cannot be created.");
                         errorMessage.setPositiveButton("Okay", null);
                         errorMessage.create().show();
-                    } else {
+                    } else { //adds the checkpoint and notifies observers
                         Checkpoint createdPoint = new Checkpoint(checkPointNumber, grabCheckpoints().getCheckpoint(grabCheckpoints().getCurrentCheckpointNumber()).getRacers().size());
                         grabCheckpoints().addCheckpoint(createdPoint);
                         grabCheckpoints().notifyObservers();
                         toShow.dismiss();
                     }
                 } catch (Exception e) {
+                    //error if the user has input invalid options for the checkpoint
                     final AlertDialog.Builder errorMessage = new AlertDialog.Builder(getContext(), R.style.CustomDialogTheme);
                     errorMessage.setTitle("Error");
                     errorMessage.setCancelable(true);
@@ -333,32 +423,33 @@ public class CheckpointFragment extends Fragment implements CheckpointGrabber {
                     errorMessage.setPositiveButton("Okay", null);
                     errorMessage.create().show();
                 }
-
-
             });
         });
     }
 
-    //TODO Java doc this
+    /**
+     * This function grabs the checkpoints from the MainTabsSectionsPagerAdapter, within the activity
+     * @return The grabbed checkpoints
+     */
     @Override
     public Checkpoints grabCheckpoints() {
+        //This is a bit unsafe, but easy way of doing it.
         return ((MainTabsSectionsPagerAdapter) Objects.requireNonNull(((ViewPager) Objects.requireNonNull(getActivity()).findViewById(R.id.mainViewPager)).getAdapter())).getCheckpoints();
 
     }
 
+    /**
+     * This makes the phone request being discoverable via bluetooth for 120 seconds.
+     */
     private void makeDiscoverable() {
         Intent makeDiscoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
         makeDiscoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 120);
         startActivity(makeDiscoverableIntent);
     }
 
-
-    private ArrayList<BluetoothDevice> searchBluetoothDevices() {
-        return null;
-    }
-
     /**
-     * This checks to make sure that bluetooth permissions are adequate for what's needed
+     * This checks to make sure that bluetooth permissions are adequate for what's needed and
+     * requests them if they're not.
      */
     private void checkPermissions() {
         int permissionCheck = Objects.requireNonNull(getActivity()).checkSelfPermission("Manifest.permission.ACCESS_FINE_LOCATION");
@@ -368,7 +459,5 @@ public class CheckpointFragment extends Fragment implements CheckpointGrabber {
         if (permissionCheck != 0) {
             this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN}, 0);
         }
-
     }
-
 }

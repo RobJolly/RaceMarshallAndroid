@@ -12,6 +12,8 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,7 +26,6 @@ import com.google.android.material.tabs.TabLayout;
 //General/default java libraries: https://docs.oracle.com/javase/7/docs/api/index.html
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
-import java.util.ArrayList;
 import java.util.Observer;
 
 //Projects own classes.
@@ -32,39 +33,54 @@ import uk.co.robertjolly.racemarshallandroid.data.Checkpoint;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
 import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.MainTabsSectionsPagerAdapter;
 
-//TODO Java doc this
+/**
+ * This is the main activity. Ran upon load of the app, and handles EVERYTHING.
+ */
 public class MainActivity extends AppCompatActivity {
 
     private MainTabsSectionsPagerAdapter pagerAdapter;
     private Checkpoints checkpoints;
     private boolean showingDialog = false;
-    private ArrayList<BroadcastReceiver> registeredReceivers = new ArrayList<>();
     private Observer askDialog;
 
-    //private SelectionsStateManager selected; //bad practice, but works for now.
-    //TODO Java doc this
+    /**
+     * Constructor for main activity. Initialises data.
+     */
     public MainActivity() {
         initialise();
     }
 
-    //TODO Java doc this
+    /**
+     * Constructor for main activity. Initialises data.
+     * @param contentLayoutId contentLayoutId
+     */
     public MainActivity(int contentLayoutId) {
         super(contentLayoutId);
         initialise();
     }
 
-    //TODO Java doc this
+    /**
+     * This function initialises the checkpoints data and the pagerAdapter.
+     * Checkpoints data is loaded from file if available.
+     */
     private void initialise() {
         checkpoints = createRaceData();
         pagerAdapter = createPagerAdapter();
     }
 
-    //TODO Java doc this
+    /**
+     * This creates the pagerAdapter that handles the tabs of the activity.
+     * @return the pagerAdapter that handles the tabs of the activity.
+     */
     private MainTabsSectionsPagerAdapter createPagerAdapter() {
         return new MainTabsSectionsPagerAdapter(this, getSupportFragmentManager(), getCheckpoints());
     }
 
-    //TODO Java doc this
+    /**
+     * This is called upon the creation of the main activity and initialises it with some data.
+     * This function grabs some data from the savedInstanceState if not null, to set Checkpoints.
+     * @param savedInstanceState Saved data from a previous instance, if any exist.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
@@ -82,16 +98,27 @@ public class MainActivity extends AppCompatActivity {
         ViewPager viewPager = findViewById(R.id.mainViewPager);
         pagerAdapter = createPagerAdapter();
         viewPager.setAdapter(pagerAdapter);
+
+        /*
+        This sets the pager to have all of the tabs loaded at once. This is bad practice, but as I only have
+        3 relatively small tabs, its not a massive problem. It's bad practice, but would require more time to
+        work around than is worth.
+         */
         viewPager.setOffscreenPageLimit(pagerAdapter.getCount()); //bad practice, but a ton of effort to work around
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
 
         if (!checkpoints.hasCheckpoints()) {
-            //TODO Change this alert dialog to a dialog fragment - fix bug whereby if screen tilted before input, there will be a crash
+            //TODO This would probably be better as a dialog fragment.
             askForCheckpointsDialog(this);
         }
 
         final Context context = this;
+        /*
+        This observer handles what's done when checkpoints are empty, by displaying a box for the user to input data,
+        and what's done when there's a mismatch between the selectedCheckpoint and the checkpoints that actually exist
+        within the Checkpoints object.
+         */
         askDialog = (observable, o) -> {
             saveData();
 
@@ -109,6 +136,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * This asks the user to provide information to create a new race.
+     * @param context context
+     */
     private void askForCheckpointsDialog(final Context context) {
         //TODO Change this alert dialog to a dialog fragment - fix bug whereby if screen tilted before input, there will be a crash
         final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
@@ -168,6 +199,9 @@ public class MainActivity extends AppCompatActivity {
         toShow.show();
     }
 
+    /**
+     * This resets the selected checkpoint to one which exists within Checkpoints.
+     */
     private void resetSelectedCheckpoint() {
         checkpoints.setCurrentCheckpointNumber(checkpoints.getCheckpointNumberList().get(0));
         checkpoints.notifyObservers();
@@ -179,32 +213,45 @@ public class MainActivity extends AppCompatActivity {
         errorBuilder.create().show();
     }
 
+    /**
+     * This is responsible for saving data upon the end of the instance, so that it can be loaded
+     * into a new instance of this activity. Stores checkpoints.
+     * @param outState The bundle in which to save data.
+     */
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable("checkpoints", getCheckpoints());
     }
 
-    //TODO Java doc this
+    /**
+     * This gets the checkpoints stored within this activity.
+     * @return the checkpoints stored within this activity.
+     */
     public Checkpoints getCheckpoints() {
         return checkpoints;
     }
 
-    //TODO Java doc this
+    /**
+     * This function attempts to create the racer data. First, by trying to load from file, and
+     * then by creating a new Checkpoint if that can't be done.
+     * @return Checkpoints, from file or new if none saved to file.
+     */
     private Checkpoints createRaceData() {
         Checkpoints loadedCheckpointData = loadCheckpoints();
-        Checkpoints checkpoints = new Checkpoints();
 
         if (loadedCheckpointData != null) { //create default checkpoint data
             return loadedCheckpointData;
         } else {
             return new Checkpoints();
         }
-
-     //   return checkpoints;
     }
 
-    //TODO Java doc this
+    /**
+     * This loads the checkpoints data from file if possible, returns null if not.
+     * @return Checkpoints loaded from file, or null if not managed.
+     */
+    @Nullable
     private Checkpoints loadCheckpoints() {
         try {
             FileInputStream fileInputStream = this.openFileInput("checkpoints");
@@ -219,11 +266,18 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * This sets the checkpoints stored within this activity to those provided.
+     * @param checkpoints The checkpoints to store within this activity.
+     */
     public void setCheckpoints(Checkpoints checkpoints) {
         this.checkpoints = checkpoints;
     }
 
-    //TODO Javadoc this
+    /**
+     * This saves the data to file. Returns true if successful, false if not.
+     * @return Returns true if successful, false if not.
+     */
     public boolean saveData() {
         try {
             return getCheckpoints().writeToFile("checkpoints", this);
@@ -232,29 +286,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onDestroy() {
-        unregisterReceivers();
-       super.onDestroy();
-    }
-
-    public void unregisterReceivers() {
-
-    }
-
-    public void addReceiver(BroadcastReceiver broadcastReceiver, IntentFilter intentFilter) {
-        registeredReceivers.add(broadcastReceiver);
-        this.registerReceiver(broadcastReceiver, intentFilter);
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState, @NonNull PersistableBundle outPersistentState) {
-        super.onSaveInstanceState(outState, outPersistentState);
-    }
-
+    /**
+     * This is called when configuration is changed.
+     * @param newConfig The new configuration
+     */
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        checkpoints.deleteObserver(askDialog);
+        checkpoints.deleteObserver(askDialog); //an observer is deleted. This prevents multiple dialogs from occurring on screen tilt.
         super.onConfigurationChanged(newConfig);
     }
 }

@@ -27,20 +27,33 @@ import uk.co.robertjolly.racemarshallandroid.ui.main.CheckpointGrabber;
 import uk.co.robertjolly.racemarshallandroid.ui.main.SelectionManagerGrabber;
 import uk.co.robertjolly.racemarshallandroid.ui.main.customElements.TimeButton;
 
-//TODO Java doc this
+/**
+ * This is the fragment that handles user input relating to what to do, to selected racers.
+ * Allows the users to select racers as in, out, etc.
+ */
 public class ActiveRacerActionFragment extends Fragment implements SelectionManagerGrabber, CheckpointGrabber{
     private SelectionsStateManager selectionsStateManager;
 
-    //TODO Java doc this
+    /**
+     * This is the actions performed on the creation of the fragment
+     * @param savedInstanceState saved data from previous instance
+     */
     //TODO Add actions for savedInstanceState != null
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        selectionsStateManager = grabSelectionManager();
+        selectionsStateManager = grabSelectionManager(); //grabs it from above. Not the best, but easy to do.
 
     }
 
-    //TODO Java doc this
+    /**
+     * Actions concerned with the creation of the view to be seen.
+     * This adds observers, text, etc.
+     * @param inflater The inflater
+     * @param container Container of views
+     * @param savedInstanceState Saved data from the previous fragment
+     * @return View that's setup to view
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -108,7 +121,10 @@ public class ActiveRacerActionFragment extends Fragment implements SelectionMana
                         selectionsStateManager.setSelectedNotStarted(((TimeButton) Objects.requireNonNull(getActivity()).findViewById(R.id.timeButton)).getTime());
                         selectionsStateManager.notifyObservers();
                         break;
-                    default: //do nothing
+                    case 2:
+                        //User has clicked cancel. This is intentionally empty. No action need happen.
+                    default:
+                        Log.w("Warning", "User has clicked an action within otherActionButton that is not intended/accounted for");
                 }
             });
             dialogBuilder.show();
@@ -117,8 +133,11 @@ public class ActiveRacerActionFragment extends Fragment implements SelectionMana
         return view;
     }
 
-    //TODO Java doc this
-    public void setSelectedRacersText(TextView textView) {
+    /**
+     * This sets the text of the given TextView. This displays which racers are selected.
+     * @param textView Text view for which to set text.
+     */
+    private void setSelectedRacersText(TextView textView) {
         textView.setText("");
         if (selectionsStateManager.getSelectedCount() > 0) {
             for (Racer racer : selectionsStateManager.getSelected()) {
@@ -132,19 +151,29 @@ public class ActiveRacerActionFragment extends Fragment implements SelectionMana
 
     }
 
-    //TODO Javadoc this
+    /**
+     * This grabs the checkpoints from the main activity.
+     * @return Checkpoints, from the main activity.
+     */
     @Override
     public Checkpoints grabCheckpoints() {
         MainActivity activity = (MainActivity) getActivity();
         return Objects.requireNonNull(activity).getCheckpoints();
     }
 
-    //TODO Javadoc this
+    /**
+     * This grabs the SelectionsStateManager from the parent fragment.
+     * @return SelectionsStateManager, from the parent fragment.
+     */
     @Override
     public SelectionsStateManager grabSelectionManager() {
         return ((ActiveRacerFragment) Objects.requireNonNull(getParentFragment())).getSelectionsStateManager();
     }
 
+    /**
+     * This is run upon the saving of this state, so that it can be loaded/unload
+     * @param outState Bundle in which to write data that will be loaded from later
+     */
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -158,10 +187,5 @@ public class ActiveRacerActionFragment extends Fragment implements SelectionMana
         } catch (Exception e) {
             //Time button just doesn't exist yet, that's fine.
         }
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
     }
 }

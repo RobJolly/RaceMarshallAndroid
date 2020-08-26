@@ -21,13 +21,19 @@ import uk.co.robertjolly.racemarshallandroid.ui.main.CheckpointGrabber;
 import uk.co.robertjolly.racemarshallandroid.ui.main.SelectionManagerGrabber;
 import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.RaceGridViewAdapter;
 
-//TODO Java doc this
+/**
+ * This is the active racer display fragment. The job of this fragment is to show to the user,
+ * the possible racers to select from, and to change the SelectionsStateManager accordingly.
+ */
 public class ActiveRacerDisplayFragment extends Fragment implements CheckpointGrabber, SelectionManagerGrabber {
     private SelectionsStateManager selectionsStateManager;
     private DisplayFilterManager displayFilterManager;
     private Checkpoints checkpoints;
 
-    //TODO Java doc this
+    /**
+     * This is the onCreate function. This initialises the values - grabs the selection manager, filters and checkpoints.
+     * @param savedInstanceState The bundle from which to grab data from a previous instance, if any is there.
+     */
     //TODO Add actions for savedInstanceState != null
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,69 +45,98 @@ public class ActiveRacerDisplayFragment extends Fragment implements CheckpointGr
         setCheckpoints(grabCheckpoints());
     }
 
-    //TODO Java doc this
+    /**
+     * This is called upon the showing of the view. In this, the grid is initialised with the data to be shown
+     * @param inflater The inflater
+     * @param container The container
+     * @param savedInstanceState The bundle from which to grab data from a previous instance, if any is there
+     * @return The view with data set/shown
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.active_racers_display_fragment, container, false);
-        view.setElevation(0); //doesn't work when set in XML - I'm unsure why, but I should fix this later when I know.
+        //view.setElevation(0); //doesn't work when set in XML - I'm unsure why, but I should fix this later when I know.
 
+        //creates the grid view to be shown in this fragment
         final GridView gridView = view.findViewById(R.id.gridView);
         final RaceGridViewAdapter raceGridViewAdapter = new RaceGridViewAdapter(gridView.getContext(), getSelectionsStateManager(), getDisplayFilterManager());
         gridView.setAdapter(raceGridViewAdapter);
         return view;
     }
 
-    //TODO Java doc this
+    /**
+     * This gets the SelectionStateManager stored within this fragment
+     * @return The SelectionStateManager stored within this fragment
+     */
     public SelectionsStateManager getSelectionsStateManager() {
         return selectionsStateManager;
     }
 
-    //TODO Java doc this
+    /**
+     * This sets the SelectionStateManager stored within this fragment
+     * @param selectionsStateManager The SelectionStateManager to store
+     */
     public void setSelectionsStateManager(SelectionsStateManager selectionsStateManager) {
         this.selectionsStateManager = selectionsStateManager;
     }
 
-    //TODO Java doc this
+    /**
+     * Gets the checkpoints stored within this fragment
+     * @return the checkpoints stored within this fragment
+     */
     public Checkpoints getCheckpoints() {
         return checkpoints;
     }
 
-    //TODO Java doc this
+    /**
+     * Sets the checkpoints stored within this fragment
+     * @param checkpoints  the checkpoints to be stored within this fragment
+     */
     public void setCheckpoints(Checkpoints checkpoints) {
         this.checkpoints = checkpoints;
     }
 
-    //TODO Java doc this
+    /**
+     * Gets the displayFilterManager stored within this fragment
+     * @return the DisplayFilterManager stored within this fragment
+     */
     public DisplayFilterManager getDisplayFilterManager() {
         return displayFilterManager;
     }
 
-    //TODO Java doc this
+    /**
+     * Sets the DisplayFilterManager stored within this fragment
+     * @param displayFilterManager the DisplayFilterManager to be stored within this fragment
+     */
     public void setDisplayFilterManager(DisplayFilterManager displayFilterManager) {
         this.displayFilterManager = displayFilterManager;
     }
 
-    //TODO Java doc this
+    /**
+     * This grabs the checkpoints, stored within the parent fragment (ActiveRacerFragment)
+     * @return Checkpoints, grabbed from the parent fragment.
+     */
     @Override
     public Checkpoints grabCheckpoints() {
         return ((ActiveRacerFragment) Objects.requireNonNull(getParentFragment())).grabCheckpoints();
     }
 
-    //TODO Java doc this
+    /**
+     * This grabs the SelectionsStateManager, stored within the parent fragment (ActiveRacerFragment)
+     * @return SelectionsStateManager, grabbed from the parent fragment.
+     */
     @Override
     public SelectionsStateManager grabSelectionManager() {
-        //return ((SectionsPagerAdapter) (((ViewPager) (getActivity()).findViewById(R.id.mainViewPager))).getAdapter()).getSelectionsStateManager();
          return ((ActiveRacerFragment) Objects.requireNonNull(getParentFragment())).getSelectionsStateManager();
     }
 
+    /**
+     * This grabs the DisplayFilterManager, stored within the parent fragment (ActiveRacerFragment)
+     * @return DisplayFilterManager, grabbed from the parent fragment.
+     */
     //TODO Java doc this
     public DisplayFilterManager grabDisplayFilterManager() {
-        //return ((SectionsPagerAdapter) (((ViewPager) (getActivity()).findViewById(R.id.mainViewPager))).getAdapter());
-
-        //(ActiveRacerFragment) getActivity().getFragmentManager().findFragmentById(R.id.get)
-        //return ((ActiveRacerFragment) getActivity().getFragmentManager().findFragmentByTag("ActiveRacerFragment")).getDisplayFilterManager();
-        //MainActivity activity = (MainActivity) getActivity();
         return ((ActiveRacerFragment) Objects.requireNonNull(getParentFragment())).getDisplayFilterManager();
     }
 

@@ -36,11 +36,19 @@ public class RacerTimesFragment extends Fragment implements Observer, Checkpoint
         checkpoints = grabCheckpoints();
     }
 
-    //TODO Java doc this
+    /**
+     * This is the function that is run after onCreate, but before the view is shown to the user.
+     * This initialises the view with the information that should be shown to the user.
+     * The purpose of this is to create a view where the user can view the racer times, report them if desired and
+     * edit them if needed.
+     * @param inflater the inflater.
+     * @param container the container.
+     * @param savedInstanceState The bundle in which data is saved and loaded from any previous views, if any.
+     * @return
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        //checkpoints = grabCheckpoints();
 
         View view = inflater.inflate(R.layout.racer_times_fragment,container,false);
 
@@ -61,8 +69,10 @@ public class RacerTimesFragment extends Fragment implements Observer, Checkpoint
         return view;
     }
 
+
     /**
-     * Required function for fragment
+     * Required function for Fragment extension.
+     * Does not do anything.
      * @param observable -
      * @param o -
      */
