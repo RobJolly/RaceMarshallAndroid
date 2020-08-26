@@ -60,7 +60,7 @@ public class ActiveRacerDisplayFragment extends Fragment implements CheckpointGr
 
         //creates the grid view to be shown in this fragment
         final GridView gridView = view.findViewById(R.id.gridView);
-        final RaceGridViewAdapter raceGridViewAdapter = new RaceGridViewAdapter(gridView.getContext(), getSelectionsStateManager(), getDisplayFilterManager());
+        final RaceGridViewAdapter raceGridViewAdapter = new RaceGridViewAdapter(gridView.getContext(), getSelectionsStateManager(), getDisplayFilterManager(), (ActiveRacerFragment) getParentFragment());
         gridView.setAdapter(raceGridViewAdapter);
         return view;
     }

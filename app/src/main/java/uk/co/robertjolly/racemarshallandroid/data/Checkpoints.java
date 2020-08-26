@@ -13,6 +13,7 @@ import com.google.gson.annotations.SerializedName;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
@@ -301,6 +302,16 @@ public class Checkpoints extends Observable implements Parcelable, Serializable 
         }
 
         getCheckpoints().removeAll(toRemove);
+        setChanged();
+    }
+
+    public void setRacerTime(int checkpointNumber, Racer racerToEdit, TimeTypes timeTypeToEdit, Date timeShown) {
+        getCheckpoint(checkpointNumber).setTime(racerToEdit, timeTypeToEdit, timeShown);
+        setChanged();
+    }
+
+    public void clearRacerTime(int checkpointNumber, Racer racer, TimeTypes type) {
+        getCheckpoint(checkpointNumber).getRacerData(racer).clearTime(type);
         setChanged();
     }
 

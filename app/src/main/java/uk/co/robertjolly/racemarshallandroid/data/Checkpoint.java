@@ -152,7 +152,8 @@ public class Checkpoint extends Observable implements Parcelable, Serializable {
             ReportedRaceTimes grabbedReportedRaceTimes; //get their reported times
             grabbedReportedRaceTimes = racerData.get(racer);
             if (grabbedReportedRaceTimes != null) {
-                if (grabbedReportedRaceTimes.getRaceTimes().getLastSetTime() != null) {
+                if (grabbedReportedRaceTimes.getRaceTimes().getInTime() != null || grabbedReportedRaceTimes.getRaceTimes().getOutTime() != null
+                || grabbedReportedRaceTimes.getRaceTimes().getDroppedOutTime() != null || grabbedReportedRaceTimes.getRaceTimes().getNotStartedTime() != null) {
                     setTimes.put(racer, racerData.get(racer));
                 }
             } else {

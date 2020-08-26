@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 //General/default java libraries: https://docs.oracle.com/javase/7/docs/api/index.html
@@ -22,14 +23,16 @@ import uk.co.robertjolly.racemarshallandroid.data.ReportedRaceTimes;
 public class RacerTimesRecyclerViewAdapter extends RecyclerView.Adapter<RacerTimesRecyclerViewHolder> {
     private Checkpoints checkpoints;
     private CheckOffStateManager toDisplay;
+    private FragmentManager fragmentManager;
 
     /**
      * Constructor for the view adapter
      * @param passedCheckpoints The checkpoints containing data for which to show in the RecyclerViewAdapter
-     * @param mContext context
+     * @param parentFragmentManager Fragment manager of the caller
      */
-    public RacerTimesRecyclerViewAdapter(Checkpoints passedCheckpoints, Context mContext) {
+    public RacerTimesRecyclerViewAdapter(Checkpoints passedCheckpoints, FragmentManager parentFragmentManager) {
         this.checkpoints = passedCheckpoints;
+        this.fragmentManager = parentFragmentManager;
         toDisplay = new CheckOffStateManager(checkpoints, null);
         checkpoints.addObserver((observable, o) -> {
             toDisplay = new CheckOffStateManager(checkpoints, null);
@@ -64,6 +67,7 @@ public class RacerTimesRecyclerViewAdapter extends RecyclerView.Adapter<RacerTim
             holder.makeInvisible();
         } else {
             holder.setRacerButton(String.valueOf(toDisplay.getListToDisplay().get(position).getRacerNumber()));
+            holder.setRacerButtonListener(fragmentManager, checkpoints, toDisplay.getListToDisplay().get(position));
             holder.setRacerTimes(checkpoints.getCheckpoint(checkpoints.getCurrentCheckpointNumber()).getReportedRaceTime(toDisplay.getListToDisplay().get(position)));
             ReportedRaceTimes times = checkpoints.getCheckpoint(checkpoints.getCurrentCheckpointNumber()).getReportedRaceTime(toDisplay.getListToDisplay().get(position));
             holder.setCheckBoxListener(times);

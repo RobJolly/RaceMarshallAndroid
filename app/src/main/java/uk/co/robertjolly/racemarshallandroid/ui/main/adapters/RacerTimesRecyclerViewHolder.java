@@ -7,12 +7,18 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 //Projects own classes.
+import java.util.Objects;
+
 import uk.co.robertjolly.racemarshallandroid.R;
+import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
+import uk.co.robertjolly.racemarshallandroid.data.Racer;
 import uk.co.robertjolly.racemarshallandroid.data.ReportedRaceTimes;
 import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
+import uk.co.robertjolly.racemarshallandroid.ui.main.fragments.EditRacerDialogFragment;
 
 /**
  * This is the class that handles setting a single segment of the recycler view displaying racer times.
@@ -50,6 +56,16 @@ public class RacerTimesRecyclerViewHolder extends RecyclerView.ViewHolder {
      */
     public void setRacerButton(String text) {
         racerButton.setText(text);
+    }
+
+    public void setRacerButtonListener(FragmentManager fragmentManager, Checkpoints checkpoints, Racer racer) {
+        racerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EditRacerDialogFragment editFragment = new EditRacerDialogFragment(checkpoints, racer);
+                editFragment.show(fragmentManager, "Edit Fragment");
+            }
+        });
     }
 
     /**

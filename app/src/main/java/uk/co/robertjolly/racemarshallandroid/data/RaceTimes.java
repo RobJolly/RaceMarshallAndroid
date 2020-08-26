@@ -6,6 +6,8 @@ import android.os.Parcelable;
 import android.util.Log;
 
 //From https://github.com/google/gson. Apache 2.0 license.
+import androidx.annotation.Nullable;
+
 import com.google.gson.annotations.SerializedName;
 
 //General/default java libraries: https://docs.oracle.com/javase/7/docs/api/index.html
@@ -109,6 +111,7 @@ public class RaceTimes implements Parcelable, Serializable {
      *
      * @return The date of check in
      */
+    @Nullable
     public Date getInTime() {
         return inTime;
     }
@@ -117,6 +120,7 @@ public class RaceTimes implements Parcelable, Serializable {
      *
      * @return The date of check out
      */
+    @Nullable
     public Date getOutTime() {
         return outTime;
     }
@@ -125,6 +129,7 @@ public class RaceTimes implements Parcelable, Serializable {
      *
      * @return the date of drop out
      */
+    @Nullable
     public Date getDroppedOutTime() {
         return droppedOutTime;
     }
@@ -133,6 +138,7 @@ public class RaceTimes implements Parcelable, Serializable {
      *
      * @return the date of did not start
      */
+    @Nullable
     public Date getNotStartedTime() {
         return notStartedTime;
     }
@@ -252,4 +258,42 @@ public class RaceTimes implements Parcelable, Serializable {
         }
     }
 
+    @Nullable
+    public Date getTimeOfType(TimeTypes timeType) {
+        switch (timeType) {
+            case IN:
+                return getInTime();
+            case OUT:
+                return getOutTime();
+            case DROPPEDOUT:
+                return getDroppedOutTime();
+            case DIDNOTSTART:
+                return getNotStartedTime();
+            default:
+                Log.e("ERROR", "Attempted to get time of a type that isn't handled. Null has been returned instead.");
+                return null;
+        }
+    }
+
+    public void clearTime(TimeTypes type) {
+        switch (type) {
+            case IN:
+                inTime = null;
+                setLastSetTime();
+                break;
+            case OUT:
+                outTime = null;
+                setLastSetTime();
+                break;
+            case DIDNOTSTART:
+                notStartedTime = null;
+                setLastSetTime();
+                break;
+            case DROPPEDOUT:
+                droppedOutTime = null;
+                setLastSetTime();
+            default:
+                Log.e("ERROR", "Attempted to clear time of type that does not exist. Type is: " + type.name());
+        }
+    }
 }

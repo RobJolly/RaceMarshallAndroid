@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -130,7 +131,6 @@ public class MainActivity extends AppCompatActivity {
 
         checkpoints.addObserver(askDialog);
         super.onCreate(savedInstanceState);
-
     }
 
     /**
@@ -290,6 +290,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         checkpoints.deleteObserver(askDialog); //an observer is deleted. This prevents multiple dialogs from occurring on screen tilt.
+        Log.i("Obs Number", String.valueOf(checkpoints.countObservers()));
         super.onConfigurationChanged(newConfig);
     }
+
+
 }

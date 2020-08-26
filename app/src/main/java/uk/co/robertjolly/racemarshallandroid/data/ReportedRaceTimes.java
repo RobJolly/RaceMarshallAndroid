@@ -4,6 +4,7 @@ package uk.co.robertjolly.racemarshallandroid.data;
 import android.annotation.SuppressLint;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 //From https://github.com/google/gson. Apache 2.0 license.
 import com.google.gson.annotations.SerializedName;
@@ -233,4 +234,10 @@ public class ReportedRaceTimes implements Parcelable, Serializable {
             return new ReportedRaceTimes[size];
         }
     };
+
+    public void clearTime(TimeTypes type) {
+        getRaceTimes().clearTime(type);
+        getReportedItems().setReportedItem(type, false);
+    }
+
 }

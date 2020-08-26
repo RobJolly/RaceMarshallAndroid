@@ -19,4 +19,5 @@
     <string name="checkedIn">Checked In</string>
     <string name="checkedOut">Checked Out</string>
     <string name="selectedCheckpoints">Selected Checkpoint: </string>
+    <string name="not_set">Not Set</string>
 </resources>

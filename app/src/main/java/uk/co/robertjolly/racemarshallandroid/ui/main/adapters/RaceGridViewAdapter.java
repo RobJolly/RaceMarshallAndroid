@@ -11,6 +11,8 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 
 //General/default java libraries: https://docs.oracle.com/javase/7/docs/api/index.html
+import androidx.fragment.app.FragmentManager;
+
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -18,6 +20,8 @@ import java.util.Objects;
 import uk.co.robertjolly.racemarshallandroid.data.DisplayFilterManager;
 import uk.co.robertjolly.racemarshallandroid.data.Racer;
 import uk.co.robertjolly.racemarshallandroid.data.SelectionsStateManager;
+import uk.co.robertjolly.racemarshallandroid.ui.main.fragments.ActiveRacerFragment;
+import uk.co.robertjolly.racemarshallandroid.ui.main.fragments.EditRacerDialogFragment;
 
 
 /**
@@ -29,16 +33,16 @@ public class RaceGridViewAdapter extends BaseAdapter {
     private SelectionsStateManager selectionsStateManager;
     private DisplayFilterManager displayFilterManager;
     private ArrayList<Racer> toShow;
-
+    private ActiveRacerFragment parentFragment;
     /**
      * Constructor for the race view adapter
      * @param mContext context
      * @param selectionsStateManager The selections state manager, which shall be used to determine which racers to display in the grid.
      * @param displayFilterManager Filters, which shall be used to help determine which racers in the grid.
      */
-    public RaceGridViewAdapter(Context mContext, SelectionsStateManager selectionsStateManager, DisplayFilterManager displayFilterManager) {
+    public RaceGridViewAdapter(Context mContext, SelectionsStateManager selectionsStateManager, DisplayFilterManager displayFilterManager, ActiveRacerFragment parentFragment) {
         this.mContext = mContext;
-
+        this.parentFragment = parentFragment;
         setSelectionsStateManager(selectionsStateManager);
         setDisplayFilterManager(displayFilterManager);
         toShow = selectionsStateManager.getShowableList(getDisplayFilterManager().getFilterList());
@@ -136,6 +140,15 @@ public class RaceGridViewAdapter extends BaseAdapter {
                         thisButton.getBackground().setColorFilter(Color.BLUE, PorterDuff.Mode.MULTIPLY);
                     }
                     getSelectionsStateManager().notifyObservers();
+                });
+
+                thisButton.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+                        EditRacerDialogFragment editFragment = new EditRacerDialogFragment(selectionsStateManager.getCheckpoints(), toShow.get(i));
+                        editFragment.show(Objects.requireNonNull(parentFragment.getFragmentManager()), "Edit Fragment");
+                        return false;
+                    }
                 });
             } catch (Exception e) {
                 Log.e("ERROR", "Button at index " + i + " Could not be created correctly. It has been made invisible.");

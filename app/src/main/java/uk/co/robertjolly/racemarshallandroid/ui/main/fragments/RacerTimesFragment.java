@@ -54,7 +54,7 @@ public class RacerTimesFragment extends Fragment implements Observer, Checkpoint
 
         final RecyclerView recView = view.findViewById(R.id.changesRecyclerView);
         recView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recView.setAdapter(new RacerTimesRecyclerViewAdapter(checkpoints, this.getContext()));
+        recView.setAdapter(new RacerTimesRecyclerViewAdapter(checkpoints, getFragmentManager()));
 
         checkpoints.addObserver((observable, o) -> {
             try {
