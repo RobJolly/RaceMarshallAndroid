@@ -3,18 +3,18 @@ package uk.co.robertjolly.racemarshallandroid.data;
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
-import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Observable;
+
+import javax.annotation.Nullable;
 
 import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
 
@@ -25,25 +25,29 @@ public class Checkpoints extends Observable implements Parcelable, Serializable 
     @SerializedName("checkpoints")
     ArrayList<Checkpoint> checkpoints = new ArrayList<>();
     @SerializedName("currentCheckpointNumber")
-    int currentCheckpointNumber = 0;
+    int currentCheckpointNumber = 0; //the checkpoint that is currently selected
 
-    //TODO Java doc this
+    /**
+     * Constructor for checkpoints.
+     */
     public Checkpoints() {
     }
 
-    //TODO Java doc this
+    /**
+     * Getter for all checkpoints stored in the Checkpoints class
+     * @return ArrayList containing all checkpoints
+     */
     private ArrayList<Checkpoint> getCheckpoints() {
         return checkpoints;
     }
 
     /**
-     *
      * @param checkpointNumber The checkpoint number to search the checkpoints for.
      * @return If the checkpoint is in the list or not.
      */
     public boolean hasCheckpoint(int checkpointNumber) {
         if (hasCheckpoints()) {
-            //Note since the checkpoints are expected to be very low in number (i.e. around 12-20), searching this way is probably fine.
+            //Note since the checkpoints are expected to be very low in number (i.e. around 12-20), searching this way is rather slow, but probably fine.
             for (Checkpoint checkpoint : getCheckpoints()) { //for each checkpoint, check if they match the number input.
                 if (checkpoint.getCheckPointNumber() == checkpointNumber) {
                     return true;
@@ -69,12 +73,13 @@ public class Checkpoints extends Observable implements Parcelable, Serializable 
     }
 
     /**
-     *
+     * This function adds a checkpoint to the list of checkpoints stored in the class, if it does not already exist.
+     * Will not override the checkpoint if it does exist.
      * @param checkpoint Checkpoint to add
      */
     public void addCheckpoint(Checkpoint checkpoint) {
         if (hasCheckpoint(checkpoint.getCheckPointNumber())) {
-            //TODO Add Error Here
+            Log.w("Warning", "Checkpoint already exists. Cannot be added. Checkpoint number is: " + String.valueOf(checkpoint.getCheckPointNumber()));
         } else {
             checkpoints.add(checkpoint);
             setChanged();
@@ -82,8 +87,7 @@ public class Checkpoints extends Observable implements Parcelable, Serializable 
     }
 
     /**
-     *
-     * @return A list of the checkpoint numbers that are stored.
+     * @return An ArrayList of the checkpoint numbers that are stored.
      */
     public ArrayList<Integer> getCheckpointNumberList() {
         ArrayList<Integer> checkpointNumbers = new ArrayList<>();
@@ -93,12 +97,27 @@ public class Checkpoints extends Observable implements Parcelable, Serializable 
                 checkpointNumbers.add(checkpoint.getCheckPointNumber());
             }
         }
-
         return checkpointNumbers;
     }
 
     /**
-     *
+     * Getter for the currently selected checkpoint.
+     * @return The currently selected checkpoint, null if currently selected checkpoint does not exist.
+     */
+    @Nullable
+    public Checkpoint getCurrentSelectedCheckpoint() {
+        Checkpoint toReturn = null;
+        try {
+            toReturn = this.getCheckpoint(getCurrentCheckpointNumber());
+        } catch (Exception e) {
+            //Checkpoint doesn't exist for w/e reason, don't need to do anything, but log it.
+            Log.w("Warning", "Currently selected checkpoint cannot be found. Checkpoint selected is: " + String.valueOf(getCurrentCheckpointNumber()));
+        }
+        return toReturn;
+    }
+
+    /**
+     * Getter for the selected checkpoint number
      * @return The currently selected checkpoint.
      */
     public int getCurrentCheckpointNumber() {
@@ -106,49 +125,67 @@ public class Checkpoints extends Observable implements Parcelable, Serializable 
     }
 
     /**
-     *
+     * Setter for the selected checkpoint number. Does not require that checkpoint exists.
      * @param currentCheckpointNumber The checkpoint that is selected.
      */
     public void setCurrentCheckpointNumber(int currentCheckpointNumber) {
-        //TODO Error checking - make sure input checkpoint exists.
         this.currentCheckpointNumber = currentCheckpointNumber;
         setChanged();
     }
 
-    //TODO Java doc this
+    /**
+     * Allows the setting of the input racer's time (given by TimeType) to the input date, for the currently selected checkpoint
+     * @param racer The racer you wish to change
+     * @param times The time of the racer you wish to change
+     * @param date The date you wish to change to.
+     */
     public void setTime(Racer racer, TimeTypes times, Date date) {
-        if ((hasCheckpoints()) && (hasCheckpoint(getCurrentCheckpointNumber()))) {
-            getCheckpoint(getCurrentCheckpointNumber()).setTime(racer, times, date);
+        if (hasCheckpoints()) {
+            try {
+                getCurrentSelectedCheckpoint().setTime(racer, times, date);
+                setChanged();
+            } catch (Exception e) {
+                Log.e("Error", "Attempted to set time when no currently selected checkpoint exists. Selected checkpoint number is: " + String.valueOf(getCheckpointNumberList()));
+            }
+            getCurrentSelectedCheckpoint().setTime(racer, times, date);
             setChanged();
+        } else {
+            Log.w("Warning", "No checkpoints are stored at this time. Cannot set the time.");
         }
     }
 
-    //TODO Java doc this
-    public void clearCheckpoints() {
-        getCheckpoints().clear();
-    }
-
-    //TODO Java doc this
+    /**
+     * Describe contents function, required for Parcelable implementation.
+     * @return Always returns 0
+     */
     @Override
     public int describeContents() {
         return 0;
     }
 
-    //TODO Java doc this
+    /**
+     * Function to write the contents of the class to the given parcel
+     * @param parcel
+     * @param i
+     */
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeInt(currentCheckpointNumber);
+        //Writing the array of checkpoints this way, as I was having errors using writeArray function.
         parcel.writeInt(getCheckpoints().size());
         for (Checkpoint checkpoint : getCheckpoints()) {
             parcel.writeParcelable(checkpoint, i);
         }
     }
 
-    //TODO Java doc this
+    /**
+     * Constructor to create class from the contents of the given parcel.
+     * @param in
+     */
     protected Checkpoints(Parcel in) {
-        currentCheckpointNumber = in.readInt();
+        setCurrentCheckpointNumber(in.readInt());
         int numberOfCheckpoints = in.readInt();
-        getCheckpoints().clear();
+        clearCheckpointData();
 
         for (int i = 0; i < numberOfCheckpoints; i++) {
             Checkpoint checkpoint = in.readParcelable(Checkpoint.class.getClassLoader());
@@ -156,7 +193,9 @@ public class Checkpoints extends Observable implements Parcelable, Serializable 
         }
     }
 
-    //TODO Java doc this
+    /**
+     * Required for Parcelable implementation
+     */
     public static final Creator<Checkpoints> CREATOR = new Creator<Checkpoints>() {
         @Override
         public Checkpoints createFromParcel(Parcel in) {
@@ -169,72 +208,86 @@ public class Checkpoints extends Observable implements Parcelable, Serializable 
         }
     };
 
-    //TODO Java doc this
-    //TODO improve this mess of code
-    public boolean writeToFile(String filename, Context context) throws IOException {
-        boolean writeSucsessful = false;
+    /**
+     * Function to write the contents of the checkpoint to the given filename
+     * @param filename filename to store
+     * @param context context of app
+     * @return boolean, indicating whether not write was successful
+     */
+    public boolean writeToFile(String filename, Context context) {
+        boolean writeSuccessful = false;
         FileOutputStream fileOutputStream = null;
         try {
             fileOutputStream = context.openFileOutput(filename, Context.MODE_PRIVATE);
         } catch (Exception e) {
-            //failed to write to file
+            Log.e("Error", "Failed to write, couldn't open the given file. Error message: " + e.getMessage());
         }
 
         ObjectOutputStream objectOutputStream = null;
         try {
-            if (fileOutputStream != null) {
+            if (fileOutputStream != null) { //if fileOutputStream couldn't be opened, no use trying
                 objectOutputStream = new ObjectOutputStream(fileOutputStream);
             }
         } catch (Exception e) {
-            //failed to write to file
+            Log.e("Error", "Failed to write, couldn't open the object output stream. Error message: " + e.getMessage());
         }
 
         try {
-            if (objectOutputStream != null) {
+            if (objectOutputStream != null) { //if objectOutputStream couldn't be opened, no use trying
                 objectOutputStream.writeObject(this);
-                writeSucsessful = true;
+                writeSuccessful = true; //write has been completed, change this so it indicates so.
             }
         } catch (Exception e) {
-            //failed to write
+            Log.e("Error", "Failed to object to the object output stream. Error message: " + e.getMessage());
         }
 
         try {
-            if (fileOutputStream != null) {
+            if (fileOutputStream != null) { //if fileOutputStream couldn't be opened, no use trying to close
                 fileOutputStream.close();
             }
         } catch (Exception e) {
-            //failed to write
+            Log.e("Error", "Failed to close file output stream. Error message: " + e.getMessage());
         }
 
-
-        return writeSucsessful;
+        return writeSuccessful;
     }
 
-    //TODO Java doc this
+    /**
+     * Finds out whether or not this class has any checkpoints stored.
+     * @return Boolean indicating, if number of checkpoints exceed 0.
+     */
     public boolean hasCheckpoints() {
         return (getCheckpoints().size() > 0);
 
     }
 
-    //TODO Java doc this
-    public int getNumberUnreported() {
+    /**
+     * Finds out for all checkpoints stored, the number of unpassed or unreported racers.
+     * @return Number of unpassed or unreported racers, in all checkpoints.
+     */
+    public int getNumberUnpassedOrUnreported() {
         int numberUnreported = 0;
         for (Checkpoint checkpoint : checkpoints) {
-            numberUnreported = numberUnreported + checkpoint.getNumberUnreported();
+            numberUnreported = numberUnreported + checkpoint.getNumberUnreportedAndUnpassedRacers();
         }
 
         return numberUnreported;
     }
 
-    //TODO Java doc this
+    /**
+     * Function to clear all stored checkpoints within this class. Does not alter currently selected checkpoint.
+     */
     public void clearCheckpointData() {
         checkpoints.clear();
         setChanged();
     }
 
-    //TODO Java doc this
+    /**
+     * Function to completely delete the Checkpoint with the given checkpoint number. Does not alter currently selected checkpoint.
+     */
     public void deleteCheckpoint(int checkpointNumber) {
         ArrayList<Checkpoint> toRemove = new ArrayList<>();
+        //get list of all checkpoints with the given checkpoint number. Probably not needed but to be safe.
         if (getCheckpointNumberList().contains(checkpointNumber)) {
             for (Checkpoint checkpoint : checkpoints) {
                 if (checkpoint.getCheckPointNumber() == checkpointNumber) {

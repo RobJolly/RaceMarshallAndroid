@@ -2,6 +2,7 @@ package uk.co.robertjolly.racemarshallandroid.data;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -35,7 +36,6 @@ public class Checkpoint extends Observable implements Parcelable, Serializable {
      */
     public Checkpoint(int checkPointNumber, int racerNumber) {
         this.checkPointNumber = checkPointNumber;
-        //racerData = new TreeMap<>((Comparator<Racer> & Serializable) Racer::compareTo);
         for (int i = 0; i < racerNumber; i++) {
             racerData.put(new Racer(i+1), new ReportedRaceTimes());
         }
@@ -45,13 +45,26 @@ public class Checkpoint extends Observable implements Parcelable, Serializable {
      *
      * @param racerNumber The number of the racer
      * @param type The time type to check
-     * @return Whether or not the given racer has the given time reported, in the checkpoint
+     * @return Whether or not the given racer has the given time reported, in the checkpoint, if the racer exists in the checkpoint.
      */
     public boolean reportedItem(int racerNumber, TimeTypes type) {
         if (racerData.containsKey(new Racer(racerNumber))) {
-            return Objects.requireNonNull(racerData.get(new Racer(racerNumber))).getReportedItems().getReportedItem(type);
+            ReportedRaceTimes reportedRaceTimes;
+            reportedRaceTimes = racerData.get(new Racer(racerNumber));
+            if (reportedRaceTimes != null) {
+                ReportedItems reportedItems = reportedRaceTimes.getReportedItems();
+                if (reportedItems != null) {
+                    return reportedItems.getReportedItem(type);
+                } else {
+                    Log.w("Warning", "The racers ReportedItems are null. Racer number: " + String.valueOf(racerNumber));
+                    return false;
+                }
+            } else {
+                Log.w("Warning", "The racers ReportedRaceTimes are null. Racer number: " + String.valueOf(racerNumber));
+                return false;
+            }
         } else {
-            //TODO: ERROR HERE
+            Log.w("Warning", "The Racer doesn't exist. Racer number: " + String.valueOf(racerNumber));
             return false;
         }
     }
@@ -74,7 +87,7 @@ public class Checkpoint extends Observable implements Parcelable, Serializable {
             Objects.requireNonNull(racerData.get(new Racer(racerNumber))).getReportedItems().setReportedItem(type,isReported);
             setChanged();
         } else {
-            //TODO: ERROR HERE
+            Log.e("Error", "The racer doesn't exist to change.");
         }
     }
 
@@ -114,10 +127,15 @@ public class Checkpoint extends Observable implements Parcelable, Serializable {
      */
     public void setTime(Racer racer, TimeTypes type, Date timeToSet) {
         if (racerData.containsKey(racer)) {
-            Objects.requireNonNull(racerData.get(racer)).getRaceTimes().setTime(timeToSet, type);
-            setChanged();
+            ReportedRaceTimes grabbedReportedRacerTimes = racerData.get(racer);
+            if (grabbedReportedRacerTimes != null) {
+                grabbedReportedRacerTimes.getRaceTimes().setTime(timeToSet, type);
+                setChanged(); //set changed so various Observers can be noticed when chosen.
+            } else {
+                Log.e("Error", "The given racers does not have any ReportedRacerTimes, unexpectedly");
+            }
         } else {
-            //TODO: ERROR HERE
+            Log.e("Error", "The given racer doesn't exist to setTime. Racer Number: " + String.valueOf(racer.getRacerNumber()));
         }
     }
 
@@ -127,9 +145,15 @@ public class Checkpoint extends Observable implements Parcelable, Serializable {
     public TreeMap<Racer, ReportedRaceTimes> getRacersWithTimes() {
         TreeMap<Racer, ReportedRaceTimes> setTimes = new TreeMap<>();
 
-        for (Racer racer : racerData.keySet()) {
-            if (racerData.get(racer).getRaceTimes().getLastSetTime() != null) {
-                setTimes.put(racer, racerData.get(racer));
+        for (Racer racer : racerData.keySet()) { //for all racers
+            ReportedRaceTimes grabbedReportedRaceTimes; //get their reported times
+            grabbedReportedRaceTimes = racerData.get(racer);
+            if (grabbedReportedRaceTimes != null) {
+                if (grabbedReportedRaceTimes.getRaceTimes().getLastSetTime() != null) {
+                    setTimes.put(racer, racerData.get(racer));
+                }
+            } else {
+                Log.e("Error", "One of the given racers does not have any ReportedRacerTimes. Racer Number: " + String.valueOf(racer.getRacerNumber()));
             }
         }
 
@@ -160,31 +184,41 @@ public class Checkpoint extends Observable implements Parcelable, Serializable {
         return racerData.keySet();
     }
 
-    //TODO Java doc this
+    /**
+     * describeContents is reported for Parcelable
+     * @return Always 0
+     */
     @Override
     public int describeContents() {
         return 0;
     }
 
-    //TODO Java doc this
+    /**
+     * Write the contents of this class to the given parcel
+     * @param parcel parcel to write to
+     * @param i parcel writing location
+     */
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeInt(checkPointNumber);
         parcel.writeInt(racerData.keySet().size());
+        //Doing this rather than writeParcelableArray as it was giving errors.
         for (Racer racer : racerData.keySet()) {
             parcel.writeParcelable(racer, i);
             parcel.writeParcelable(racerData.get(racer), i);
         }
     }
 
-    //TODO Java doc this
+    /**
+     * Constructor, from which Checkpoint will be written from Parcel.
+     * @param in parcel from which to construct checkpoint
+     */
     protected Checkpoint(Parcel in) {
         this.checkPointNumber = in.readInt();
         int numberOfRacers = in.readInt();
 
         racerData = new TreeMap<>();
-
-        int count = 0;
+        //Doing this rather than readParcelableArray as it was giving errors.
         for (int i = 0; i < numberOfRacers; i++) {
             Racer racer = in.readParcelable(Racer.class.getClassLoader());
             ReportedRaceTimes times = in.readParcelable(ReportedRaceTimes.class.getClassLoader());
@@ -192,7 +226,9 @@ public class Checkpoint extends Observable implements Parcelable, Serializable {
         }
     }
 
-    //TODO Java doc this
+    /**
+     * Required for Parcelable implementation.
+     */
     public static final Creator<Checkpoint> CREATOR = new Creator<Checkpoint>() {
         @Override
         public Checkpoint createFromParcel(Parcel in) {
@@ -205,10 +241,13 @@ public class Checkpoint extends Observable implements Parcelable, Serializable {
         }
     };
 
-    //TODO Java doc this
-    public int getNumberUnreported() {
+    /**
+     * Gets the number of unreported and unpassed racers. An unreported unpassed racer will be counted once.
+     * @return Number of unreported and unpassed racers.
+     */
+    public int getNumberUnreportedAndUnpassedRacers() {
         int notReportedCount = 0;
-        for (ReportedRaceTimes times : racerData.values()) {
+        for (ReportedRaceTimes times : racerData.values()) { //for all racers
             if (!times.allReported()) { //if all times haven't been reported
                 notReportedCount++;
             } else if (!times.getRaceTimes().hasPassed()) { //if the racer hasn't yet passed

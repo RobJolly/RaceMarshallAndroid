@@ -17,13 +17,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+
 /**
  * This class stores information about a racer (i.e. Racer Number)
  */
+//TODO Find out why having a comparable here is a bad idea/warned against
 public class Racer implements Comparable, Parcelable, Serializable {
 
     @SerializedName("racerNumber")
-    int racerNumber;
+    private int racerNumber;
 
     /**
      * Constructor for the racer
@@ -66,18 +68,26 @@ public class Racer implements Comparable, Parcelable, Serializable {
         }
     }
 
-    //TODO Java doc this
+    /**
+     * Function required for Parcelable implementation
+     * @return Always 0
+     */
     @Override
     public int describeContents() {
         return 0;
     }
 
-    //TODO Java doc this
+    /**
+     * Constructor, given parcel from which racer shall be made
+     * @param in parcel from which to construct racer
+     */
     protected Racer(Parcel in) {
         racerNumber = in.readInt();
     }
 
-    //TODO Java doc this
+    /**
+     * Function required to implement Parcelable.
+     */
     public static final Creator<Racer> CREATOR = new Creator<Racer>() {
         @Override
         public Racer createFromParcel(Parcel in) {
@@ -90,12 +100,20 @@ public class Racer implements Comparable, Parcelable, Serializable {
         }
     };
 
-    //TODO Java doc this
+    /**
+     * Writes the class's data to the given parcel
+     * @param parcel parcel to write the data to
+     * @param i the index/location from which to write
+     */
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeInt(racerNumber);
     }
 
+    /**
+     * To string, specifically implemented such that JSON/GSON values can be gathered.
+     * @return RacerNumber, in string form
+     */
     @NonNull
     @Override
     public String toString() {

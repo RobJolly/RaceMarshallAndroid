@@ -3,6 +3,7 @@ package uk.co.robertjolly.racemarshallandroid.data;
 import android.content.res.Resources;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -10,10 +11,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Observable;
 
+import javax.annotation.Nullable;
+
 import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.enums.RacerDisplayFilter;
 
 //TODO Implement a static array of racerDisplayFilters, so there's a consistent order - fewer bugs, less code.
+//TODO Implement saving/loaded of display filters.
 /**
  * This handles the filters for which racers to display or not display, on the racer interaction screen
  */
@@ -21,6 +25,10 @@ public class DisplayFilterManager extends Observable implements Parcelable, Seri
     @SerializedName("filterList")
     private ArrayList<RacerDisplayFilter> filterList;
 
+    /**
+     * Constructor for the DisplayFilterManager. Attempts to load from file, but if failed for any reason will default to having
+     * two filters, Checked In and Unreported, selected.
+     */
     public DisplayFilterManager() {
         filterList = implementRacerFilters();
     }
@@ -46,6 +54,7 @@ public class DisplayFilterManager extends Observable implements Parcelable, Seri
      * Loading function for the filters
      * @return The stored list of filters, or null if cannot be found.
      */
+    @Nullable
     public ArrayList<RacerDisplayFilter> loadFilters() {
         return null;
     }
@@ -72,18 +81,22 @@ public class DisplayFilterManager extends Observable implements Parcelable, Seri
                 case DIDNOTSTART:
                     returningArray[4] = true;
                     break;
-                default: //do nothing, filter not expected.
+                default: //filter not expected/checked for
+                    Log.w("Warning", "A filter has appeared that is not checked for. Filter is called: " + filter.name());
             }
         }
         return returningArray;
     }
 
+    /**
+     * Getter for the filter list stored in this class
+     * @return An ArrayList of all stored filters
+     */
     public ArrayList<RacerDisplayFilter> getFilterList() {
         return filterList;
     }
 
     /**
-     *
      * @param resources The resources for the android application
      * @return An array of strings, naming the filters.
      */
@@ -126,7 +139,8 @@ public class DisplayFilterManager extends Observable implements Parcelable, Seri
                         getFilterList().add(RacerDisplayFilter.DIDNOTSTART);
                         setChanged();
                     break;
-                default: //do nothing
+                default:
+                    Log.w("Warning", "Filter attempting to be changed that is out of index. Index: " + String.valueOf(i));
             }
         } else {
             switch (i) {
@@ -150,21 +164,27 @@ public class DisplayFilterManager extends Observable implements Parcelable, Seri
                     getFilterList().remove(RacerDisplayFilter.DIDNOTSTART);
                     setChanged();
                     break;
-                default: //do nothing
+                default:
+                    Log.w("Warning", "Filter attempting to be changed that is out of index. Index: " + String.valueOf(i));
             }
         }
     }
 
-    //TODO Java doc this
+    /**
+     * Constructor for class that will create based on input parcel
+     * @param in Parcel from which to construct class
+     */
     protected DisplayFilterManager(Parcel in) {
         int arraySize = in.readInt();
         filterList = new ArrayList<>();
-        for (int i = 0; i < arraySize; i++) {
+        for (int i = 0; i < arraySize; i++) { //using this rather than readArray as was having errors with readArray
             filterList.add(RacerDisplayFilter.values()[in.readInt()]);
         }
     }
 
-    //TODO Java doc this
+    /**
+     * Required function to implement Parcelable
+     */
     public static final Creator<DisplayFilterManager> CREATOR = new Creator<DisplayFilterManager>() {
         @Override
         public DisplayFilterManager createFromParcel(Parcel in) {
@@ -177,18 +197,25 @@ public class DisplayFilterManager extends Observable implements Parcelable, Seri
         }
     };
 
-    //TODO Java doc this
+    /**
+     * Required function to implement Parcelable
+     * @return Always 0
+     */
     @Override
     public int describeContents() {
         return 0;
     }
 
-    //TODO Java doc this
+    /**
+     * Function to write the data of this class to the given parcel
+     * @param parcel Parcel to write to
+     * @param i index/location of the parcel from which to write
+     */
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeInt(filterList.size());
         for (RacerDisplayFilter filter : filterList) {
-            parcel.writeInt(filter.ordinal());
+            parcel.writeInt(filter.ordinal()); //write the enum as ordinal (Int)
         }
     }
 }

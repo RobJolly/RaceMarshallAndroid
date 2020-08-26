@@ -28,9 +28,7 @@ import com.github.douglasjunior.bluetoothclassiclibrary.BluetoothService;
 import com.github.douglasjunior.bluetoothclassiclibrary.BluetoothStatus;
 import com.github.douglasjunior.bluetoothclassiclibrary.BluetoothWriter;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Observable;
@@ -245,7 +243,7 @@ public class CheckpointFragment extends Fragment implements CheckpointGrabber {
             @Override
             public void onClick(View view) {
                 final AlertDialog.Builder warnUser = new AlertDialog.Builder(getContext());
-                String warningString = "This will delete all data. There are currently " + String.valueOf(grabCheckpoints().getNumberUnreported()) + " unreported or unpassed racers.";
+                String warningString = "This will delete all data. There are currently " + String.valueOf(grabCheckpoints().getNumberUnpassedOrUnreported()) + " unreported or unpassed racers.";
                 warnUser.setTitle("Warning:");
                 warnUser.setCancelable(true);
                 warnUser.setMessage(warningString);
@@ -285,7 +283,7 @@ public class CheckpointFragment extends Fragment implements CheckpointGrabber {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         final AlertDialog.Builder doubleCheckBuilder = new AlertDialog.Builder(getActivity());
                         doubleCheckBuilder.setTitle("Are you sure?");
-                        doubleCheckBuilder.setMessage("You are about to delete checkpoint " + checkpointNumberStrings[i] + ". This cannot be reversed. There are " + String.valueOf(grabCheckpoints().getCheckpoint(possibilities.get(i)).getNumberUnreported()) + " Unreported or Unpassed racers in this checkpoint");
+                        doubleCheckBuilder.setMessage("You are about to delete checkpoint " + checkpointNumberStrings[i] + ". This cannot be reversed. There are " + String.valueOf(grabCheckpoints().getCheckpoint(possibilities.get(i)).getNumberUnreportedAndUnpassedRacers()) + " Unreported or Unpassed racers in this checkpoint");
                         doubleCheckBuilder.setPositiveButton("Cancel", null);
                         final int selectedItem = i;
                         doubleCheckBuilder.setNegativeButton("Confirm", new DialogInterface.OnClickListener() {
