@@ -15,8 +15,11 @@ import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.ReportedRaceTimes;
 import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
 
-//TODO Java doc this
-public class RecyclerViewHolder extends RecyclerView.ViewHolder {
+/**
+ * This is the class that handles setting a single segment of the recycler view displaying racer times.
+ * It is responsible for setting the text boxes, check boxes, text views, etc.
+ */
+public class RacerTimesRecyclerViewHolder extends RecyclerView.ViewHolder {
 
     private Button racerButton;
     private CheckBox racerReported;
@@ -27,8 +30,11 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder {
     private View lowerDivider;
     private boolean manualChange = false;
 
-    //TODO Java doc this
-    public RecyclerViewHolder(@NonNull View itemView) {
+    /**
+     * Constructor for the recyclerViewHolder. Grabs some items from the view.
+     * @param itemView the view to set/grab data from
+     */
+    public RacerTimesRecyclerViewHolder(@NonNull View itemView) {
         super(itemView);
         racerButton = itemView.findViewById(R.id.racerNumberButton);
         racerReported = itemView.findViewById(R.id.reportedCheckBox);
@@ -39,21 +45,29 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder {
         lowerDivider = itemView.findViewById(R.id.lowerDivider);
     }
 
-    //TODO Java doc this
+    /**
+     * This sets the racer button text to the given text
+     * @param text The text to set
+     */
     public void setRacerButton(String text) {
         racerButton.setText(text);
     }
 
-    //TODO Java doc this
+    /**
+     * This sets the times for the racer text boxes, based on the given times.
+     * @param times the times of the racer to set.
+     */
     public void setRacerTimes(ReportedRaceTimes times) {
         setRacerTimeTextBox1(times);
         setRacerTimeTextBox2(times);
         setRacerTimeTextBox3(times);
-
     }
 
-    //TODO Java doc this
-    //TODO These set racer time boxes are dodgy, not very object oriented - I should probably fix that.
+    /**
+     * This sets the text for the first racerTimes TextView. TextViews should be set in-order.
+     * @param times The times from which to calculate the text of the TextView from.
+     */
+    //TODO These set racer time boxes are dodgy, not very object oriented, or clean - I should probably fix that, but it's not a priority.
     private void setRacerTimeTextBox1(ReportedRaceTimes times) {
        if (times.getRaceTimes().getInTime() != null) {
            timeTextView1.setText(times.getFormattedDisplayTime(TimeTypes.IN));
@@ -86,7 +100,10 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder {
        }
     }
 
-    //TODO Java doc this
+    /**
+     * This sets the text for the first racerTimes TextView. TextViews should be set in-order.
+     * @param times The times from which to calculate the text of the TextView from.
+     */
     private void setRacerTimeTextBox2(ReportedRaceTimes times) {
         if (times.getRaceTimes().getInTime() != null) {
             if (times.getRaceTimes().getOutTime() != null) {
@@ -150,7 +167,10 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
-    //TODO Java doc this
+    /**
+     * This sets the text for the first racerTimes TextView. TextViews should be set in-order.
+     * @param times The times from which to calculate the text of the TextView from.
+     */
     private void setRacerTimeTextBox3(ReportedRaceTimes times) {
         if (timeTextView2.getText() != "") {
             if ((times.getRaceTimes().getInTime() != null) & (times.getRaceTimes().getOutTime() != null)) {
@@ -176,7 +196,10 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder {
         }
     }
 
-    //TODO Java doc this
+    /**
+     * This creates the listener for the check box. Allows setting the times for the racer, to reported or unreported if checked.
+     * @param times the times of the racer associated with the view.
+     */
     public void setCheckBoxListener(final ReportedRaceTimes times) {
         manualChange = true;
         racerReported.setChecked(times.allReported());
@@ -197,7 +220,9 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder {
         });
     }
 
-    //TODO Java doc this
+    /**
+     * This makes all items in the view invisible.
+     */
     public void makeInvisible() {
         racerButton.setVisibility(View.INVISIBLE);
         racerReported.setVisibility(View.INVISIBLE);
@@ -208,7 +233,9 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder {
         upperDivider.setVisibility(View.INVISIBLE);
     }
 
-    //TODO Java doc this
+    /**
+     * This makes all items in the view visible.
+     */
     public void makeUninvisible() {
         racerButton.setVisibility(View.VISIBLE);
         racerReported.setVisibility(View.VISIBLE);

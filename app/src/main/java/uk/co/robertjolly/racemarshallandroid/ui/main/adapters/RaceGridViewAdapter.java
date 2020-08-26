@@ -4,6 +4,7 @@ package uk.co.robertjolly.racemarshallandroid.ui.main.adapters;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -11,6 +12,7 @@ import android.widget.Button;
 
 //General/default java libraries: https://docs.oracle.com/javase/7/docs/api/index.html
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -20,7 +22,9 @@ import uk.co.robertjolly.racemarshallandroid.data.Racer;
 import uk.co.robertjolly.racemarshallandroid.data.SelectionsStateManager;
 
 
-//TODO Java doc this
+/**
+ * This is the class responsible for handling the displaying of the grid.
+ */
 public class RaceGridViewAdapter extends BaseAdapter {
 
     private final Context mContext;
@@ -28,16 +32,21 @@ public class RaceGridViewAdapter extends BaseAdapter {
     private DisplayFilterManager displayFilterManager;
     private ArrayList<Racer> toShow;
 
-    //TODO Java doc this
+    /**
+     * Constructor for the race view adapter
+     * @param mContext context
+     * @param selectionsStateManager The selections state manager, which shall be used to determine which racers to display in the grid.
+     * @param displayFilterManager Filters, which shall be used to help determine which racers in the grid.
+     */
     public RaceGridViewAdapter(Context mContext, SelectionsStateManager selectionsStateManager, DisplayFilterManager displayFilterManager) {
         this.mContext = mContext;
 
         setSelectionsStateManager(selectionsStateManager);
         setDisplayFilterManager(displayFilterManager);
-        toShow = selectionsStateManager.getShowableList(getDisplayFilterManager().getFilterList()); //Setting filters here - change later
+        toShow = selectionsStateManager.getShowableList(getDisplayFilterManager().getFilterList());
 
 
-        selectionsStateManager.addObserver(new Observer() {
+        selectionsStateManager.addObserver(new Observer() { //observer to change the grid, if selections has changed
             @Override
             public void update(Observable observable, Object o) {
                 toShow = getSelectionsStateManager().getShowableList(getDisplayFilterManager().getFilterList());
@@ -47,7 +56,7 @@ public class RaceGridViewAdapter extends BaseAdapter {
 
         getDisplayFilterManager().addObserver(new Observer() {
             @Override
-            public void update(Observable observable, Object o) {
+            public void update(Observable observable, Object o) { //observer to change the grid, if filters have changed
                 toShow = getSelectionsStateManager().getShowableList(getDisplayFilterManager().getFilterList());
                 notifyDataSetChanged();
             }
@@ -55,26 +64,43 @@ public class RaceGridViewAdapter extends BaseAdapter {
 
     }
 
-    //TODO Java doc this
+    /**
+     * Gets the number of items to show in the grid.
+     * @return Number of items to show in the grid (All Racers in Selected Checkpoint + 6)
+     */
     @Override
     public int getCount() {
         //+6 exists to create a 'buffer' - prevents floating action buttons from making the bottom two rows unclickable/harder to click.
         return getToShow().size() + 6;
     }
 
-    //TODO Java doc this
+    /**
+     * This is a function required to extend base adapter
+     * @param i index
+     * @return Always null
+     */
     @Override
     public Object getItem(int i) {
         return null;
     }
 
-    //TODO Java doc this
+    /**
+     * This is a function required to extend base adapter
+     * @param i index
+     * @return Always 0
+     */
     @Override
     public long getItemId(int i) {
         return 0;
     }
 
-    //TODO Java doc this
+    /**
+     * This gets the view at a given index. This handles the setting up of buttons.
+     * @param i index
+     * @param view view
+     * @param viewGroup view group
+     * @return View (Button) with the data, colour and size set for the grid.
+     */
     @Override
     public View getView(final int i, View view, ViewGroup viewGroup) {
 
@@ -92,7 +118,7 @@ public class RaceGridViewAdapter extends BaseAdapter {
             try {
                 if (getSelectionsStateManager().isSelected(getToShow().get(i))) { //if button is selected - blue colour
                     thisButton.getBackground().setColorFilter(Color.BLUE, PorterDuff.Mode.MULTIPLY);
-                } else if (getSelectionsStateManager().getSelectedCheckpoint().getRacerData(getToShow().get(i)).getRaceTimes().getDroppedOutTime() != null) {
+                } else if (Objects.requireNonNull(getSelectionsStateManager().getSelectedCheckpoint()).getRacerData(getToShow().get(i)).getRaceTimes().getDroppedOutTime() != null) {
                     thisButton.getBackground().setColorFilter(Color.parseColor("#5E35B1"), PorterDuff.Mode.MULTIPLY);
                 } else if (getSelectionsStateManager().getSelectedCheckpoint().getRacerData(getToShow().get(i)).getRaceTimes().getNotStartedTime() != null) {
                     thisButton.getBackground().setColorFilter(Color.parseColor("#5E35B1"), PorterDuff.Mode.MULTIPLY);
@@ -122,37 +148,51 @@ public class RaceGridViewAdapter extends BaseAdapter {
                     }
                 });
             } catch (Exception e) {
-                //TODO error here
-                //Error - Button cannot be created within an error.
+                Log.e("ERROR", "Button at index " + String.valueOf(i) + " Could not be created correctly. It has been made invisible.");
                 thisButton.setVisibility(View.INVISIBLE);
             }
 
         }
 
-
         return thisButton;
     }
 
-    //TODO Java doc this
+    /**
+     * Getter for the SelectionsStateManager stored in RaceGridViewAdapter
+     * @return The stored SelectionsStateManager
+     */
     public SelectionsStateManager getSelectionsStateManager() {
         return selectionsStateManager;
     }
 
-    //TODO Java doc this
+    /**
+     * Setter for the SelectionsStateManager stored in RaceGridViewAdapter
+     * @param selectionsStateManager The SelectionsStateManager to store in this object.
+     */
     public void setSelectionsStateManager(SelectionsStateManager selectionsStateManager) {
         this.selectionsStateManager = selectionsStateManager;
     }
 
-    //TODO Java doc this
+    /**
+     * Getter for the DisplayFilterManager stored in RaceGridViewAdapter
+     * @return The displayFilterManager stored
+     */
     public DisplayFilterManager getDisplayFilterManager() {
         return displayFilterManager;
     }
 
-    //TODO Java doc this
+    /**
+     * Setter for the DisplayFilterManager stored in RaceGridViewAdapter
+     * @param displayFilterManager The DisplayFilterManager to store in this object.
+     */
     public void setDisplayFilterManager(DisplayFilterManager displayFilterManager) {
         this.displayFilterManager = displayFilterManager;
     }
 
+    /**
+     * Getter for the racers that are stored in this adapter, to be shown
+     * @return An ArrayList of Racers that are to be shown by this adapter
+     */
     public ArrayList<Racer> getToShow() {
         return toShow;
     }

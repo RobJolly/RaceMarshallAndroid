@@ -31,12 +31,12 @@ import java.util.Observer;
 //Projects own classes.
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoint;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
-import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.SectionsPagerAdapter;
+import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.MainTabsSectionsPagerAdapter;
 
 //TODO Java doc this
 public class MainActivity extends AppCompatActivity {
 
-    private SectionsPagerAdapter pagerAdapter;
+    private MainTabsSectionsPagerAdapter pagerAdapter;
     private Checkpoints checkpoints;
     private boolean showingDialog = false;
     private ArrayList<BroadcastReceiver> registeredReceivers = new ArrayList<>();
@@ -61,8 +61,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //TODO Java doc this
-    private SectionsPagerAdapter createPagerAdapter() {
-        SectionsPagerAdapter adapter = new SectionsPagerAdapter(this, getSupportFragmentManager(), getCheckpoints());
+    private MainTabsSectionsPagerAdapter createPagerAdapter() {
+        MainTabsSectionsPagerAdapter adapter = new MainTabsSectionsPagerAdapter(this, getSupportFragmentManager(), getCheckpoints());
          return adapter;
     }
 

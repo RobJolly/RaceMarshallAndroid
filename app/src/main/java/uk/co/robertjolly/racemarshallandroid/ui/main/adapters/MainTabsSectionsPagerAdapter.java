@@ -22,16 +22,14 @@ import uk.co.robertjolly.racemarshallandroid.ui.main.fragments.RacerTimesFragmen
  * A [FragmentPagerAdapter] that returns a fragment corresponding to
  * one of the sections/tabs/pages.
  */
-public class SectionsPagerAdapter extends FragmentPagerAdapter {
+public class MainTabsSectionsPagerAdapter extends FragmentPagerAdapter {
 
     @StringRes
     private final int[] TAB_TITLES = new int[]{R.string.tab_text_1, R.string.tab_text_2, R.string.tab_text_3};
     private final Fragment[] mFragmentList = getFragments();
-    //private final Fragment[] mFragmentList = getFragments();
     private final Context mContext;
     private Checkpoints checkpoints;
     private SelectionsStateManager selectionsStateManager;
-    public int[] fragId;
 
     /**
      * Constructor for the fragment page adapter.
@@ -40,12 +38,11 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
      * @param fm
      * @param checkpoints
      */
-    public SectionsPagerAdapter(Context context, FragmentManager fm, Checkpoints checkpoints) {
+    public MainTabsSectionsPagerAdapter(Context context, FragmentManager fm, Checkpoints checkpoints) {
         super(fm);
         mContext = context;
         setCheckpoints(checkpoints);
         setSelectionsStateManager(new SelectionsStateManager(getCheckpoints()));
-        //mFragmentList = getFragments();
     }
 
     /**
@@ -63,10 +60,6 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         allTabs[2] = new CheckpointFragment();
         fragID[2] = allTabs[2].getId();
 
-        //pass racer data
-     //   Bundle racerData = new Bundle();
-    //    racerData.putIntegerArrayList("racers", racers);
-     //   allTabs[0].setArguments(racerData);
         return allTabs;
     }
 
@@ -120,21 +113,31 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         return checkpoints;
     }
 
-    //TODO Java doc this
+    /**
+     * This gets the selections state manager stored within this class
+     * @return getter of the selections state manager stored.
+     */
     public SelectionsStateManager getSelectionsStateManager() {
         return selectionsStateManager;
     }
 
-    //TODO Java doc this
+    /**
+     * This sets the selections state manager stored within this class
+     * @param selectionsStateManager setter for the selections state manager stored.
+     */
     public void setSelectionsStateManager(SelectionsStateManager selectionsStateManager) {
         this.selectionsStateManager = selectionsStateManager;
     }
 
+    /**
+     * This is a class required to extend FragmentPagerAdapter. It calls super.
+     * @param container the container
+     * @param position position to destroy
+     * @param object object
+     */
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         super.destroyItem(container, position, object);
-
     }
-
 
 }

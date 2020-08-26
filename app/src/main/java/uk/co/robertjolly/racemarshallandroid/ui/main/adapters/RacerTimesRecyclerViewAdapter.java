@@ -18,14 +18,20 @@ import uk.co.robertjolly.racemarshallandroid.data.CheckOffStateManager;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
 import uk.co.robertjolly.racemarshallandroid.data.ReportedRaceTimes;
 
-//TODO Java doc this
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder> {
+/**
+ * This RecyclerViewAdapter is responsible handling the list of racers and their times.
+ */
+public class RacerTimesRecyclerViewAdapter extends RecyclerView.Adapter<RacerTimesRecyclerViewHolder> {
     private Checkpoints checkpoints;
     private Context mContext;
     private CheckOffStateManager toDisplay;
 
-    //TODO Java doc this
-    public RecyclerViewAdapter(Checkpoints passedCheckpoints, Context mContext) {
+    /**
+     * Constructor for the view adapter
+     * @param passedCheckpoints The checkpoints containing data for which to show in the RecyclerViewAdapter
+     * @param mContext context
+     */
+    public RacerTimesRecyclerViewAdapter(Checkpoints passedCheckpoints, Context mContext) {
         this.checkpoints = passedCheckpoints;
         this.mContext = mContext;
         toDisplay = new CheckOffStateManager(checkpoints, null);
@@ -36,28 +42,30 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
                 notifyDataSetChanged();
             }
         });
-        /*toDisplay.addObserver(new Observer() {
-            @Override
-            public void update(Observable observable, Object o) {
-                notifyDataSetChanged();
-            }
-        });*/
-        //notPassed = passedCheckpoint.getAllNotPassed();
     }
 
-    //TODO Java doc this
+    /**
+     * This is the creator for the view holder (This is what determines what is shown in each bit of the list)
+     * @param parent view group
+     * @param viewType flags
+     * @return The inflated/Created view holder.
+     */
     @NonNull
     @Override
-    public RecyclerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RacerTimesRecyclerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.racer_passed_data_display, parent, false);
 
-        return new RecyclerViewHolder(view);
+        return new RacerTimesRecyclerViewHolder(view);
     }
 
-    //TODO Java doc this
+    /**
+     * This is called when a given place in the recycler view is created. This is where the data is set.
+     * @param holder the holder for which to use to set data.
+     * @param position index in the recyclerView
+     */
     @Override
-    public void onBindViewHolder(@NonNull RecyclerViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RacerTimesRecyclerViewHolder holder, int position) {
         int size = toDisplay.getListToDisplay().size();
         if (position >= size || size == 0) {
             holder.makeInvisible();
@@ -68,12 +76,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
             holder.setCheckBoxListener(times);
             holder.makeUninvisible();
         }
-
     }
 
-    //TODO Java doc this
+    /**
+     * This gets the number of items to display in the recycler view
+     * @return The number of items to display
+     */
     @Override
     public int getItemCount() {
-        return toDisplay.getListToDisplay().size() + 2;
+        return toDisplay.getListToDisplay().size() + 2; //+2 is a buffer, this leaves room to scroll at end for floating actions buttons.
     }
 }

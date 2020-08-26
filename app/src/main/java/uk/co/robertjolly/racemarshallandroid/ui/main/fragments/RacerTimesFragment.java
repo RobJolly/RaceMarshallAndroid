@@ -20,7 +20,7 @@ import uk.co.robertjolly.racemarshallandroid.MainActivity;
 import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
 import uk.co.robertjolly.racemarshallandroid.ui.main.CheckpointGrabber;
-import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.RecyclerViewAdapter;
+import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.RacerTimesRecyclerViewAdapter;
 import uk.co.robertjolly.racemarshallandroid.ui.main.customElements.CheckpointFob;
 
 //TODO Java doc this
@@ -44,7 +44,7 @@ public class RacerTimesFragment extends Fragment implements Observer, Checkpoint
 
         final RecyclerView recView = view.findViewById(R.id.changesRecyclerView);
         recView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recView.setAdapter(new RecyclerViewAdapter(checkpoints, this.getContext()));
+        recView.setAdapter(new RacerTimesRecyclerViewAdapter(checkpoints, this.getContext()));
 
         checkpoints.addObserver(new Observer() {
             @Override

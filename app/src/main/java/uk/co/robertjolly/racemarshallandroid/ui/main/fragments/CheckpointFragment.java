@@ -44,7 +44,7 @@ import uk.co.robertjolly.racemarshallandroid.data.Checkpoint;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
 import uk.co.robertjolly.racemarshallandroid.miscClasses.RaceMarshallBluetoothComponent;
 import uk.co.robertjolly.racemarshallandroid.ui.main.CheckpointGrabber;
-import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.SectionsPagerAdapter;
+import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.MainTabsSectionsPagerAdapter;
 
 //TODO Java doc this
 public class CheckpointFragment extends Fragment implements CheckpointGrabber {
@@ -406,7 +406,7 @@ public class CheckpointFragment extends Fragment implements CheckpointGrabber {
     //TODO Java doc this
     @Override
     public Checkpoints grabCheckpoints() {
-        return ((SectionsPagerAdapter) Objects.requireNonNull(((ViewPager) Objects.requireNonNull(getActivity()).findViewById(R.id.mainViewPager)).getAdapter())).getCheckpoints();
+        return ((MainTabsSectionsPagerAdapter) Objects.requireNonNull(((ViewPager) Objects.requireNonNull(getActivity()).findViewById(R.id.mainViewPager)).getAdapter())).getCheckpoints();
 
     }
 
