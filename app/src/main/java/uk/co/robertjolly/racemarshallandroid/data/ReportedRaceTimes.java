@@ -15,35 +15,51 @@ import java.text.SimpleDateFormat;
 //Projects own classes.
 import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
 
-//TODO Java doc this
+/**
+ * Class to store and handle both the RaceTimes, and Whether or not they've been reported.
+ */
 public class ReportedRaceTimes implements Parcelable, Serializable {
     @SerializedName("raceTimes")
     private RaceTimes raceTimes;
     @SerializedName("reportedItems")
     private ReportedItems reportedItems;
 
-    //TODO Java doc this
+    /**
+     * Constructor for ReportedRaceTimes
+     */
     public ReportedRaceTimes() {
         raceTimes = new RaceTimes();
         reportedItems = new ReportedItems();
     }
 
-    //TODO Java doc this
+    /**
+     * Gets the RaceTimes stored in this object
+     * @return the RaceTimes for this object
+     */
     public RaceTimes getRaceTimes() {
         return raceTimes;
     }
 
-    //TODO Java doc this
+    /**
+     * Gets the reportedItems stored in this object
+     * @return the reportedItems stored in this object
+     */
     public ReportedItems getReportedItems() {
         return reportedItems;
     }
 
-    //TODO Java doc this
+    /**
+     * Checks whether or not all of the SET times have been reported. Will return true if no time is set.
+     * @return Boolean, indicating if all of the times stored have been set
+     */
     public boolean allReported() {
         return (inReportedIfSet() & outReportedIfSet() & droppedOutReportedIfSet() & didNotStartReportedIfSet());
     }
 
-    //TODO Java doc this
+    /**
+     * Find if there is an in-time reported, if it is set. Returns true if it isn't set.
+     * @return Whether or not, if set, the in-time is reported. Returns true if it isn't set.
+     */
     public boolean inReportedIfSet() {
         if (getRaceTimes().getInTime() != null) {
             return (getReportedItems().getReportedItem(TimeTypes.IN));
@@ -52,7 +68,10 @@ public class ReportedRaceTimes implements Parcelable, Serializable {
         }
     }
 
-    //TODO Java doc this
+    /**
+     * Find if there is an out-time reported, if it is set. Returns true if it isn't set.
+     * @return Whether or not, if set, the out-time is reported. Returns true if it isn't set.
+     */
     public boolean outReportedIfSet() {
         if (getRaceTimes().getOutTime() != null) {
             return (getReportedItems().getReportedItem(TimeTypes.OUT));
@@ -61,7 +80,10 @@ public class ReportedRaceTimes implements Parcelable, Serializable {
         }
     }
 
-    //TODO Java doc this
+    /**
+     * Find if there is an dropped-out-time reported, if it is set. Returns true if it isn't set.
+     * @return Whether or not, if set, the dropped-out-time is reported. Returns true if it isn't set.
+     */
     public boolean droppedOutReportedIfSet() {
         if (getRaceTimes().getDroppedOutTime() != null) {
             return (getReportedItems().getReportedItem(TimeTypes.DROPPEDOUT));
@@ -70,7 +92,10 @@ public class ReportedRaceTimes implements Parcelable, Serializable {
         }
     }
 
-    //TODO Java doc this
+    /**
+     * Find if there is an did-not-start-time reported, if it is set. Returns true if it isn't set.
+     * @return Whether or not, if set, the did-not-start-time is reported. Returns true if it isn't set.
+     */
     public boolean didNotStartReportedIfSet() {
         if (getRaceTimes().getNotStartedTime() != null) {
             return (getReportedItems().getReportedItem(TimeTypes.DIDNOTSTART));
@@ -79,7 +104,10 @@ public class ReportedRaceTimes implements Parcelable, Serializable {
         }
     }
 
-    //TODO Java doc this
+    /**
+     * Sets all unreported items to reported, if the time associated has been set
+     *
+     */
     public void setAllUnreportedToReported() {
         if (!inReportedIfSet()) {
             getReportedItems().setReportedItem(TimeTypes.IN, true);
@@ -95,7 +123,9 @@ public class ReportedRaceTimes implements Parcelable, Serializable {
         }
     }
 
-    //TODO Java doc this
+    /**
+     * Sets all reported items to unreported.
+     */
     public void setAllReportedToUnreported() {
         getReportedItems().setReportedItem(TimeTypes.IN, false);
         getReportedItems().setReportedItem(TimeTypes.OUT, false);
@@ -103,7 +133,14 @@ public class ReportedRaceTimes implements Parcelable, Serializable {
         getReportedItems().setReportedItem(TimeTypes.DIDNOTSTART, false);
     }
 
-    //TODO Java doc this
+    /**
+     * Gets a time, of the given type, in the HH:mm:ss format, with words representing the given time type,
+     * (e.g. in for checked in, dropped out for dropped out, etc.), with the words representing the given time type
+     * bracketed if the given type has also been reported. The formatted time is seperated from the descriptor by ": ".
+     * An example of a string produced would be: "(dropped out): 12:42:33"
+     * @param type The type of the time to find
+     * @return String representing time formatted as explained above. Empty String if specified time isn't set.
+     */
     public String getFormattedDisplayTime(TimeTypes type) {
         String toReturn = "";
         @SuppressLint("SimpleDateFormat") SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
@@ -153,26 +190,38 @@ public class ReportedRaceTimes implements Parcelable, Serializable {
         return toReturn;
     }
 
-    //TODO Java doc this
+    /**
+     * Function required for implementation of Parcelable.
+     * @return Always 0
+     */
     @Override
     public int describeContents() {
         return 0;
     }
 
-    //TODO Java doc this
+    /**
+     * Writes the data from this class to the given parcel
+     * @param parcel The parcel in which to write
+     * @param i flags
+     */
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeParcelable(raceTimes, i);
         parcel.writeParcelable(reportedItems, i);
     }
 
-    //TODO Java doc this
+    /**
+     * Constructor to initialise this class from the given parcel.
+     * @param in The parcel from which to construct
+     */
     protected ReportedRaceTimes(Parcel in) {
         raceTimes = in.readParcelable(RaceTimes.class.getClassLoader());
         reportedItems = in.readParcelable(ReportedItems.class.getClassLoader());
     }
 
-    //TODO Java doc this
+    /**
+     * Function required for Parcelable implementation
+     */
     public static final Creator<ReportedRaceTimes> CREATOR = new Creator<ReportedRaceTimes>() {
         @Override
         public ReportedRaceTimes createFromParcel(Parcel in) {

@@ -3,6 +3,7 @@ package uk.co.robertjolly.racemarshallandroid.data;
 //Open-source android libraries: https://source.android.com/. Apache 2.0.
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 //From https://github.com/google/gson. Apache 2.0 license.
 import com.google.gson.annotations.SerializedName;
@@ -13,7 +14,9 @@ import java.io.Serializable;
 //Projects own classes.
 import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
 
-//TODO Java doc this
+/**
+ * Reported items is the class that handles which times, if any, have been marked as reported.
+ */
 public class ReportedItems implements Parcelable, Serializable {
     @SerializedName("inReported")
     private boolean inReported;
@@ -24,11 +27,17 @@ public class ReportedItems implements Parcelable, Serializable {
     @SerializedName("didNotStartReported")
     private boolean didNotStartReported;
 
-    //TODO Java doc this
+    /**
+     * Constructor for reported items.
+     */
     public ReportedItems() {
     }
 
-    //TODO Java doc this
+    /**
+     * Sets a given item to the given reported state
+     * @param toReport Time type, indicating which time to change
+     * @param isReported Boolean, indicating whether or not the given time is reported or not.
+     */
     public void setReportedItem(TimeTypes toReport, boolean isReported) {
         switch (toReport) {
             case IN :
@@ -44,11 +53,15 @@ public class ReportedItems implements Parcelable, Serializable {
                 didNotStartReported = isReported;
                 break;
             default:
-                //TODO: ADD ERROR HERE
+                Log.e("Error", "Attempted to change a TimeType that isn't checked for. Type is: " + toReport.name());
         }
     }
 
-    //TODO Java doc this
+    /**
+     * This gets whether or not the given item is reported.
+     * @param toReport which type of time to check
+     * @return boolean indicating whether or not the time of type, toReport is reported or not
+     */
     public boolean getReportedItem(TimeTypes toReport) {
         switch (toReport) {
             case IN :
@@ -60,12 +73,15 @@ public class ReportedItems implements Parcelable, Serializable {
             case DIDNOTSTART:
                 return didNotStartReported;
             default:
-                //TODO: ADD ERROR HERE
+                Log.e("Error", "Attempted to find information about a TimeType that isn't checked for. Type is: " + toReport.name());
                 return false;
         }
     }
 
-    //TODO Java doc this
+    /**
+     * Constructor that will set data based on the given parcel.
+     * @param in the parcel to take data from.
+     */
     protected ReportedItems(Parcel in) {
         inReported = in.readByte() != 0;
         outReported = in.readByte() != 0;
@@ -73,7 +89,11 @@ public class ReportedItems implements Parcelable, Serializable {
         didNotStartReported = in.readByte() != 0;
     }
 
-    //TODO Java doc this
+    /**
+     * Writes the data of this object to the given parcel
+     * @param dest The parcel in which to write data
+     * @param flags Any flags for the parcel
+     */
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeByte((byte) (inReported ? 1 : 0));
@@ -82,13 +102,18 @@ public class ReportedItems implements Parcelable, Serializable {
         dest.writeByte((byte) (didNotStartReported ? 1 : 0));
     }
 
-    //TODO Java doc this
+    /**
+     * Required for Parcelable implementation
+     * @return Always 0
+     */
     @Override
     public int describeContents() {
         return 0;
     }
 
-    //TODO Java doc this
+    /**
+     * Required for Parcelable implementation
+     */
     public static final Creator<ReportedItems> CREATOR = new Creator<ReportedItems>() {
         @Override
         public ReportedItems createFromParcel(Parcel in) {

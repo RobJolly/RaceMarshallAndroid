@@ -56,7 +56,7 @@ public class CheckpointFragment extends Fragment implements CheckpointGrabber {
     private AlertDialog.Builder alertBuilder;
     private AlertDialog notifyDialog;
     private RaceMarshallBluetoothComponent raceMarshallBluetoothComponent;
-    private UUID uuidReceive = UUID.fromString("10879b40-da59-4450-b507-f0a2b26a229c");
+    private UUID uuidReceive = UUID.fromString("baeed2bb-a07c-486c-a57b-ad6d1c4d5de3");
     private AlertDialog.Builder notifyBuilder;
     //TODO Java doc this
     @Override
@@ -65,7 +65,7 @@ public class CheckpointFragment extends Fragment implements CheckpointGrabber {
         deviceList.addAll(bluetoothAdapter.getBondedDevices());
 
 
-        raceMarshallBluetoothComponent = new RaceMarshallBluetoothComponent(getActivity(), grabCheckpoints());
+        raceMarshallBluetoothComponent = new RaceMarshallBluetoothComponent(grabCheckpoints());
         checkPermissions();
 
         //Configure bluetooth library from: https://github.com/douglasjunior/AndroidBluetoothLibrary

@@ -3,6 +3,7 @@ package uk.co.robertjolly.racemarshallandroid.data;
 //Open-source android libraries: https://source.android.com/. Apache 2.0.
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 //From https://github.com/google/gson. Apache 2.0 license.
 import com.google.gson.annotations.SerializedName;
@@ -31,7 +32,9 @@ public class RaceTimes implements Parcelable, Serializable {
     @SerializedName("lastSetTime")
     private Date lastSetTime;
 
-    //TODO Java doc this
+    /**
+     * Constructor for raceTimes
+     */
     public RaceTimes() {
     }
 
@@ -55,7 +58,7 @@ public class RaceTimes implements Parcelable, Serializable {
                 setNotStartedTime(time);
                 break;
             default:
-                //TODO: ADD ERROR HERE
+                Log.e("Error", "Attempted to set a TimeTypes that isn't handled. Type is: " + type.name());
         }
     }
 
@@ -146,45 +149,44 @@ public class RaceTimes implements Parcelable, Serializable {
      * @return If the racer has passed the checkpoint
      */
     public boolean hasPassed() {
-        if (outTime != null) {
-            return true;
-        } else {
-            return false;
-        }
+        return outTime != null;
     }
 
-    //TODO Java doc this
+    /**
+     * Constructor for RaceTimes, from input parcel
+      * @param in Parcel from which to create RaceTimes.
+     */
     protected RaceTimes(Parcel in) {
         long inTime = in.readLong();
-        if (inTime == -1) {
+        if (inTime == -1) { //-1 is used as the default, as we want to set null if it doesn't exist.
             this.inTime = null;
         } else {
             this.inTime = new Date(inTime);
         }
 
         long outTime = in.readLong();
-        if (outTime == -1) {
+        if (outTime == -1) { //-1 is used as the default, as we want to set null if it doesn't exist.
             this.outTime = null;
         } else {
             this.outTime = new Date(outTime);
         }
 
         long droppedOutTime = in.readLong();
-        if (droppedOutTime == -1) {
+        if (droppedOutTime == -1) { //-1 is used as the default, as we want to set null if it doesn't exist.
             this.droppedOutTime = null;
         } else {
             this.droppedOutTime = new Date(droppedOutTime);
         }
 
         long notStartedTime = in.readLong();
-        if (notStartedTime == -1) {
+        if (notStartedTime == -1) { //-1 is used as the default, as we want to set null if it doesn't exist.
             this.notStartedTime = null;
         } else {
             this.notStartedTime = new Date(notStartedTime);
         }
 
         long lastSetTime = in.readLong();
-        if (lastSetTime == -1) {
+        if (lastSetTime == -1) { //-1 is used as the default, as we want to set null if it doesn't exist.
             this.lastSetTime = null;
         } else {
             this.lastSetTime = new Date(lastSetTime);
@@ -192,7 +194,9 @@ public class RaceTimes implements Parcelable, Serializable {
 
     }
 
-    //TODO Java doc this
+    /**
+     * Function required for Parcelable implementation
+     */
     public static final Creator<RaceTimes> CREATOR = new Creator<RaceTimes>() {
         @Override
         public RaceTimes createFromParcel(Parcel in) {
@@ -205,39 +209,46 @@ public class RaceTimes implements Parcelable, Serializable {
         }
     };
 
-    //TODO Java doc this
+    /**
+     * Function required for Parcelable implementation
+     * @return Always 0
+     */
     @Override
     public int describeContents() {
         return 0;
     }
 
-    //TODO Java doc this
+    /**
+     * Function to write the data of this class into the given parcel
+     * @param parcel Parcel to write data to
+     * @param i Index/location of parcel
+     */
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         try {
             parcel.writeLong(inTime.getTime());
         } catch (Exception e){
-            parcel.writeLong(-1);
+            parcel.writeLong(-1); //-1 is used as the default, as we want to set null if it doesn't exist.
         }
         try {
             parcel.writeLong(outTime.getTime());
         } catch (Exception e){
-            parcel.writeLong(-1);
+            parcel.writeLong(-1); //-1 is used as the default, as we want to set null if it doesn't exist.
         }
         try {
             parcel.writeLong(droppedOutTime.getTime());
         } catch (Exception e){
-            parcel.writeLong(-1);
+            parcel.writeLong(-1); //-1 is used as the default, as we want to set null if it doesn't exist.
         }
         try {
             parcel.writeLong(notStartedTime.getTime());
         } catch (Exception e){
-            parcel.writeLong(-1);
+            parcel.writeLong(-1); //-1 is used as the default, as we want to set null if it doesn't exist.
         }
         try {
             parcel.writeLong(lastSetTime.getTime());
         } catch (Exception e){
-            parcel.writeLong(-1);
+            parcel.writeLong(-1); //-1 is used as the default, as we want to set null if it doesn't exist.
         }
     }
 
