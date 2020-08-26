@@ -235,6 +235,19 @@ public class SelectionsStateManager extends Observable implements Parcelable {
         return compatable;
     }
 
+    public boolean areCompatableOther() {
+        boolean compatable = true;
+
+        for (Racer racer : selected) {
+            ReportedRaceTimes racerTimes = getCheckpoints().getCheckpoint(getCheckpoints().getCurrentCheckpointNumber()).getReportedRaceTime(racer);
+            if (racerTimes.getRaceTimes().getNotStartedTime() != null || racerTimes.getRaceTimes().getDroppedOutTime() != null) {
+                compatable = false;
+                break;
+            }
+        }
+
+        return compatable;
+    }
 
     protected SelectionsStateManager(Parcel in) {
         checkpoints = in.readParcelable(Checkpoints.class.getClassLoader());

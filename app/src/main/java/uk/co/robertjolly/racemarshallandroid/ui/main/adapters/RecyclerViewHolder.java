@@ -1,5 +1,6 @@
 package uk.co.robertjolly.racemarshallandroid.ui.main.adapters;
 
+import android.graphics.Paint;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -26,7 +27,6 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder {
     private TextView timeTextView3;
     private View upperDivider;
     private View lowerDivider;
-    private ReportedRaceTimes times;
     private boolean manualChange = false;
 
     //TODO Java doc this
@@ -59,12 +59,32 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder {
     private void setRacerTimeTextBox1(ReportedRaceTimes times) {
        if (times.getRaceTimes().getInTime() != null) {
            timeTextView1.setText(times.getFormattedDisplayTime(TimeTypes.IN));
+           if (times.inReportedIfSet()) {
+               timeTextView1.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+           } else {
+               timeTextView1.setPaintFlags(0);
+           }
        } else if (times.getRaceTimes().getOutTime() != null) {
            timeTextView1.setText(times.getFormattedDisplayTime(TimeTypes.OUT));
+           if (times.outReportedIfSet()) {
+               timeTextView1.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+           } else {
+               timeTextView1.setPaintFlags(0);
+           }
        } else if (times.getRaceTimes().getDroppedOutTime() != null) {
            timeTextView1.setText(times.getFormattedDisplayTime(TimeTypes.DROPPEDOUT));
+           if (times.droppedOutReportedIfSet()) {
+               timeTextView1.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+           } else {
+               timeTextView1.setPaintFlags(0);
+           }
        } else if (times.getRaceTimes().getNotStartedTime() != null) {
            timeTextView1.setText(times.getFormattedDisplayTime(TimeTypes.DIDNOTSTART));
+           if (times.didNotStartReportedIfSet()) {
+               timeTextView1.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+           } else {
+               timeTextView1.setPaintFlags(0);
+           }
        }
     }
 
@@ -73,27 +93,60 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder {
         if (times.getRaceTimes().getInTime() != null) {
             if (times.getRaceTimes().getOutTime() != null) {
                 timeTextView2.setText(times.getFormattedDisplayTime(TimeTypes.OUT));
+                if (times.outReportedIfSet()) {
+                    timeTextView2.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+                } else {
+                    timeTextView2.setPaintFlags(0);
+                }
             } else if (times.getRaceTimes().getDroppedOutTime() != null) {
                 timeTextView2.setText(times.getFormattedDisplayTime(TimeTypes.DROPPEDOUT));
+                if (times.droppedOutReportedIfSet()) {
+                    timeTextView2.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+                } else {
+                    timeTextView2.setPaintFlags(0);
+                }
             } else if (times.getRaceTimes().getNotStartedTime() != null) {
                 timeTextView2.setText(times.getFormattedDisplayTime(TimeTypes.DIDNOTSTART));
+                if (times.didNotStartReportedIfSet()) {
+                    timeTextView2.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+                } else {
+                    timeTextView2.setPaintFlags(0);
+                }
             } else {
                 timeTextView2.setText("");
+                timeTextView2.setPaintFlags(0);
             }
         } else {
             if (times.getRaceTimes().getOutTime() != null) {
                 if (times.getRaceTimes().getDroppedOutTime() != null) {
                     timeTextView2.setText(times.getFormattedDisplayTime(TimeTypes.DROPPEDOUT));
+                    if (times.droppedOutReportedIfSet()) {
+                        timeTextView2.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+                    } else {
+                        timeTextView2.setPaintFlags(0);
+                    }
                 } else if (times.getRaceTimes().getNotStartedTime() != null) {
                     timeTextView2.setText(times.getFormattedDisplayTime(TimeTypes.DIDNOTSTART));
+                    if (times.didNotStartReportedIfSet()) {
+                        timeTextView2.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+                    } else {
+                        timeTextView2.setPaintFlags(0);
+                    }
                 } else {
                     timeTextView2.setText("");
+                    timeTextView2.setPaintFlags(0);
                 }
             } else {
                 if ((times.getRaceTimes().getDroppedOutTime() != null) & (times.getRaceTimes().getNotStartedTime() != null) ) {
                     timeTextView2.setText(times.getFormattedDisplayTime(TimeTypes.DIDNOTSTART));
+                    if (times.didNotStartReportedIfSet()) {
+                        timeTextView2.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+                    } else {
+                        timeTextView2.setPaintFlags(0);
+                    }
                 } else {
                     timeTextView2.setText("");
+                    timeTextView2.setPaintFlags(0);
                 }
             }
         }
@@ -105,12 +158,23 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder {
             if ((times.getRaceTimes().getInTime() != null) & (times.getRaceTimes().getOutTime() != null)) {
                 if (times.getRaceTimes().getDroppedOutTime() != null) {
                     timeTextView3.setText(times.getFormattedDisplayTime(TimeTypes.DROPPEDOUT));
+                    if (times.droppedOutReportedIfSet()) {
+                        timeTextView3.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+                    } else {
+                        timeTextView3.setPaintFlags(0);
+                    }
                 } else if (times.getRaceTimes().getNotStartedTime() != null){
                     timeTextView3.setText(times.getFormattedDisplayTime(TimeTypes.DIDNOTSTART));
+                    if (times.didNotStartReportedIfSet()) {
+                        timeTextView3.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+                    } else {
+                        timeTextView3.setPaintFlags(0);
+                    }
                 }
             }
         } else {
             timeTextView3.setText("");
+            timeTextView3.setPaintFlags(0);
         }
     }
 
@@ -133,11 +197,6 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder {
                 }
             }
         });
-    }
-
-    //TODO Java doc this
-    public void setBoxStylesAndTime(ReportedRaceTimes previousItem, ReportedRaceTimes currentItem) {
-
     }
 
     //TODO Java doc this

@@ -17,7 +17,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
-
 /**
  * This class stores information about a racer (i.e. Racer Number)
  */

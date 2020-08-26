@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 //import android.R;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -82,7 +83,16 @@ public class ActiveRacerFragment extends Fragment implements CheckpointGrabber {
                         getDisplayFilterManager().notifyObservers();
                     }
                 });
-                dialogBuilder.show();
+                AlertDialog fobDialog = dialogBuilder.create();
+
+                fobDialog.show();
+
+                ListView listView = fobDialog.getListView();
+                //int count = listView.getChildCount();
+                //fobDialog.getOwnerActivity().
+                //Button checkIn = (Button) listView.getItemAtPosition(0);
+               // fobDialog.getListView().findViewsWithText(viewArrayList, getResources().getString(R.string.checkedIn), 0);
+               // int i = 0;
             }
         });
 

@@ -79,6 +79,7 @@ public class ActiveRacerActionFragment extends Fragment implements SelectionMana
                 }
                 view.findViewById(R.id.inButton).setEnabled(selectionsStateManager.areCompatableIn());
                 view.findViewById(R.id.outButton).setEnabled(selectionsStateManager.areCompatableOut());
+                view.findViewById(R.id.otherActionButton).setEnabled(selectionsStateManager.areCompatableOther());
             }
         });
 

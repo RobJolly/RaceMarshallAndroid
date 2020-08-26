@@ -239,9 +239,4 @@ public class RaceTimes implements Parcelable, Serializable {
         }
     }
 
-    public String getJsonString() {
-        Gson gson = new Gson();
-        return gson.toJson(this);
-    }
-
 }

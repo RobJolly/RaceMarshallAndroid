@@ -7,6 +7,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -25,7 +26,7 @@ public class Checkpoint extends Observable implements Parcelable, Serializable {
     @SerializedName("checkPointNumber")
     int checkPointNumber;
     @SerializedName("racerData")
-    TreeMap<Racer, ReportedRaceTimes> racerData;
+    TreeMap<Racer, ReportedRaceTimes> racerData = new TreeMap<>(new TreeMap<>((Comparator<Racer> & Serializable) Racer::compareTo));
 
     /**
      * Constructor for the checkpoint
@@ -34,7 +35,7 @@ public class Checkpoint extends Observable implements Parcelable, Serializable {
      */
     public Checkpoint(int checkPointNumber, int racerNumber) {
         this.checkPointNumber = checkPointNumber;
-        racerData = new TreeMap<>();
+        //racerData = new TreeMap<>((Comparator<Racer> & Serializable) Racer::compareTo);
         for (int i = 0; i < racerNumber; i++) {
             racerData.put(new Racer(i+1), new ReportedRaceTimes());
         }
