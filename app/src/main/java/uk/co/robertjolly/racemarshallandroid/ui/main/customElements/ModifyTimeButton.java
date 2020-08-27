@@ -2,7 +2,6 @@ package uk.co.robertjolly.racemarshallandroid.ui.main.customElements;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.util.AttributeSet;
@@ -13,7 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.ikovac.timepickerwithseconds.MyTimePickerDialog;
-import com.ikovac.timepickerwithseconds.TimePicker;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -69,9 +67,9 @@ public class ModifyTimeButton extends androidx.appcompat.widget.AppCompatButton 
                     //Error checking, make sure they mean if it's been reported before here.
                     if (timesToEdit.getReportedItems().getReportedItem(timeTypeToEdit)) {
                         AlertDialog.Builder warningBuilder = new AlertDialog.Builder(getContext());
-                        warningBuilder.setMessage("The previous time has already been reported. Are you sure you want to change it?");
-                        warningBuilder.setPositiveButton("Cancel", null);
-                        warningBuilder.setNegativeButton("Yes", new DialogInterface.OnClickListener() {
+                        warningBuilder.setMessage(getResources().getString(R.string.check_time_change_reported));
+                        warningBuilder.setPositiveButton(getResources().getString(R.string.cancel), null);
+                        warningBuilder.setNegativeButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 changeRacerTime(checkpointsToEdit, racerToEdit, timeTypeToEdit, timeShown);

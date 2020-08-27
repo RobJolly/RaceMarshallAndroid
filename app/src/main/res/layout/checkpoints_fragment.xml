@@ -19,20 +19,20 @@
                 android:layout_height="wrap_content"
                 android:background="#43A047"
                 android:elevation="4dp"
-                android:text="Checkpoints"
+                android:text="@string/checkpoints"
                 android:textSize="24sp" />
 
             <Button
                 android:id="@+id/createCheckpointButton"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:text="Create Checkpoint" />
+                android:text="@string/create_checkpoint" />
 
             <Button
                 android:id="@+id/deleteCheckpointButton"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:text="Delete Checkpoint" />
+                android:text="@string/delete_checkpoint" />
 
             <TextView
                 android:id="@+id/textView3"
@@ -40,26 +40,26 @@
                 android:layout_height="wrap_content"
                 android:background="#43A047"
                 android:elevation="4dp"
-                android:text="Data Transfer"
+                android:text="@string/data_transfer"
                 android:textSize="24sp" />
 
             <Button
                 android:id="@+id/transferCheckpointButton"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:text="Transfer Checkpoint" />
+                android:text="@string/transfer_checkpoint" />
 
             <Button
                 android:id="@+id/receiveCheckpointButton"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:text="Receive Checkpoint" />
+                android:text="@string/receive_checkpoint" />
 
             <Button
                 android:id="@+id/exportJsonButton"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:text="Export Data (As JSON)" />
+                android:text="@string/export_data_as_json" />
 
             <TextView
                 android:id="@+id/textView4"
@@ -67,14 +67,14 @@
                 android:layout_height="wrap_content"
                 android:background="#43A047"
                 android:elevation="4dp"
-                android:text="Start New Race"
+                android:text="@string/start_new_race"
                 android:textSize="24sp" />
 
             <Button
                 android:id="@+id/deleteAllCheckpoints"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:text="Delete All (New Race)" />
+                android:text="@string/delete_all_new_race" />
         </LinearLayout>
     </ScrollView>
 

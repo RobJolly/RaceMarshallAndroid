@@ -1,6 +1,7 @@
 package uk.co.robertjolly.racemarshallandroid.ui.main.adapters;
 
 //Open-source android libraries: https://source.android.com/. Apache 2.0.
+import android.content.res.Resources;
 import android.graphics.Paint;
 import android.view.View;
 import android.widget.Button;
@@ -72,10 +73,10 @@ public class RacerTimesRecyclerViewHolder extends RecyclerView.ViewHolder {
      * This sets the times for the racer text boxes, based on the given times.
      * @param times the times of the racer to set.
      */
-    public void setRacerTimes(ReportedRaceTimes times) {
-        setRacerTimeTextBox1(times);
-        setRacerTimeTextBox2(times);
-        setRacerTimeTextBox3(times);
+    public void setRacerTimes(ReportedRaceTimes times, Resources resources) {
+        setRacerTimeTextBox1(times, resources);
+        setRacerTimeTextBox2(times, resources);
+        setRacerTimeTextBox3(times, resources);
     }
 
     /**
@@ -83,30 +84,30 @@ public class RacerTimesRecyclerViewHolder extends RecyclerView.ViewHolder {
      * @param times The times from which to calculate the text of the TextView from.
      */
     //TODO These set racer time boxes are dodgy, not very object oriented, or clean - I should probably fix that, but it's not a priority.
-    private void setRacerTimeTextBox1(ReportedRaceTimes times) {
+    private void setRacerTimeTextBox1(ReportedRaceTimes times, Resources resources) {
        if (times.getRaceTimes().getInTime() != null) {
-           timeTextView1.setText(times.getFormattedDisplayTime(TimeTypes.IN));
+           timeTextView1.setText(times.getFormattedDisplayTime(TimeTypes.IN, resources));
            if (times.inReportedIfSet()) {
                timeTextView1.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
            } else {
                timeTextView1.setPaintFlags(0);
            }
        } else if (times.getRaceTimes().getOutTime() != null) {
-           timeTextView1.setText(times.getFormattedDisplayTime(TimeTypes.OUT));
+           timeTextView1.setText(times.getFormattedDisplayTime(TimeTypes.OUT, resources));
            if (times.outReportedIfSet()) {
                timeTextView1.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
            } else {
                timeTextView1.setPaintFlags(0);
            }
        } else if (times.getRaceTimes().getDroppedOutTime() != null) {
-           timeTextView1.setText(times.getFormattedDisplayTime(TimeTypes.DROPPEDOUT));
+           timeTextView1.setText(times.getFormattedDisplayTime(TimeTypes.DROPPEDOUT, resources));
            if (times.droppedOutReportedIfSet()) {
                timeTextView1.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
            } else {
                timeTextView1.setPaintFlags(0);
            }
        } else if (times.getRaceTimes().getNotStartedTime() != null) {
-           timeTextView1.setText(times.getFormattedDisplayTime(TimeTypes.DIDNOTSTART));
+           timeTextView1.setText(times.getFormattedDisplayTime(TimeTypes.DIDNOTSTART, resources));
            if (times.didNotStartReportedIfSet()) {
                timeTextView1.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
            } else {
@@ -119,24 +120,24 @@ public class RacerTimesRecyclerViewHolder extends RecyclerView.ViewHolder {
      * This sets the text for the first racerTimes TextView. TextViews should be set in-order.
      * @param times The times from which to calculate the text of the TextView from.
      */
-    private void setRacerTimeTextBox2(ReportedRaceTimes times) {
+    private void setRacerTimeTextBox2(ReportedRaceTimes times, Resources resources) {
         if (times.getRaceTimes().getInTime() != null) {
             if (times.getRaceTimes().getOutTime() != null) {
-                timeTextView2.setText(times.getFormattedDisplayTime(TimeTypes.OUT));
+                timeTextView2.setText(times.getFormattedDisplayTime(TimeTypes.OUT, resources));
                 if (times.outReportedIfSet()) {
                     timeTextView2.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
                 } else {
                     timeTextView2.setPaintFlags(0);
                 }
             } else if (times.getRaceTimes().getDroppedOutTime() != null) {
-                timeTextView2.setText(times.getFormattedDisplayTime(TimeTypes.DROPPEDOUT));
+                timeTextView2.setText(times.getFormattedDisplayTime(TimeTypes.DROPPEDOUT, resources));
                 if (times.droppedOutReportedIfSet()) {
                     timeTextView2.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
                 } else {
                     timeTextView2.setPaintFlags(0);
                 }
             } else if (times.getRaceTimes().getNotStartedTime() != null) {
-                timeTextView2.setText(times.getFormattedDisplayTime(TimeTypes.DIDNOTSTART));
+                timeTextView2.setText(times.getFormattedDisplayTime(TimeTypes.DIDNOTSTART, resources));
                 if (times.didNotStartReportedIfSet()) {
                     timeTextView2.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
                 } else {
@@ -149,14 +150,14 @@ public class RacerTimesRecyclerViewHolder extends RecyclerView.ViewHolder {
         } else {
             if (times.getRaceTimes().getOutTime() != null) {
                 if (times.getRaceTimes().getDroppedOutTime() != null) {
-                    timeTextView2.setText(times.getFormattedDisplayTime(TimeTypes.DROPPEDOUT));
+                    timeTextView2.setText(times.getFormattedDisplayTime(TimeTypes.DROPPEDOUT, resources));
                     if (times.droppedOutReportedIfSet()) {
                         timeTextView2.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
                     } else {
                         timeTextView2.setPaintFlags(0);
                     }
                 } else if (times.getRaceTimes().getNotStartedTime() != null) {
-                    timeTextView2.setText(times.getFormattedDisplayTime(TimeTypes.DIDNOTSTART));
+                    timeTextView2.setText(times.getFormattedDisplayTime(TimeTypes.DIDNOTSTART, resources));
                     if (times.didNotStartReportedIfSet()) {
                         timeTextView2.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
                     } else {
@@ -168,7 +169,7 @@ public class RacerTimesRecyclerViewHolder extends RecyclerView.ViewHolder {
                 }
             } else {
                 if ((times.getRaceTimes().getDroppedOutTime() != null) & (times.getRaceTimes().getNotStartedTime() != null) ) {
-                    timeTextView2.setText(times.getFormattedDisplayTime(TimeTypes.DIDNOTSTART));
+                    timeTextView2.setText(times.getFormattedDisplayTime(TimeTypes.DIDNOTSTART, resources));
                     if (times.didNotStartReportedIfSet()) {
                         timeTextView2.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
                     } else {
@@ -186,18 +187,18 @@ public class RacerTimesRecyclerViewHolder extends RecyclerView.ViewHolder {
      * This sets the text for the first racerTimes TextView. TextViews should be set in-order.
      * @param times The times from which to calculate the text of the TextView from.
      */
-    private void setRacerTimeTextBox3(ReportedRaceTimes times) {
+    private void setRacerTimeTextBox3(ReportedRaceTimes times, Resources resources) {
         if (timeTextView2.getText() != "") {
             if ((times.getRaceTimes().getInTime() != null) & (times.getRaceTimes().getOutTime() != null)) {
                 if (times.getRaceTimes().getDroppedOutTime() != null) {
-                    timeTextView3.setText(times.getFormattedDisplayTime(TimeTypes.DROPPEDOUT));
+                    timeTextView3.setText(times.getFormattedDisplayTime(TimeTypes.DROPPEDOUT, resources));
                     if (times.droppedOutReportedIfSet()) {
                         timeTextView3.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
                     } else {
                         timeTextView3.setPaintFlags(0);
                     }
                 } else if (times.getRaceTimes().getNotStartedTime() != null){
-                    timeTextView3.setText(times.getFormattedDisplayTime(TimeTypes.DIDNOTSTART));
+                    timeTextView3.setText(times.getFormattedDisplayTime(TimeTypes.DIDNOTSTART, resources));
                     if (times.didNotStartReportedIfSet()) {
                         timeTextView3.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
                     } else {
@@ -215,7 +216,7 @@ public class RacerTimesRecyclerViewHolder extends RecyclerView.ViewHolder {
      * This creates the listener for the check box. Allows setting the times for the racer, to reported or unreported if checked.
      * @param times the times of the racer associated with the view.
      */
-    public void setCheckBoxListener(final ReportedRaceTimes times) {
+    public void setCheckBoxListener(final ReportedRaceTimes times, Resources resources) {
         manualChange = true;
         racerReported.setChecked(times.allReported());
         manualChange = false;
@@ -227,7 +228,7 @@ public class RacerTimesRecyclerViewHolder extends RecyclerView.ViewHolder {
                 } else {
                     times.setAllReportedToUnreported();
                 }
-                setRacerTimes(times);
+                setRacerTimes(times, resources);
             }
         });
     }

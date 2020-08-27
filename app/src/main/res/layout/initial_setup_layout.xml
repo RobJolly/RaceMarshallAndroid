@@ -17,7 +17,7 @@
             android:id="@+id/textView5"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Number of racers:"
+            android:text="@string/number_of_racers"
             android:textSize="18sp" />
 
         <EditText
@@ -31,7 +31,7 @@
             android:id="@+id/textView6"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Your first checkpoint number:"
+            android:text="@string/first_checkpoint_number"
             android:textSize="18sp" />
 
         <EditText
@@ -39,7 +39,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="number" />
+            android:inputType="number"
+            android:importantForAutofill="no" />
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

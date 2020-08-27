@@ -2,6 +2,7 @@ package uk.co.robertjolly.racemarshallandroid.ui.main.adapters;
 
 //Open-source android libraries: https://source.android.com/. Apache 2.0.
 import android.content.Context;
+import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,14 +31,16 @@ public class RacerTimesRecyclerViewAdapter extends RecyclerView.Adapter<RacerTim
     private FragmentManager fragmentManager;
     private Observer checkpointsObserver;
     private Observer checkoffStateManagerObserver;
+    private Resources resources;
     /**
      * Constructor for the view adapter
      * @param passedCheckpoints The checkpoints containing data for which to show in the RecyclerViewAdapter
      * @param parentFragmentManager Fragment manager of the caller
      */
-    public RacerTimesRecyclerViewAdapter(Checkpoints passedCheckpoints, FragmentManager parentFragmentManager, TimesFilterManager timesFilterManager) {
+    public RacerTimesRecyclerViewAdapter(Checkpoints passedCheckpoints, FragmentManager parentFragmentManager, TimesFilterManager timesFilterManager, Resources resources) {
         this.checkpoints = passedCheckpoints;
         this.fragmentManager = parentFragmentManager;
+        this.resources = resources;
         toDisplay = new CheckOffStateManager(checkpoints, timesFilterManager);
 
         checkpointsObserver = (observable, o) -> {
@@ -81,9 +84,9 @@ public class RacerTimesRecyclerViewAdapter extends RecyclerView.Adapter<RacerTim
         } else {
             holder.setRacerButton(String.valueOf(toDisplay.getListToDisplay().get(position).getRacerNumber()));
             holder.setRacerButtonListener(fragmentManager, checkpoints, toDisplay.getListToDisplay().get(position));
-            holder.setRacerTimes(checkpoints.getCheckpoint(checkpoints.getCurrentCheckpointNumber()).getReportedRaceTime(toDisplay.getListToDisplay().get(position)));
+            holder.setRacerTimes(checkpoints.getCheckpoint(checkpoints.getCurrentCheckpointNumber()).getReportedRaceTime(toDisplay.getListToDisplay().get(position)), resources);
             ReportedRaceTimes times = checkpoints.getCheckpoint(checkpoints.getCurrentCheckpointNumber()).getReportedRaceTime(toDisplay.getListToDisplay().get(position));
-            holder.setCheckBoxListener(times);
+            holder.setCheckBoxListener(times, resources);
             holder.makeUninvisible();
         }
     }

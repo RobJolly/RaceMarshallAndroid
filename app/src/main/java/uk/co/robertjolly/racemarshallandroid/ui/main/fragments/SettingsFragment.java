@@ -230,8 +230,8 @@ public class SettingsFragment extends Fragment implements CheckpointGrabber {
                 makeDiscoverable();
                 raceMarshallBluetoothComponent.startListening();
                 notifyBuilder = new AlertDialog.Builder(getContext());
-                notifyBuilder.setMessage("Waiting for checkpoint to be sent..");
-                notifyBuilder.setPositiveButton("Cancel", (dialogInterface, i) -> {
+                notifyBuilder.setMessage(getString(R.string.waiting_send));
+                notifyBuilder.setPositiveButton(getString(R.string.cancel), (dialogInterface, i) -> {
                     //Will dismiss on its own, doesn't need help.
                 });
                 notifyBuilder.setOnDismissListener(dialogInterface -> {
@@ -262,22 +262,21 @@ public class SettingsFragment extends Fragment implements CheckpointGrabber {
             //TODO Ideally, we wouldn't require the user to re-click after any of these. See if we can grab user responses to these dialogs. Maybe broadcast receivers?
             if (bluetoothAdapter == null) { //user doesn't have bluetooth adapter
                 notifyBuilder = new AlertDialog.Builder(getContext());
-                notifyBuilder.setMessage("Sorry, this feature requires bluetooth, which your phone doesn't appear to have.");
+                notifyBuilder.setMessage(getString(R.string.no_bluetooth));
                 notifyDialog = notifyBuilder.create();
                 notifyDialog.show();
             } else if (!bluetoothAdapter.isEnabled()){ //bluetooth isn't enabled, ask to re-enable.
                 notifyBuilder = new AlertDialog.Builder(getContext());
-                notifyBuilder.setMessage("To use this feature, bluetooth must be enabled. Click Enable to enable bluetooth, or Cancel to keep it disabled.");
-                notifyBuilder.setPositiveButton("Enable", (dialogInterface, i) -> {
+                notifyBuilder.setMessage(getString(R.string.ask_bluetooth_enable));
+                notifyBuilder.setPositiveButton(getString(R.string.enable), (dialogInterface, i) -> {
                     bluetoothAdapter.enable();
                     //receiveCheckpoint.performClick();
                 });
-                notifyBuilder.setNegativeButton("Cancel", null);
+                notifyBuilder.setNegativeButton(getString(R.string.cancel), null);
                 notifyDialog = notifyBuilder.create();
                 notifyDialog.show();
             } else if (checkPermissions()){ //user hasn't enabled the permissions. Ask them to fix that.
-                notifyBuilder.setMessage("Sorry, you've not activated the location permission. Without that, this can't work. If the popup to enable it didn't appear," +
-                        " please go to Settings -> Apps -> RaceMarshallAndroid to manually re-enable it. Otherwise, try again.");
+                notifyBuilder.setMessage(getString(R.string.location_permission_missing));
                 notifyBuilder.show();
             } else { //user has everything enabled correctly. Start listening for a checkpoint.
                 service.startScan();
@@ -309,8 +308,8 @@ public class SettingsFragment extends Fragment implements CheckpointGrabber {
         alertBuilder.setItems(deviceNames, (dialogInterface, i) -> {
             raceMarshallBluetoothComponent.startConnecting(deviceList.get(i), uuidReceive);
             Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
-                notifyBuilder.setMessage("Trying to send checkpoint. If this takes more than a few seconds, it has likely failed, and should be cancelled.");
-                notifyBuilder.setPositiveButton("Cancel", (dialogInterface1, i1) -> {
+                notifyBuilder.setMessage(getString(R.string.trying_get_checkpoint));
+                notifyBuilder.setPositiveButton(getString(R.string.cancel), (dialogInterface1, i1) -> {
                     raceMarshallBluetoothComponent.stopConnecting();
                     raceMarshallBluetoothComponent.stopConnection();
                 });
@@ -333,12 +332,12 @@ public class SettingsFragment extends Fragment implements CheckpointGrabber {
         deleteAll.setOnClickListener(view1 -> {
             //This warning is to make sure that the user intended to delete everything.
             final AlertDialog.Builder warnUser = new AlertDialog.Builder(getContext());
-            String warningString = "This will delete all data. There are currently " + grabCheckpoints().getNumberUnpassedOrUnreported() + " unreported or unpassed racers.";
-            warnUser.setTitle("Warning:");
+            String warningString = getString(R.string.delete_data_warning1) + grabCheckpoints().getNumberUnpassedOrUnreported() + getString(R.string.delete_data_warning2);
+            warnUser.setTitle(getString(R.string.warning));
             warnUser.setCancelable(true);
             warnUser.setMessage(warningString);
-            warnUser.setPositiveButton("Cancel", null);
-            warnUser.setNegativeButton("Delete All", (dialogInterface, i) -> {
+            warnUser.setPositiveButton(R.string.cancel, null);
+            warnUser.setNegativeButton(getString(R.string.delete_all), (dialogInterface, i) -> {
                 grabCheckpoints().clearCheckpointData();
                 grabCheckpoints().notifyObservers();
             });
@@ -356,7 +355,7 @@ public class SettingsFragment extends Fragment implements CheckpointGrabber {
         final Button deleteCheckpoint = view.findViewById(R.id.deleteCheckpointButton);
         deleteCheckpoint.setOnClickListener(view1 -> {
             final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity(), R.style.CustomDialogTheme);
-            dialogBuilder.setTitle("Delete Checkpoint:");
+            dialogBuilder.setTitle(getString(R.string.delete_checkpoint_dots));
             dialogBuilder.setCancelable(true);
             //gets a list of checkpoints
             final ArrayList<Integer> possibilities = grabCheckpoints().getCheckpointNumberList();
@@ -370,11 +369,11 @@ public class SettingsFragment extends Fragment implements CheckpointGrabber {
             //adds another dialog to ensure that the user intended to delete the checkpoint.
             dialogBuilder.setItems(checkpointNumberStrings, (dialogInterface, i) -> {
                 final AlertDialog.Builder doubleCheckBuilder = new AlertDialog.Builder(getActivity());
-                doubleCheckBuilder.setTitle("Are you sure?");
-                doubleCheckBuilder.setMessage("You are about to delete checkpoint " + checkpointNumberStrings[i] + ". This cannot be reversed. There are " + grabCheckpoints().getCheckpoint(possibilities.get(i)).getNumberUnreportedAndUnpassedRacers() + " Unreported or Unpassed racers in this checkpoint");
-                doubleCheckBuilder.setPositiveButton("Cancel", null);
+                doubleCheckBuilder.setTitle(getString(R.string.are_you_sure));
+                doubleCheckBuilder.setMessage(getString(R.string.delete_checkpoint_warning_1) + checkpointNumberStrings[i] + getString(R.string.delete_checkpoint_warning2) + grabCheckpoints().getCheckpoint(possibilities.get(i)).getNumberUnreportedAndUnpassedRacers() + getString(R.string.delete_checkpoint_warning_3));
+                doubleCheckBuilder.setPositiveButton(getString(R.string.cancel), null);
                 final int selectedItem = i;
-                doubleCheckBuilder.setNegativeButton("Confirm", (dialogInterface1, i1) -> {
+                doubleCheckBuilder.setNegativeButton(getString(R.string.confirm), (dialogInterface1, i1) -> {
                     grabCheckpoints().deleteCheckpoint(possibilities.get(selectedItem));
                     grabCheckpoints().notifyObservers();
                 });
@@ -418,12 +417,12 @@ public class SettingsFragment extends Fragment implements CheckpointGrabber {
             final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(getContext());
             final View addNewCheckpointView = getLayoutInflater().inflate(R.layout.create_new_checkpoint, null);
             alertBuilder.setView(addNewCheckpointView);
-            alertBuilder.setPositiveButton("Add Checkpoint", (dialogInterface, i) -> {
+            alertBuilder.setPositiveButton(getString(R.string.add_checkpoint), (dialogInterface, i) -> {
                 //Purposely blank due to limitations that exist before the button is shown to user
                 //This is set later
             });
 
-            alertBuilder.setNegativeButton("Cancel", (dialogInterface, i) -> {
+            alertBuilder.setNegativeButton(getString(R.string.cancel), (dialogInterface, i) -> {
                 //cancel doesn't need to do anything.
             });
 
@@ -453,10 +452,10 @@ public class SettingsFragment extends Fragment implements CheckpointGrabber {
                     //errors to the user if the checkpoint already exists
                     if (grabCheckpoints().hasCheckpoint(checkPointNumber)) {
                         final AlertDialog.Builder errorMessage = new AlertDialog.Builder(getContext(), R.style.CustomDialogTheme);
-                        errorMessage.setTitle("Error");
+                        errorMessage.setTitle(getString(R.string.error));
                         errorMessage.setCancelable(true);
-                        errorMessage.setMessage("That checkpoint already exists and cannot be created.");
-                        errorMessage.setPositiveButton("Okay", null);
+                        errorMessage.setMessage(getString(R.string.checkpoint_exists));
+                        errorMessage.setPositiveButton(getString(R.string.okay), null);
                         errorMessage.create().show();
                     } else { //adds the checkpoint and notifies observers
                         Checkpoint createdPoint = new Checkpoint(checkPointNumber, grabCheckpoints().getCheckpoint(grabCheckpoints().getCurrentCheckpointNumber()).getRacers().size());
@@ -467,10 +466,10 @@ public class SettingsFragment extends Fragment implements CheckpointGrabber {
                 } catch (Exception e) {
                     //error if the user has input invalid options for the checkpoint
                     final AlertDialog.Builder errorMessage = new AlertDialog.Builder(getContext(), R.style.CustomDialogTheme);
-                    errorMessage.setTitle("Error");
+                    errorMessage.setTitle(getString(R.string.error));
                     errorMessage.setCancelable(true);
-                    errorMessage.setMessage("Invalid Checkpoint Input. The checkpoint must be a whole integer.");
-                    errorMessage.setPositiveButton("Okay", null);
+                    errorMessage.setMessage(getString(R.string.invalid_checkpoint_input));
+                    errorMessage.setPositiveButton(R.string.okay, null);
                     errorMessage.create().show();
                 }
             });

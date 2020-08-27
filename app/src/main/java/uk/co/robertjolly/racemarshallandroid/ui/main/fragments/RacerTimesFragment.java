@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.RecyclerView;
 //General/default java libraries: https://docs.oracle.com/javase/7/docs/api/index.html
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.sql.Time;
 import java.util.Objects;
 import java.util.Observable;
 import java.util.Observer;
@@ -63,7 +62,7 @@ public class RacerTimesFragment extends Fragment implements Observer, Checkpoint
 
         final RecyclerView recView = view.findViewById(R.id.changesRecyclerView);
         recView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        viewAdapter = new RacerTimesRecyclerViewAdapter(checkpoints, getFragmentManager(), timesFilterManager);
+        viewAdapter = new RacerTimesRecyclerViewAdapter(checkpoints, getFragmentManager(), timesFilterManager, getResources());
         recView.setAdapter(viewAdapter);
 
         checkpointsObserver = (observable, o) -> {
@@ -82,7 +81,7 @@ public class RacerTimesFragment extends Fragment implements Observer, Checkpoint
             @Override
             public void onClick(View view) {
                 final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity(), R.style.CustomDialogTheme);
-                dialogBuilder.setTitle(R.string.FilterRacers);
+                dialogBuilder.setTitle(R.string.filter_racers);
                 dialogBuilder.setCancelable(true);
 
                 //Multi choice dialog. So users can pick from many.

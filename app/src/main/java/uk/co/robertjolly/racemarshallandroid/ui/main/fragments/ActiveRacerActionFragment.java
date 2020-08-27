@@ -2,7 +2,6 @@ package uk.co.robertjolly.racemarshallandroid.ui.main.fragments;
 
 //Open-source android libraries: https://source.android.com/. Apache 2.0.
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -110,19 +109,19 @@ public class ActiveRacerActionFragment extends Fragment implements SelectionMana
         Button otherActionButton = view.findViewById(R.id.otherActionButton);
         otherActionButton.setOnClickListener(view1 -> {
             final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
-            dialogBuilder.setTitle(R.string.otherActions);
+            dialogBuilder.setTitle(R.string.other_actions);
             dialogBuilder.setCancelable(true);
 
             ArrayList<String> options = new ArrayList<>(); //list of option names for the user to click
             ArrayList<OtherDialogOptions> optionsTypes = new ArrayList<>(); //what the options do.
 
             if (selectionsStateManager.areCompatableDroppedOut()) {
-                options.add(getResources().getString(R.string.droppedOut));
+                options.add(getResources().getString(R.string.dropped_out));
                 optionsTypes.add(OtherDialogOptions.DROPPEDOUT);
             }
 
             if (selectionsStateManager.areCompatableNotStarted()) {
-                options.add(getResources().getString(R.string.didNotStart));
+                options.add(getResources().getString(R.string.did_not_start));
                 optionsTypes.add(OtherDialogOptions.DIDNOTSTART);
             }
             options.add(getResources().getString(R.string.cancel));
@@ -150,7 +149,7 @@ public class ActiveRacerActionFragment extends Fragment implements SelectionMana
             }
             textView.setText(textView.getText().subSequence(0, textView.length()-1));
         } else {
-            textView.setText(R.string.selectedRacersTextViewString);
+            textView.setText(R.string.selected_racers_text_view_string);
         }
 
     }

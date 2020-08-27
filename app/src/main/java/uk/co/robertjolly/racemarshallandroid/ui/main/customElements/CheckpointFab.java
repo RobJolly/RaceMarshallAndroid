@@ -35,7 +35,7 @@ public class CheckpointFab {
         //this displays a list of current checkpoints, and on user click, will allow the change of the active checkpoint.
         fobCheckpoint.setOnClickListener(view1 -> {
             final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activity, R.style.CustomDialogTheme);
-            dialogBuilder.setTitle(R.string.selectedCheckpoints);
+            dialogBuilder.setTitle(R.string.selected_checkpoints);
             dialogBuilder.setCancelable(true);
 
             final ArrayList<Integer> possibilities = checkpoints.getCheckpointNumberList();

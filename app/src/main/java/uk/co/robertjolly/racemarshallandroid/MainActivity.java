@@ -140,11 +140,11 @@ public class MainActivity extends AppCompatActivity {
     private void askForCheckpointsDialog(final Context context) {
         //TODO Change this alert dialog to a dialog fragment - fix bug whereby if screen tilted before input, there will be a crash
         final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
-        alertBuilder.setTitle("Start New race: Please provide this information:");
+        alertBuilder.setTitle(getString(R.string.start_new_race_title));
         final View initialiseCheckpointView = getLayoutInflater().inflate(R.layout.initial_setup_layout, null);
         alertBuilder.setView(initialiseCheckpointView);
         alertBuilder.setCancelable(false);
-        alertBuilder.setPositiveButton("Done", (dialogInterface, i) -> {
+        alertBuilder.setPositiveButton(getString(R.string.done), (dialogInterface, i) -> {
 
         });
         final AlertDialog toShow = alertBuilder.create();
@@ -186,10 +186,10 @@ public class MainActivity extends AppCompatActivity {
 
             private void showDialogCheckpointError(Context context) {
                 final AlertDialog.Builder errorBuilder = new AlertDialog.Builder(context);
-                errorBuilder.setTitle("Error");
+                errorBuilder.setTitle(getString(R.string.error));
                 errorBuilder.setCancelable(true);
-                errorBuilder.setMessage("Sorry, something is wrong with the numbers you input. Both number of racers and the checkpoint number must be positive, whole integers.");
-                errorBuilder.setPositiveButton("Okay", null);
+                errorBuilder.setMessage(getString(R.string.wrong_numbers_input));
+                errorBuilder.setPositiveButton(getString(R.string.okay), null);
                 errorBuilder.create().show();
             }
         });
@@ -203,10 +203,10 @@ public class MainActivity extends AppCompatActivity {
         checkpoints.setCurrentCheckpointNumber(checkpoints.getCheckpointNumberList().get(0));
         checkpoints.notifyObservers();
         final AlertDialog.Builder errorBuilder = new AlertDialog.Builder(this);
-        errorBuilder.setTitle("Selected Checkpoint Changed");
+        errorBuilder.setTitle(getString(R.string.selected_checkpoint_changed));
         errorBuilder.setCancelable(true);
-        errorBuilder.setMessage("Your previously selected checkpoint no longer exists. Your selected checkpoint has been changed to checkpoint number: " + getCheckpoints().getCurrentCheckpointNumber());
-        errorBuilder.setPositiveButton("Okay", null);
+        errorBuilder.setMessage(getString(R.string.no_previous_checkpoint) + getCheckpoints().getCurrentCheckpointNumber());
+        errorBuilder.setPositiveButton(getString(R.string.okay), null);
         errorBuilder.create().show();
     }
 

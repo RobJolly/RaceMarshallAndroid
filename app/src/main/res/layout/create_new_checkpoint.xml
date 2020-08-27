@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Checkpoint Number"
+            android:text="@string/checkpoint_number"
             android:textSize="30sp" />
 
         <EditText

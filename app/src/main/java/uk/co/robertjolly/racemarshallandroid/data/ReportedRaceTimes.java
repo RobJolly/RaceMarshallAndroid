@@ -2,9 +2,9 @@ package uk.co.robertjolly.racemarshallandroid.data;
 
 //Open-source android libraries: https://source.android.com/. Apache 2.0.
 import android.annotation.SuppressLint;
+import android.content.res.Resources;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 //From https://github.com/google/gson. Apache 2.0 license.
 import com.google.gson.annotations.SerializedName;
@@ -14,6 +14,7 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 
 //Projects own classes.
+import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
 
 /**
@@ -142,7 +143,7 @@ public class ReportedRaceTimes implements Parcelable, Serializable {
      * @param type The type of the time to find
      * @return String representing time formatted as explained above. Empty String if specified time isn't set.
      */
-    public String getFormattedDisplayTime(TimeTypes type) {
+    public String getFormattedDisplayTime(TimeTypes type, Resources resources) {
         String toReturn = "";
         @SuppressLint("SimpleDateFormat") SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
 
@@ -150,9 +151,9 @@ public class ReportedRaceTimes implements Parcelable, Serializable {
             case IN:
                 if (getRaceTimes().getInTime() != null) {
                     if (getReportedItems().getReportedItem(TimeTypes.IN)) {
-                        toReturn = toReturn + "(" + "in" + "): ";
+                        toReturn = toReturn + "(" + resources.getString(R.string.in_uncaps) + "): ";
                     } else {
-                        toReturn = toReturn + "in" + ": ";
+                        toReturn = toReturn + resources.getString(R.string.in_uncaps) + ": ";
                     }
                     toReturn = toReturn + timeFormat.format(getRaceTimes().getInTime());
                 }
@@ -160,9 +161,9 @@ public class ReportedRaceTimes implements Parcelable, Serializable {
             case OUT:
                 if (getRaceTimes().getOutTime() != null) {
                     if (getReportedItems().getReportedItem(TimeTypes.OUT)) {
-                        toReturn = toReturn + "(" + "out" + "): ";
+                        toReturn = toReturn + "(" + resources.getString(R.string.out_uncaps) + "): ";
                     } else {
-                        toReturn = toReturn + "out" + ": ";
+                        toReturn = toReturn + resources.getString(R.string.out_uncaps) + ": ";
                     }
                     toReturn = toReturn + timeFormat.format(getRaceTimes().getOutTime());
                 }
@@ -170,9 +171,9 @@ public class ReportedRaceTimes implements Parcelable, Serializable {
             case DROPPEDOUT:
                 if (getRaceTimes().getDroppedOutTime() != null) {
                     if (getReportedItems().getReportedItem(TimeTypes.DROPPEDOUT)) {
-                        toReturn = toReturn + "(" + "dropped out" + "): ";
+                        toReturn = toReturn + "(" + resources.getString(R.string.dropped_out_uncaps) + "): ";
                     } else {
-                        toReturn = toReturn + "dropped out" + ": ";
+                        toReturn = toReturn + resources.getString(R.string.dropped_out_uncaps) + ": ";
                     }
                     toReturn = toReturn + timeFormat.format(getRaceTimes().getDroppedOutTime());
                 }
@@ -180,9 +181,9 @@ public class ReportedRaceTimes implements Parcelable, Serializable {
             case DIDNOTSTART:
                 if (getRaceTimes().getNotStartedTime() != null) {
                     if (getReportedItems().getReportedItem(TimeTypes.DIDNOTSTART)) {
-                        toReturn = toReturn + "(" + "did not start" + "): ";
+                        toReturn = toReturn + "(" + resources.getString(R.string.did_not_start_uncaps) + "): ";
                     } else {
-                        toReturn = toReturn + "did not start" + ": ";
+                        toReturn = toReturn + resources.getString(R.string.did_not_start_uncaps) + ": ";
                     }
                     toReturn = toReturn + timeFormat.format(getRaceTimes().getNotStartedTime());
                 }

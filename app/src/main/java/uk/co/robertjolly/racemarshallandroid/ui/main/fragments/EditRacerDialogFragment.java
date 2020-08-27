@@ -1,5 +1,6 @@
 package uk.co.robertjolly.racemarshallandroid.ui.main.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -51,13 +52,14 @@ public class EditRacerDialogFragment extends DialogFragment {
         super.onCreate(savedInstanceState);
     }
 
+    @SuppressLint("SetTextI18n") //for whatever reason, this is a thing. It doesn't seem to break anything.
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.edit_racer_fragment, container, false);
 
         TextView title = view.findViewById(R.id.racerDescriptionText);
-        title.setText("Editing racer: " + racer.getRacerNumber());
+        title.setText(getString(R.string.editing_racer) + racer.getRacerNumber());
         inModifyButton = view.findViewById(R.id.inModifyTimeButton);
         inModifyButton.initialiseButton(checkpoints, racer, TimeTypes.IN);
 
@@ -133,35 +135,35 @@ public class EditRacerDialogFragment extends DialogFragment {
 
     private void clearIfSure(TimeTypes toCheck) {
         AlertDialog.Builder checkBuilder = new AlertDialog.Builder(getContext());
-        String messageToShow = "Are you sure you want to delete the ";
+        String messageToShow = getString(R.string.are_you_sure_delete_the);
         switch (toCheck) {
             case IN:
-                messageToShow = messageToShow + "checked in ";
+                messageToShow = messageToShow + getString(R.string.checked_in_uncaps);
                 break;
             case OUT:
-                messageToShow = messageToShow + "checked out ";
+                messageToShow = messageToShow + getString(R.string.checked_out_uncaps);
                 break;
             case DROPPEDOUT:
-                messageToShow = messageToShow + "dropped out ";
+                messageToShow = messageToShow + getString(R.string.dropped_out_uncaps);
                 break;
             case DIDNOTSTART:
-                messageToShow = messageToShow + "did not start ";
+                messageToShow = messageToShow + getString(R.string.did_not_start_uncaps);
             default:
                 Log.e("Error", "Attempting to clear a time type that is not handled");
         }
-        messageToShow = messageToShow + "time?";
+        messageToShow = messageToShow + " " + getString(R.string.time_question);
         if (checkpoints.getCurrentSelectedCheckpoint().getRacerData(racer).getReportedItems().getReportedItem(toCheck)) {
-            messageToShow = messageToShow + " You've reported this time already.";
+            messageToShow = messageToShow + " " + getString(R.string.reported_time_already);
         }
         checkBuilder.setMessage(messageToShow);
-        checkBuilder.setNegativeButton("Yes", new DialogInterface.OnClickListener() {
+        checkBuilder.setNegativeButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 checkpoints.clearRacerTime(checkpoints.getCurrentCheckpointNumber(), racer, toCheck);
                 checkpoints.notifyObservers();
             }
         });
-        checkBuilder.setPositiveButton("Cancel", null);
+        checkBuilder.setPositiveButton(getString(R.string.cancel), null);
         checkBuilder.create().show();
     }
 

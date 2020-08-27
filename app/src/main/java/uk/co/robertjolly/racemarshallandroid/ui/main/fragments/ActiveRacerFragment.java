@@ -95,7 +95,7 @@ public class ActiveRacerFragment extends Fragment implements CheckpointGrabber {
         FloatingActionButton fabFilter = view.findViewById(R.id.filterFob); //This allows filters to be selected.
         fabFilter.setOnClickListener(view1 -> {
             final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity(), R.style.CustomDialogTheme);
-            dialogBuilder.setTitle(R.string.FilterRacers);
+            dialogBuilder.setTitle(R.string.filter_racers);
             dialogBuilder.setCancelable(true);
 
             //Multi choice dialog. So users can pick from many.

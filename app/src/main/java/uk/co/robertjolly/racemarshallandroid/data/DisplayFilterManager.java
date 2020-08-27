@@ -104,7 +104,7 @@ public class DisplayFilterManager extends Observable implements Parcelable, Seri
      * @return An array of strings, naming the filters.
      */
     public String[] getFilterNames(Resources resources) {
-        return new String[]{resources.getString(R.string.toPass), resources.getString(R.string.checkedIn), resources.getString(R.string.checkedOut), resources.getString(R.string.droppedOut), resources.getString(R.string.didNotStart)};
+        return new String[]{resources.getString(R.string.to_pass), resources.getString(R.string.checked_in), resources.getString(R.string.checked_out), resources.getString(R.string.dropped_out), resources.getString(R.string.did_not_start)};
     }
 
     /**
