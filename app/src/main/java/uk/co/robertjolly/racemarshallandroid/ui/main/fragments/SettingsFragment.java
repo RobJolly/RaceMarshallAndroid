@@ -206,18 +206,46 @@ public class SettingsFragment extends Fragment implements CheckpointGrabber {
     private void setReceiveCheckpointButton(View view) {
         final Button receiveCheckpoint = view.findViewById(R.id.receiveCheckpointButton);
         receiveCheckpoint.setOnClickListener(view1 -> {
-            makeDiscoverable();
-            raceMarshallBluetoothComponent.startListening();
-            notifyBuilder.setMessage("Waiting for checkpoint to be sent..");
-            notifyBuilder.setPositiveButton("Cancel", (dialogInterface, i) -> {
-                raceMarshallBluetoothComponent.stopListening();
-                raceMarshallBluetoothComponent.setReading(false);
-            });
-
-            Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+            //TODO Ideally, we wouldn't require the user to re-click after any of these. See if we can grab user responses to these dialogs. Maybe broadcast receivers?
+            if (bluetoothAdapter == null) { //user doesn't have bluetooth adapter
+                notifyBuilder = new AlertDialog.Builder(getContext());
+                notifyBuilder.setMessage("Sorry, this feature requires bluetooth, which your phone doesn't appear to have.");
                 notifyDialog = notifyBuilder.create();
                 notifyDialog.show();
-            });
+            } else if (!bluetoothAdapter.isEnabled()){ //bluetooth isn't enabled, ask to re-enable.
+                notifyBuilder = new AlertDialog.Builder(getContext());
+                notifyBuilder.setMessage("To use this feature, bluetooth must be enabled. Click Enable to enable bluetooth, or Cancel to keep it disabled.");
+                notifyBuilder.setPositiveButton("Enable", (dialogInterface, i) -> {
+                    bluetoothAdapter.enable();
+                    //receiveCheckpoint.performClick();
+                });
+                notifyBuilder.setNegativeButton("Cancel", null);
+                notifyDialog = notifyBuilder.create();
+                notifyDialog.show();
+            } else if (checkPermissions()){ //user hasn't enabled the permissions. Ask them to fix that.
+                notifyBuilder.setMessage("Sorry, you've not activated the location permission. Without that, this can't work. If the popup to enable it didn't appear," +
+                        " please go to Settings -> Apps -> RaceMarshallAndroid to manually re-enable it. Otherwise, try again.");
+                notifyBuilder.show();
+            } else { //user has everything enabled correctly. Start listening for a checkpoint.
+                makeDiscoverable();
+                raceMarshallBluetoothComponent.startListening();
+                notifyBuilder = new AlertDialog.Builder(getContext());
+                notifyBuilder.setMessage("Waiting for checkpoint to be sent..");
+                notifyBuilder.setPositiveButton("Cancel", (dialogInterface, i) -> {
+                    //Will dismiss on its own, doesn't need help.
+                });
+                notifyBuilder.setOnDismissListener(dialogInterface -> {
+                    //TODO Figure out why this only works once.
+                    raceMarshallBluetoothComponent.stopListening();
+                    raceMarshallBluetoothComponent.stopConnection();
+                    raceMarshallBluetoothComponent.setReading(false);
+                });
+
+                Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+                    notifyDialog = notifyBuilder.create();
+                    notifyDialog.show();
+                });
+            }
         });
     }
 
@@ -231,9 +259,31 @@ public class SettingsFragment extends Fragment implements CheckpointGrabber {
         final Button transferCheckpoint = view.findViewById(R.id.transferCheckpointButton);
 
         transferCheckpoint.setOnClickListener(view12 -> {
-            service.startScan();
-            alertBuilder = new AlertDialog.Builder(getContext());
-            createAlertDialog();
+            //TODO Ideally, we wouldn't require the user to re-click after any of these. See if we can grab user responses to these dialogs. Maybe broadcast receivers?
+            if (bluetoothAdapter == null) { //user doesn't have bluetooth adapter
+                notifyBuilder = new AlertDialog.Builder(getContext());
+                notifyBuilder.setMessage("Sorry, this feature requires bluetooth, which your phone doesn't appear to have.");
+                notifyDialog = notifyBuilder.create();
+                notifyDialog.show();
+            } else if (!bluetoothAdapter.isEnabled()){ //bluetooth isn't enabled, ask to re-enable.
+                notifyBuilder = new AlertDialog.Builder(getContext());
+                notifyBuilder.setMessage("To use this feature, bluetooth must be enabled. Click Enable to enable bluetooth, or Cancel to keep it disabled.");
+                notifyBuilder.setPositiveButton("Enable", (dialogInterface, i) -> {
+                    bluetoothAdapter.enable();
+                    //receiveCheckpoint.performClick();
+                });
+                notifyBuilder.setNegativeButton("Cancel", null);
+                notifyDialog = notifyBuilder.create();
+                notifyDialog.show();
+            } else if (checkPermissions()){ //user hasn't enabled the permissions. Ask them to fix that.
+                notifyBuilder.setMessage("Sorry, you've not activated the location permission. Without that, this can't work. If the popup to enable it didn't appear," +
+                        " please go to Settings -> Apps -> RaceMarshallAndroid to manually re-enable it. Otherwise, try again.");
+                notifyBuilder.show();
+            } else { //user has everything enabled correctly. Start listening for a checkpoint.
+                service.startScan();
+                alertBuilder = new AlertDialog.Builder(getContext());
+                createAlertDialog();
+            }
         });
     }
 
@@ -451,13 +501,15 @@ public class SettingsFragment extends Fragment implements CheckpointGrabber {
      * This checks to make sure that bluetooth permissions are adequate for what's needed and
      * requests them if they're not.
      */
-    private void checkPermissions() {
+    private boolean checkPermissions() {
         int permissionCheck = Objects.requireNonNull(getActivity()).checkSelfPermission("Manifest.permission.ACCESS_FINE_LOCATION");
         permissionCheck += getActivity().checkSelfPermission("Manifest.permission.ACCESS_COARSE_LOCATION");
         permissionCheck += getActivity().checkSelfPermission("Manifest.permission.BLUETOOTH");
         permissionCheck += getActivity().checkSelfPermission("Manifest.permission.BLUETOOTH_ADMIN");
         if (permissionCheck != 0) {
             this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN}, 0);
+            return false;
         }
+        return true;
     }
 }

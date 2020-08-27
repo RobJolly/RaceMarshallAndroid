@@ -132,7 +132,7 @@ public class RacerTimesFragment extends Fragment implements Observer, Checkpoint
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        removeObservers(); //this deletes all observers before it's remade. Prevents continuously growing the number of observers on things such as screen rotation.
+        //removeObservers(); //this deletes all observers before it's remade. Prevents continuously growing the number of observers on things such as screen rotation.
         super.onSaveInstanceState(outState);
     }
 }
