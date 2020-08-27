@@ -333,6 +333,40 @@ public class SelectionsStateManager extends Observable implements Parcelable { /
     }
 
     /**
+     * Finds out whether not not all of the selected racers can be set as dropped out, based on their current set times.
+     * @return whether not not all of the selected racers can be set as dropped out, based on their current set times
+     */
+    public boolean areCompatableDroppedOut() {
+        boolean compatable = true;
+
+        for (Racer racer : selected) {
+            ReportedRaceTimes racerTimes = getCheckpoints().getCheckpoint(getCheckpoints().getCurrentCheckpointNumber()).getReportedRaceTime(racer);
+            if (racerTimes.getRaceTimes().getNotStartedTime() != null || racerTimes.getRaceTimes().getDroppedOutTime() != null) {
+                compatable = false;
+                break;
+            }
+        }
+        return compatable;
+    }
+
+    /**
+     * Finds out whether not not all of the selected racers can be set as not started, based on their current set times.
+     * @return whether not not all of the selected racers can be set not started, based on their current set times
+     */
+    public boolean areCompatableNotStarted() {
+        boolean compatable = true;
+
+        for (Racer racer : selected) {
+            ReportedRaceTimes racerTimes = getCheckpoints().getCheckpoint(getCheckpoints().getCurrentCheckpointNumber()).getReportedRaceTime(racer);
+            if (racerTimes.getRaceTimes().getNotStartedTime() != null || racerTimes.getRaceTimes().getDroppedOutTime() != null || racerTimes.getRaceTimes().getOutTime() != null || racerTimes.getRaceTimes().getInTime() != null) {
+                compatable = false;
+                break;
+            }
+        }
+        return compatable;
+    }
+
+    /**
      * Constructor which takes a parcel and sets the selected checkpoint based on that parcel.
      * @param in Parcel from which to take data
      */

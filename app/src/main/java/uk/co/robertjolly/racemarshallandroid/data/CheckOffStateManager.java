@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Observable;
+import java.util.Observer;
 import java.util.TreeMap;
 
 /**
@@ -13,6 +14,9 @@ import java.util.TreeMap;
  */
 public class CheckOffStateManager extends Observable {
     private Checkpoints checkpoints;
+    private TimesFilterManager timesFilterManager;
+    private Observer checkpointsObserver;
+    private Observer timesFilterManagerObserver;
 
     /**
      * Constructor - The list of possible checkpoints, and the list of filters, to be applied to the
@@ -20,13 +24,27 @@ public class CheckOffStateManager extends Observable {
      * @param checkpoints The complete checkpoint data for the application
      * @param filters The filters, to decide to show or not show records in checkpoints.
      */
-    public CheckOffStateManager(Checkpoints checkpoints, DisplayFilterManager filters) {
+    public CheckOffStateManager(Checkpoints checkpoints, TimesFilterManager filters) {
         this.checkpoints = checkpoints;
+        this.timesFilterManager = filters;
 
-        checkpoints.addObserver((observable, o) -> {
-            setChanged();
-            notifyObservers();
-        });
+        checkpointsObserver = new Observer() { //calls for an update if the checkpoints change
+            @Override
+            public void update(Observable observable, Object o) {
+                setChanged();
+                notifyObservers();
+            }
+        };
+        timesFilterManagerObserver = new Observer() { //calls for an update if the time filters change
+            @Override
+            public void update(Observable observable, Object o) {
+                setChanged();
+                notifyObservers();
+            }
+        };
+
+        checkpoints.addObserver(checkpointsObserver);
+        timesFilterManager.addObserver(timesFilterManagerObserver);
     }
 
     /**
@@ -50,10 +68,17 @@ public class CheckOffStateManager extends Observable {
         if ((checkpoints.hasCheckpoints()) && (checkpoints.hasCheckpoint(checkpoints.getCurrentCheckpointNumber()))) {
             racersWithTimes = checkpoints.getCheckpoint(checkpoints.getCurrentCheckpointNumber()).getRacersWithTimes();
         }
-        //racersWithTimes = checkpoints.getCheckpoint(checkpoints.getCurrentCheckpointNumber()).getRacersWithTimes();
 
-        //here's where you'd do the filtering - we don't have any yet
+
+        //This is the filtering logic.
         ArrayList<Racer> toReport = new ArrayList<>(racersWithTimes.keySet());
+        ArrayList<Racer> toRemove = new ArrayList<>();
+        for (Racer racer : toReport) {
+            if (!timesFilterManager.shouldShow(checkpoints.getCurrentSelectedCheckpoint(), racer)) {
+                toRemove.add(racer);
+            }
+        }
+        toReport.removeAll(toRemove);
 
         //This sorts the list, based on most recent recorded change.
         Collections.sort(toReport, (racer, t1) -> {
@@ -71,5 +96,10 @@ public class CheckOffStateManager extends Observable {
         });
 
         return toReport;
+    }
+
+    public void removeObservers() {
+        checkpoints.deleteObserver(checkpointsObserver);
+        timesFilterManager.deleteObserver(timesFilterManagerObserver);
     }
 }

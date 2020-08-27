@@ -12,10 +12,14 @@ import androidx.recyclerview.widget.RecyclerView;
 //General/default java libraries: https://docs.oracle.com/javase/7/docs/api/index.html
 
 //Projects own classes.
+import java.util.Observable;
+import java.util.Observer;
+
 import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.CheckOffStateManager;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
 import uk.co.robertjolly.racemarshallandroid.data.ReportedRaceTimes;
+import uk.co.robertjolly.racemarshallandroid.data.TimesFilterManager;
 
 /**
  * This RecyclerViewAdapter is responsible handling the list of racers and their times.
@@ -24,20 +28,29 @@ public class RacerTimesRecyclerViewAdapter extends RecyclerView.Adapter<RacerTim
     private Checkpoints checkpoints;
     private CheckOffStateManager toDisplay;
     private FragmentManager fragmentManager;
-
+    private Observer checkpointsObserver;
+    private Observer checkoffStateManagerObserver;
     /**
      * Constructor for the view adapter
      * @param passedCheckpoints The checkpoints containing data for which to show in the RecyclerViewAdapter
      * @param parentFragmentManager Fragment manager of the caller
      */
-    public RacerTimesRecyclerViewAdapter(Checkpoints passedCheckpoints, FragmentManager parentFragmentManager) {
+    public RacerTimesRecyclerViewAdapter(Checkpoints passedCheckpoints, FragmentManager parentFragmentManager, TimesFilterManager timesFilterManager) {
         this.checkpoints = passedCheckpoints;
         this.fragmentManager = parentFragmentManager;
-        toDisplay = new CheckOffStateManager(checkpoints, null);
-        checkpoints.addObserver((observable, o) -> {
-            toDisplay = new CheckOffStateManager(checkpoints, null);
+        toDisplay = new CheckOffStateManager(checkpoints, timesFilterManager);
+
+        checkpointsObserver = (observable, o) -> {
+            //toDisplay.removeObservers();
+            //toDisplay = new CheckOffStateManager(checkpoints, timesFilterManager);
             notifyDataSetChanged();
-        });
+        };
+        checkpoints.addObserver(checkpointsObserver);
+
+        checkoffStateManagerObserver = (observable, o) -> {
+            notifyDataSetChanged();
+        };
+        toDisplay.addObserver(checkoffStateManagerObserver);
     }
 
     /**
@@ -82,5 +95,10 @@ public class RacerTimesRecyclerViewAdapter extends RecyclerView.Adapter<RacerTim
     @Override
     public int getItemCount() {
         return toDisplay.getListToDisplay().size() + 2; //+2 is a buffer, this leaves room to scroll at end for floating actions buttons.
+    }
+
+    public void removeObservers() {
+        checkpoints.deleteObserver(checkpointsObserver);
+        toDisplay.deleteObserver(checkoffStateManagerObserver);
     }
 }

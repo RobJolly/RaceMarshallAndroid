@@ -2,6 +2,7 @@ package uk.co.robertjolly.racemarshallandroid.ui.main.fragments;
 
 //Open-source android libraries: https://source.android.com/. Apache 2.0.
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +15,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 //General/default java libraries: https://docs.oracle.com/javase/7/docs/api/index.html
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
 
@@ -90,6 +93,7 @@ public class ActiveRacerActionFragment extends Fragment implements SelectionMana
             selectionsStateManager.clearSelected();
             selectionsStateManager.notifyObservers();
         });
+
         Button outButton = view.findViewById(R.id.outButton);
         outButton.setOnClickListener(view13 -> {
            selectionsStateManager.setSelectedPassed(((TimeButton) Objects.requireNonNull(getActivity()).findViewById(R.id.timeButton)).getTime());
@@ -109,24 +113,24 @@ public class ActiveRacerActionFragment extends Fragment implements SelectionMana
             dialogBuilder.setTitle(R.string.otherActions);
             dialogBuilder.setCancelable(true);
 
+            ArrayList<String> options = new ArrayList<>(); //list of option names for the user to click
+            ArrayList<OtherDialogOptions> optionsTypes = new ArrayList<>(); //what the options do.
 
-            String[] options = {getResources().getString(R.string.droppedOut), getResources().getString(R.string.didNotStart), getResources().getString(R.string.cancel)};
-            dialogBuilder.setItems(options, (dialogInterface, i) -> {
-                switch (i) {
-                    case 0:
-                        selectionsStateManager.setSelectedDroppedOut(((TimeButton) Objects.requireNonNull(getActivity()).findViewById(R.id.timeButton)).getTime());
-                        selectionsStateManager.notifyObservers();
-                        break;
-                    case 1:
-                        selectionsStateManager.setSelectedNotStarted(((TimeButton) Objects.requireNonNull(getActivity()).findViewById(R.id.timeButton)).getTime());
-                        selectionsStateManager.notifyObservers();
-                        break;
-                    case 2:
-                        //User has clicked cancel. This is intentionally empty. No action need happen.
-                    default:
-                        Log.w("Warning", "User has clicked an action within otherActionButton that is not intended/accounted for");
-                }
-            });
+            if (selectionsStateManager.areCompatableDroppedOut()) {
+                options.add(getResources().getString(R.string.droppedOut));
+                optionsTypes.add(OtherDialogOptions.DROPPEDOUT);
+            }
+
+            if (selectionsStateManager.areCompatableNotStarted()) {
+                options.add(getResources().getString(R.string.didNotStart));
+                optionsTypes.add(OtherDialogOptions.DIDNOTSTART);
+            }
+            options.add(getResources().getString(R.string.cancel));
+            optionsTypes.add(OtherDialogOptions.CANCEL);
+
+            Object[] stringObjectArray = options.toArray();
+            String[] stringArray = Arrays.copyOf(stringObjectArray, stringObjectArray.length, String[].class);
+            dialogBuilder.setItems(stringArray, (dialogInterface, i) -> doOtherDialogActions(optionsTypes.get(i)));
             dialogBuilder.show();
         });
 
@@ -186,6 +190,29 @@ public class ActiveRacerActionFragment extends Fragment implements SelectionMana
             }
         } catch (Exception e) {
             //Time button just doesn't exist yet, that's fine.
+        }
+    }
+
+    private enum OtherDialogOptions {
+        DROPPEDOUT, DIDNOTSTART, CANCEL
+    }
+
+    private void doOtherDialogActions(OtherDialogOptions options) {
+        switch (options) {
+            case DROPPEDOUT:
+                selectionsStateManager.setSelectedDroppedOut(((TimeButton) Objects.requireNonNull(getActivity()).findViewById(R.id.timeButton)).getTime());
+                selectionsStateManager.notifyObservers();
+                break;
+            case DIDNOTSTART:
+                selectionsStateManager.setSelectedNotStarted(((TimeButton) Objects.requireNonNull(getActivity()).findViewById(R.id.timeButton)).getTime());
+                selectionsStateManager.notifyObservers();
+                break;
+            case CANCEL:
+                //do nothing, user exited dialog.
+                break;
+            default:
+                Log.w("Warning", "User has clicked an action within otherActionButton that is not intended/accounted for");
+                break;
         }
     }
 }
