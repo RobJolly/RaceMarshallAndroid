@@ -25,6 +25,7 @@ import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
 import uk.co.robertjolly.racemarshallandroid.data.RaceTimes;
 import uk.co.robertjolly.racemarshallandroid.data.Racer;
 import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
+import uk.co.robertjolly.racemarshallandroid.miscClasses.Vibrate;
 import uk.co.robertjolly.racemarshallandroid.ui.main.customElements.ModifyTimeButton;
 
 public class EditRacerDialogFragment extends DialogFragment {
@@ -159,6 +160,7 @@ public class EditRacerDialogFragment extends DialogFragment {
         checkBuilder.setNegativeButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                new Vibrate().pulse(getContext());
                 checkpoints.clearRacerTime(checkpoints.getCurrentCheckpointNumber(), racer, toCheck);
                 checkpoints.notifyObservers();
             }

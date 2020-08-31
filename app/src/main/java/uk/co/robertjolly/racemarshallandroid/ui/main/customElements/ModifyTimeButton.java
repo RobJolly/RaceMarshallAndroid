@@ -26,6 +26,7 @@ import uk.co.robertjolly.racemarshallandroid.data.RaceTimes;
 import uk.co.robertjolly.racemarshallandroid.data.Racer;
 import uk.co.robertjolly.racemarshallandroid.data.ReportedRaceTimes;
 import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
+import uk.co.robertjolly.racemarshallandroid.miscClasses.Vibrate;
 
 public class ModifyTimeButton extends androidx.appcompat.widget.AppCompatButton {
 
@@ -115,6 +116,7 @@ public class ModifyTimeButton extends androidx.appcompat.widget.AppCompatButton 
     }
 
     private void changeRacerTime(Checkpoints checkpointsToEdit, Racer racerToEdit, TimeTypes timeTypeToEdit, Date timeShown) {
+        new Vibrate().pulse(getContext());
         checkpointsToEdit.setRacerTime(checkpointsToEdit.getCurrentCheckpointNumber(), racerToEdit, timeTypeToEdit, timeShown);
         checkpointsToEdit.notifyObservers();
     }
