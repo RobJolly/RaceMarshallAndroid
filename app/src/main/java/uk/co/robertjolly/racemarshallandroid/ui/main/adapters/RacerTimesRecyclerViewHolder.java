@@ -204,7 +204,13 @@ public class RacerTimesRecyclerViewHolder extends RecyclerView.ViewHolder {
                     } else {
                         timeTextView3.setPaintFlags(0);
                     }
+                } else {
+                    timeTextView3.setText("");
+                    timeTextView3.setPaintFlags(0);
                 }
+            } else {
+                timeTextView3.setText("");
+                timeTextView3.setPaintFlags(0);
             }
         } else {
             timeTextView3.setText("");

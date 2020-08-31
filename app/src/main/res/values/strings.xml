@@ -80,6 +80,6 @@
     <string name="select_send_checkpoint">Select checkpoint to send</string>
     <string name="other">Other</string>
     <string name="about">About</string>
-    <string name="version_number_1_0">Version Number: 1.02</string>
+    <string name="version_number_1_0">Version Number: 1.03</string>
     <string name="developer_robert_a_jolly">Developer: Robert A. Jolly</string>
 </resources>
