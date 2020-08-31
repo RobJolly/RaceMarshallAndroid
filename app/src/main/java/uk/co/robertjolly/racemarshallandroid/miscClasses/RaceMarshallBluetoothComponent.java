@@ -8,6 +8,8 @@ import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 
 //General/default java libraries: https://docs.oracle.com/javase/7/docs/api/index.html
+import androidx.annotation.Nullable;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -31,11 +33,13 @@ public class RaceMarshallBluetoothComponent extends Observable {
     private BluetoothDevice bluetoothDevice;
     private UUID deviceUUID;
     private UUID uuidReceive = UUID.fromString("baeed2bb-a07c-486c-a57b-ad6d1c4d5de3");
-    private ConnectedThread connectedThread;
+    private ConnectedWritingThread connectedWritingThread;
+    private ConnectedReadingThread connectedReadingThread;
     private Checkpoints checkpoints;
+    private Checkpoint toOutput = null;
     private boolean writing = false;
     private boolean reading = false;
-
+    private boolean failed = true;
     /**
      * This is the constructor for the raceMarshallBluetoothComponent. It is set up with checkpoints to modify or send from.
      * @param checkpoints checkpoints that are wanted to be sent from, or modified.
@@ -43,7 +47,6 @@ public class RaceMarshallBluetoothComponent extends Observable {
     public RaceMarshallBluetoothComponent(Checkpoints checkpoints) {
         this.checkpoints = checkpoints;
     }
-
 
     /**
      * This is a thread that will be responsible for receiving data.
@@ -57,6 +60,7 @@ public class RaceMarshallBluetoothComponent extends Observable {
         public listeningThread() {
             BluetoothServerSocket tmp = null;
             reading = true;
+            failed = true;
             try {
                 String appName = "RaceMarshallAndroid";
                 tmp = bluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord(appName, uuidReceive);
@@ -85,7 +89,7 @@ public class RaceMarshallBluetoothComponent extends Observable {
 
             if (bluetoothSocket != null) { //Bluetooth socket has now connected - can do stuff
                 Log.e("ACThread", "Attempting to create connector");
-                connected(bluetoothSocket, 0);
+                connectedReading(bluetoothSocket);
             }
         }
 
@@ -139,7 +143,7 @@ public class RaceMarshallBluetoothComponent extends Observable {
                 }
             }
 
-            connected(bluetoothSocket, checkpointNumber);
+            connectedWriting(bluetoothSocket, checkpointNumber);
         }
 
         /**
@@ -171,6 +175,8 @@ public class RaceMarshallBluetoothComponent extends Observable {
         if (listeningThread != null) {
             listeningThread.cancel();
             Log.i("Stop Listening", "Now Stopped Listening");
+            listeningThread.interrupt();
+            Log.i("Stop Listening", "Now Stopped Listening thread");
         }
     }
 
@@ -181,6 +187,8 @@ public class RaceMarshallBluetoothComponent extends Observable {
         if (connectionCreatorThread != null) {
             connectionCreatorThread.cancel();
             Log.i("Stop Connecting", "Now Stopped Connecting");
+            connectionCreatorThread.interrupt();
+            Log.i("Stop Connecting", "Now Stopped Connecting");
         }
     }
 
@@ -188,9 +196,18 @@ public class RaceMarshallBluetoothComponent extends Observable {
      * Stops the device connecting to another
      */
     public synchronized void stopConnection() {
-        if (connectedThread != null) {
-            connectedThread.cancel();
-            Log.i("Stop Connection", "Now Stopped Connection");
+        if (connectedWritingThread != null) {
+            connectedWritingThread.cancel();
+            Log.i("Stop Connection", "Now Stopped Writing Connection");
+            connectedWritingThread.interrupt();
+            Log.i("Stop Connection", "Now stopped writing connected thread");
+        }
+
+        if (connectedReadingThread != null) {
+            connectedReadingThread.cancel();
+            Log.i("Stop Connection", "Now Stopped Reading Connection");
+            connectedReadingThread.interrupt();
+            Log.i("Stop Connection", "Now stopped reading connected thread");
         }
     }
 
@@ -201,6 +218,7 @@ public class RaceMarshallBluetoothComponent extends Observable {
      */
     public synchronized void startConnecting(BluetoothDevice bluetoothDevice, UUID uuid, int checkpointNumber) {
         stopListening();
+        failed = true;
 
         if (connectionCreatorThread != null) {
             connectionCreatorThread.cancel();
@@ -213,57 +231,38 @@ public class RaceMarshallBluetoothComponent extends Observable {
     /**
      * This is the thread that will run when both have been connected
      */
-    //TODO consider having different threads for both reading and writing
-    private class ConnectedThread extends Thread {
+    private class ConnectedReadingThread extends Thread {
         private final BluetoothSocket bluetoothSocket;
-        private final ObjectOutputStream objectOutputStream;
         private final ObjectInputStream objectInputStream;
-        private int checkpointNumber;
 
         /**
          * Constructor for the connection thread (This handles the connected devices
          * @param bluetoothSocket Bluetooth socket of the connection
          */
-        public ConnectedThread(BluetoothSocket bluetoothSocket, int checkpointNumber) {
+        public ConnectedReadingThread(BluetoothSocket bluetoothSocket) {
             this.bluetoothSocket = bluetoothSocket;
             InputStream tmpInputStream = null;
-            OutputStream tmpOutputStream = null;
 
             try {
                 tmpInputStream = bluetoothSocket.getInputStream();
-                tmpOutputStream = bluetoothSocket.getOutputStream();
-
             } catch (Exception e) {
-                Log.e("Error", "Failed to create input or output streams");
+                Log.e("Error", "Failed to create input stream");
             }
             InputStream inputStream = tmpInputStream;
-            OutputStream outputStream = tmpOutputStream;
 
             ObjectInputStream tmpObjectInputStream = null;
-            ObjectOutputStream tmpObjectOutputStream = null;
 
-            if (writing) {
+            while (!isInterrupted()) {
                 try {
-                    //Be careful with these, this could loop forever
-                    tmpObjectOutputStream = new ObjectOutputStream(outputStream);
+                    tmpObjectInputStream = new ObjectInputStream(inputStream);
+                    break;
                 } catch (IOException e) {
-                    Log.e("Error", "Could not create ObjectOutputStream");
+                    Log.e("Error", "Could not create ObjectInputStream");
                 }
-            } else {
-                while (true) {
-                    try {
-                        tmpObjectInputStream = new ObjectInputStream(inputStream);
-                        break;
-                    } catch (IOException e) {
-                        Log.e("Error", "Could not create ObjectInputStream");
-                    }
-                }
-
             }
 
-            objectOutputStream = tmpObjectOutputStream;
             objectInputStream = tmpObjectInputStream;
-            Log.i("Connected Thread", "Initialised Connected Thread");
+            Log.i("Connected Thread", "Initialised Reading Connected Thread");
         }
 
         /**
@@ -271,25 +270,18 @@ public class RaceMarshallBluetoothComponent extends Observable {
          * This shall run until it has successfully written, or read a checkpoint.
          */
         public void run() {
-            if (writing) {
-                boolean success = false;
-                while (!success) {
-                    success = send(checkpoints.getCheckpoint(checkpointNumber));
+            while (!isInterrupted()) {
+                try {
+                    //TODO Add checkpoint checking here
+                    Checkpoint checkpoint = (Checkpoint) objectInputStream.readObject();
+                    toOutput = checkpoint;
+                    failed = false;
+                    break;
+                } catch (Exception e) {
+                    //Log.e("Error", "Failed to create a checkpoint from the input stream data"); //this spams to the console
                 }
-                Log.i("Connected Thread", "Written to connected thread");
-            } else {
-                while (true) {
-                    try {
-                        //TODO Add checkpoint checking here
-                        Checkpoint checkpoint = (Checkpoint) objectInputStream.readObject();
-                        checkpoints.addCheckpoint(checkpoint);
-                        break;
-                    } catch (Exception e) {
-                        //Log.e("Error", "Failed to create a checkpoint from the input stream data");
-                    }
-                }
-                Log.i("Connected Thread", "Read Connected Thread Successfully");
             }
+            Log.i("Connected Thread", "Read Connected Thread Successfully");
 
             try {
                 setChanged();
@@ -297,7 +289,79 @@ public class RaceMarshallBluetoothComponent extends Observable {
             } catch (Exception e) {
                 Log.e("Error", "Could not notify all observers of a change in component");
             }
-                cancel();
+            cancel();
+        }
+
+        /**
+         * Stops the connection
+         */
+        public void cancel() {
+            try {
+                bluetoothSocket.close();
+            } catch (Exception e) {
+                Log.e("Error", "Failed to close bluetooth socket");
+            }
+        }
+    }
+
+
+    /**
+     * This is the thread that will run when both have been connected
+     */
+    private class ConnectedWritingThread extends Thread {
+        private final BluetoothSocket bluetoothSocket;
+        private final ObjectOutputStream objectOutputStream;
+        private int checkpointNumber;
+
+        /**
+         * Constructor for the connection thread (This handles the connected devices
+         * @param bluetoothSocket Bluetooth socket of the connection
+         */
+        public ConnectedWritingThread(BluetoothSocket bluetoothSocket, int checkpointNumber) {
+            this.bluetoothSocket = bluetoothSocket;
+            this.checkpointNumber = checkpointNumber;
+            OutputStream tmpOutputStream = null;
+
+            try {
+                tmpOutputStream = bluetoothSocket.getOutputStream();
+
+            } catch (Exception e) {
+                Log.e("Error", "Failed to create input or output streams");
+            }
+            OutputStream outputStream = tmpOutputStream;
+
+            ObjectOutputStream tmpObjectOutputStream = null;
+            try {
+                //Be careful with these, this could loop forever
+                tmpObjectOutputStream = new ObjectOutputStream(outputStream);
+            } catch (IOException e) {
+                Log.e("Error", "Could not create ObjectOutputStream");
+            }
+
+            objectOutputStream = tmpObjectOutputStream;
+            Log.i("Connected Thread", "Initialised Connected Thread");
+        }
+
+        /**
+         * This run function is started on the creation of a thread.
+         * This shall run until it has successfully written the given checkpoint.
+         */
+        public void run() {
+            boolean success = false;
+            while (!success & !isInterrupted()) {
+                success = send(checkpoints.getCheckpoint(checkpointNumber));
+            }
+            Log.i("Connected Thread", "Written to connected thread");
+            if (!isInterrupted()) {
+                failed = false;
+                try {
+                    setChanged();
+                    notifyObservers();
+                } catch (Exception e) {
+                    Log.e("Error", "Could not notify all observers of a change in component");
+                }
+            }
+            cancel();
         }
 
         /**
@@ -330,16 +394,30 @@ public class RaceMarshallBluetoothComponent extends Observable {
     }
 
     /**
-     * Handles the connection
+     * Handles the connection on the reading side
      * @param bluetoothSocket the bluetooth socket of the connected device
      */
-    private void connected(BluetoothSocket bluetoothSocket, int checkpointNumber) {
-        connectedThread = new ConnectedThread(bluetoothSocket, checkpointNumber);
+    private void connectedReading(BluetoothSocket bluetoothSocket) {
+        connectedReadingThread = new ConnectedReadingThread(bluetoothSocket);
         try {
-            connectedThread.start();
-            Log.i("Connected", "Started connected thread");
+            connectedReadingThread.start();
+            Log.i("Connected", "Started connected reading thread");
         } catch (Exception e) {
-            Log.e("Error", " Failed to connect thread");
+            Log.e("Error", " Failed to connect reading thread");
+        }
+    }
+
+    /**
+     * Handles the writing connection
+     * @param bluetoothSocket the bluetooth socket of the connected device
+     */
+    private void connectedWriting(BluetoothSocket bluetoothSocket, int checkpointNumber) {
+        connectedWritingThread = new ConnectedWritingThread(bluetoothSocket, checkpointNumber);
+        try {
+            connectedWritingThread.start();
+            Log.i("Connected", "Started connected writing thread");
+        } catch (Exception e) {
+            Log.e("Error", " Failed to connect writing thread");
         }
     }
 
@@ -350,7 +428,7 @@ public class RaceMarshallBluetoothComponent extends Observable {
      */
     public boolean send(Checkpoint checkpoint) {
         try {
-            return connectedThread.send(checkpoint);
+            return connectedWritingThread.send(checkpoint);
         } catch (Exception e) {
             Log.e("Error", "Failed to Write to device");
             return false;
@@ -387,5 +465,22 @@ public class RaceMarshallBluetoothComponent extends Observable {
      */
     public boolean isReading() {
         return reading;
+    }
+
+    /**
+     * Getter for whether or not the Bluetooth Component completed the last read/write successfully
+     * @return
+     */
+    public boolean isFailed() {
+        return failed;
+    }
+
+    /**
+     * Getter for the output checkpoint (null if not set)
+     * @return checkpoint received, if set
+     */
+    @Nullable
+    public Checkpoint getReceivedCheckpoint() {
+        return toOutput;
     }
 }

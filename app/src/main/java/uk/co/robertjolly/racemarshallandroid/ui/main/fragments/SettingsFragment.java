@@ -83,11 +83,39 @@ public class SettingsFragment extends Fragment implements CheckpointGrabber {
             notifyDialog.dismiss();
             if (raceMarshallBluetoothComponent.isReading()) {
                 raceMarshallBluetoothComponent.setReading(false);
-                notifyBuilder.setMessage("Received Checkpoint");
+                if (raceMarshallBluetoothComponent.isFailed() || raceMarshallBluetoothComponent.getReceivedCheckpoint() == null) {
+                    notifyBuilder.setMessage("Failed to receive checkpoint");
+                } else {
+                    if (grabCheckpoints().hasCheckpoint(raceMarshallBluetoothComponent.getReceivedCheckpoint().getCheckPointNumber())) {
+                        notifyBuilder.setMessage("You've received a checkpoint that you already have, Number: " + raceMarshallBluetoothComponent.getReceivedCheckpoint().getCheckPointNumber() + ". Do you want to override your version of the checkpoint?");
+                        notifyBuilder.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
 
+                            }
+                        });
+                        notifyBuilder.setNegativeButton("Override Checkpoint", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                grabCheckpoints().deleteCheckpoint(raceMarshallBluetoothComponent.getReceivedCheckpoint().getCheckPointNumber());
+                                grabCheckpoints().addCheckpoint(raceMarshallBluetoothComponent.getReceivedCheckpoint());
+                                grabCheckpoints().notifyObservers();
+                            }
+                        });
+                    } else {
+                        //Got the checkpoint fine, tell the user.
+                        notifyBuilder.setMessage("Received Checkpoint " + raceMarshallBluetoothComponent.getReceivedCheckpoint().getCheckPointNumber());
+                        grabCheckpoints().addCheckpoint(Objects.requireNonNull(raceMarshallBluetoothComponent.getReceivedCheckpoint()));
+                        grabCheckpoints().notifyObservers();
+                    }
+                }
             } else if (raceMarshallBluetoothComponent.isWriting()) {
                 raceMarshallBluetoothComponent.setWriting(false);
-                notifyBuilder.setMessage("Sent Checkpoint");
+                if (raceMarshallBluetoothComponent.isFailed()) {
+                    notifyBuilder.setMessage("Failed to send checkpoint");
+                } else {
+                    notifyBuilder.setMessage("Sent Checkpoint");
+                }
             }
             notifyDialog = notifyBuilder.create();
             notifyDialog.show();
@@ -99,7 +127,6 @@ public class SettingsFragment extends Fragment implements CheckpointGrabber {
      * These two are from a library that i'm using to scan for devices via bluetooth.
      */
     private void setupBluetoothServiceAndConfig() {
-        //TODO add code ensuring that there is bluetooth here.
 
         /* Configure bluetooth library from: https://github.com/douglasjunior/AndroidBluetoothLibrary
          * I'm using this as an easy way to find bluetooth devices. Because doing it manually is a pain.
@@ -235,10 +262,8 @@ public class SettingsFragment extends Fragment implements CheckpointGrabber {
                     //Will dismiss on its own, doesn't need help.
                 });
                 notifyBuilder.setOnDismissListener(dialogInterface -> {
-                    //TODO Figure out why this only works once.
                     raceMarshallBluetoothComponent.stopListening();
                     raceMarshallBluetoothComponent.stopConnection();
-                    raceMarshallBluetoothComponent.setReading(false);
                 });
 
                 Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
@@ -316,7 +341,7 @@ public class SettingsFragment extends Fragment implements CheckpointGrabber {
                 checkpointNumberStrings[countCheckpoints] = String.valueOf(item);
                 countCheckpoints++;
             }
-            askCheckpoint.setTitle("Select checkpoint to send");
+            askCheckpoint.setTitle(getString(R.string.select_send_checkpoint));
             askCheckpoint.setItems(checkpointNumberStrings, new DialogInterface.OnClickListener() { //transfers checkpoint on selection of an item.
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -324,7 +349,6 @@ public class SettingsFragment extends Fragment implements CheckpointGrabber {
                     Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
                         notifyBuilder.setMessage(getString(R.string.trying_get_checkpoint));
                         notifyBuilder.setPositiveButton(getString(R.string.cancel), (dialogInterface1, i1) -> {
-                            //TODO Make logic to stop an ongoing transfer in-action (so no "failed writing checkpoint" loop)
                             raceMarshallBluetoothComponent.stopConnecting();
                             raceMarshallBluetoothComponent.stopConnection();
                         });
@@ -461,9 +485,7 @@ public class SettingsFragment extends Fragment implements CheckpointGrabber {
             //creates the actions for the addNewCheckpoint button dialog.
             Button createButtonAction = toShow.getButton(DialogInterface.BUTTON_POSITIVE);
             createButtonAction.setOnClickListener(view1 -> {
-                //TODO add error checking here
                 TextView checkpointNumberTextBox = addNewCheckpointView.findViewById(R.id.newCheckpointNumber);
-
                 try {
                     int checkPointNumber = Integer.parseInt(checkpointNumberTextBox.getText().toString());
                     //errors to the user if the checkpoint already exists
