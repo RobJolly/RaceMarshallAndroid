@@ -150,13 +150,14 @@ public class MainActivity extends AppCompatActivity {
         final AlertDialog toShow = alertBuilder.create();
         toShow.show();
         //Code to select first box and bring up keyboard - and dismiss keyboard on close.
-        toShow.findViewById(R.id.numberOfRacers).requestFocus();
+        //removed for now as it doesn't function without bugs.
+        /*toShow.findViewById(R.id.numberOfRacers).requestFocus();
         InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
         toShow.setOnDismissListener(dialogInterface -> {
             InputMethodManager inputMethodManager1 = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
             inputMethodManager1.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-        });
+        });*/
 
         Button doneButton = toShow.getButton(DialogInterface.BUTTON_POSITIVE);
         doneButton.setOnClickListener(new View.OnClickListener() {

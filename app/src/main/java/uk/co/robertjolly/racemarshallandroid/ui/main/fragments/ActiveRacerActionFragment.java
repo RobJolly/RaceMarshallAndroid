@@ -25,6 +25,7 @@ import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
 import uk.co.robertjolly.racemarshallandroid.data.Racer;
 import uk.co.robertjolly.racemarshallandroid.data.SelectionsStateManager;
+import uk.co.robertjolly.racemarshallandroid.miscClasses.Vibrate;
 import uk.co.robertjolly.racemarshallandroid.ui.main.CheckpointGrabber;
 import uk.co.robertjolly.racemarshallandroid.ui.main.SelectionManagerGrabber;
 import uk.co.robertjolly.racemarshallandroid.ui.main.customElements.TimeButton;
@@ -89,19 +90,27 @@ public class ActiveRacerActionFragment extends Fragment implements SelectionMana
         setSelectedRacersText(view.findViewById(R.id.selectedRacersTextView));
         Button deselectAllButton = view.findViewById(R.id.deselectAllButton);
         deselectAllButton.setOnClickListener(view14 -> {
+            if (selectionsStateManager.getSelected().size() > 0) {
+                new Vibrate().pulse(getContext());
+            }
             selectionsStateManager.clearSelected();
             selectionsStateManager.notifyObservers();
         });
 
         Button outButton = view.findViewById(R.id.outButton);
         outButton.setOnClickListener(view13 -> {
+            if (selectionsStateManager.getSelected().size() > 0) {
+                new Vibrate().pulse(getContext());
+            }
            selectionsStateManager.setSelectedPassed(((TimeButton) Objects.requireNonNull(getActivity()).findViewById(R.id.timeButton)).getTime());
            selectionsStateManager.notifyObservers();
         });
 
         Button inButton = view.findViewById(R.id.inButton);
         inButton.setOnClickListener(view12 -> {
-
+            if (selectionsStateManager.getSelected().size() > 0) {
+                new Vibrate().pulse(getContext());
+            }
             selectionsStateManager.setSelectedIn(((TimeButton) Objects.requireNonNull(getActivity()).findViewById(R.id.timeButton)).getTime());
             selectionsStateManager.notifyObservers();
         });
@@ -199,10 +208,16 @@ public class ActiveRacerActionFragment extends Fragment implements SelectionMana
     private void doOtherDialogActions(OtherDialogOptions options) {
         switch (options) {
             case DROPPEDOUT:
+                if (selectionsStateManager.getSelected().size() > 0) {
+                    new Vibrate().pulse(getContext());
+                }
                 selectionsStateManager.setSelectedDroppedOut(((TimeButton) Objects.requireNonNull(getActivity()).findViewById(R.id.timeButton)).getTime());
                 selectionsStateManager.notifyObservers();
                 break;
             case DIDNOTSTART:
+                if (selectionsStateManager.getSelected().size() > 0) {
+                    new Vibrate().pulse(getContext());
+                }
                 selectionsStateManager.setSelectedNotStarted(((TimeButton) Objects.requireNonNull(getActivity()).findViewById(R.id.timeButton)).getTime());
                 selectionsStateManager.notifyObservers();
                 break;

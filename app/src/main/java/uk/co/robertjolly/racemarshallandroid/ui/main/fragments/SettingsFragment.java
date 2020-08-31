@@ -39,6 +39,7 @@ import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoint;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
 import uk.co.robertjolly.racemarshallandroid.miscClasses.RaceMarshallBluetoothComponent;
+import uk.co.robertjolly.racemarshallandroid.miscClasses.Vibrate;
 import uk.co.robertjolly.racemarshallandroid.ui.main.CheckpointGrabber;
 import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.MainTabsSectionsPagerAdapter;
 
@@ -77,7 +78,7 @@ public class SettingsFragment extends Fragment implements CheckpointGrabber {
         notifyDialog = notifyBuilder.create();
 
         //this is run when a new checkpoint has been added or a checkpoint has been transmitted.
-        raceMarshallBluetoothComponent.addObserver((observable, o) -> Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+        raceMarshallBluetoothComponent.addObserver((observable, o) -> Objects.requireNonNull(getActivity()).runOnUiThread(() -> { //this deals with the logic of what to tell the user after they've sent or received a checkpoint
             grabCheckpoints().notifyObservers();
             AlertDialog.Builder notifyBuilder = new AlertDialog.Builder(getContext());
             notifyDialog.dismiss();
@@ -119,6 +120,7 @@ public class SettingsFragment extends Fragment implements CheckpointGrabber {
             }
             notifyDialog = notifyBuilder.create();
             notifyDialog.show();
+            new Vibrate().pulse(getContext());
         }));
     }
 
