@@ -12,6 +12,7 @@
         android:layout_margin="2dp"
         android:gravity="center"
         android:text="@string/selected_racers_label_string"
+        android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/HorizontalGuideline15"
         app:layout_constraintEnd_toStartOf="@+id/VerticalGuideline45"
         app:layout_constraintStart_toStartOf="parent"

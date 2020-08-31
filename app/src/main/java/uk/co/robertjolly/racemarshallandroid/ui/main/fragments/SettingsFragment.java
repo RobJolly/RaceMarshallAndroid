@@ -224,6 +224,7 @@ public class SettingsFragment extends Fragment implements CheckpointGrabber {
         setDeleteCheckpointButton(view);
         setTransferCheckpointButton(view);
         setReceiveCheckpointButton(view);
+        setAboutButton(view);
         return view;
     }
 
@@ -375,7 +376,7 @@ public class SettingsFragment extends Fragment implements CheckpointGrabber {
         deleteAll.setOnClickListener(view1 -> {
             //This warning is to make sure that the user intended to delete everything.
             final AlertDialog.Builder warnUser = new AlertDialog.Builder(getContext());
-            String warningString = getString(R.string.delete_data_warning1) + grabCheckpoints().getNumberUnpassedOrUnreported() + getString(R.string.delete_data_warning2);
+            String warningString = getString(R.string.delete_data_warning1) + " " + grabCheckpoints().getNumberUnpassedOrUnreported() + " " + getString(R.string.delete_data_warning2);
             warnUser.setTitle(getString(R.string.warning));
             warnUser.setCancelable(true);
             warnUser.setMessage(warningString);
@@ -413,7 +414,7 @@ public class SettingsFragment extends Fragment implements CheckpointGrabber {
             dialogBuilder.setItems(checkpointNumberStrings, (dialogInterface, i) -> {
                 final AlertDialog.Builder doubleCheckBuilder = new AlertDialog.Builder(getActivity());
                 doubleCheckBuilder.setTitle(getString(R.string.are_you_sure));
-                doubleCheckBuilder.setMessage(getString(R.string.delete_checkpoint_warning_1) + checkpointNumberStrings[i] + getString(R.string.delete_checkpoint_warning2) + grabCheckpoints().getCheckpoint(possibilities.get(i)).getNumberUnreportedAndUnpassedRacers() + getString(R.string.delete_checkpoint_warning_3));
+                doubleCheckBuilder.setMessage(getString(R.string.delete_checkpoint_warning_1)+ checkpointNumberStrings[i] + getString(R.string.delete_checkpoint_warning2) + grabCheckpoints().getCheckpoint(possibilities.get(i)).getNumberUnreportedAndUnpassedRacers() + getString(R.string.delete_checkpoint_warning_3));
                 doubleCheckBuilder.setPositiveButton(getString(R.string.cancel), null);
                 final int selectedItem = i;
                 doubleCheckBuilder.setNegativeButton(getString(R.string.confirm), (dialogInterface1, i1) -> {
@@ -448,6 +449,18 @@ public class SettingsFragment extends Fragment implements CheckpointGrabber {
         });
     }
 
+    private void setAboutButton(View view) {
+        Button aboutButton = view.findViewById(R.id.aboutButton);
+        aboutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder aboutNoticeBuilder = new AlertDialog.Builder(getContext());
+                View aboutView = getLayoutInflater().inflate(R.layout.about_page, null);
+                aboutNoticeBuilder.setView(aboutView);
+                aboutNoticeBuilder.create().show();
+            }
+        });
+    }
     /**
      * This sets the actions of the set new checkpoint button. The purpose of this button is to allow
      * the user to create a new checkpoint

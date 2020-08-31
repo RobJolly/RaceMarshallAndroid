@@ -103,22 +103,20 @@ public class RaceGridViewAdapter extends BaseAdapter {
 
         final Button thisButton = new Button(mContext);
         //note, button size setting (next 3 lines) from: https://stackoverflow.com/questions/11010111/how-to-set-the-width-of-a-button-in-dp-during-runtime-in-android
-        final float scale = mContext.getResources().getDisplayMetrics().density;
-        thisButton.setWidth((int)(100 * scale));
+        final float scale = mContext.getResources().getDisplayMetrics().density; //this is a scaling factor - means buttons should be the same size on any device
+        thisButton.setWidth((int)(100 * scale)); //sets sizes of the button (100x100 should be fine, easily clickable)
         thisButton.setHeight((int)(100 * scale));
 
-        //ArrayList<Racer> toShow = getToShow();
-        //Prevents crash if button count too large and creates invisible 'buffer' buttons
-        if (i >= getToShow().size()) {
+        if (i >= getToShow().size()) { //Prevents crash if button count too large and creates invisible 'buffer' buttons
             thisButton.setVisibility(View.INVISIBLE);
         } else {
-            try {
+            try { //this colours the buttons
                 if (getSelectionsStateManager().isSelected(getToShow().get(i))) { //if button is selected - blue colour
                     thisButton.getBackground().setColorFilter(Color.BLUE, PorterDuff.Mode.MULTIPLY);
                 } else if (Objects.requireNonNull(getSelectionsStateManager().getSelectedCheckpoint()).getRacerData(getToShow().get(i)).getRaceTimes().getDroppedOutTime() != null) {
                     thisButton.getBackground().setColorFilter(Color.parseColor("#5E35B1"), PorterDuff.Mode.MULTIPLY);
                 } else if (getSelectionsStateManager().getSelectedCheckpoint().getRacerData(getToShow().get(i)).getRaceTimes().getNotStartedTime() != null) {
-                    thisButton.getBackground().setColorFilter(Color.parseColor("#5E35B1"), PorterDuff.Mode.MULTIPLY);
+                    thisButton.getBackground().setColorFilter(Color.parseColor("#311A5E"), PorterDuff.Mode.MULTIPLY);
                 } else if (getSelectionsStateManager().getSelectedCheckpoint().getRacerData(getToShow().get(i)).getRaceTimes().getOutTime() != null) {
                     thisButton.getBackground().setColorFilter(Color.parseColor("#D81B60"), PorterDuff.Mode.MULTIPLY);
                 } else if (getSelectionsStateManager().getSelectedCheckpoint().getRacerData(getToShow().get(i)).getRaceTimes().getInTime() != null) {

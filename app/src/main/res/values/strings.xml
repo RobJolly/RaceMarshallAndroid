@@ -78,5 +78,8 @@
     <string name="start_new_race">Start New Race</string>
     <string name="delete_all_new_race">Delete All (New Race)</string>
     <string name="select_send_checkpoint">Select checkpoint to send</string>
-
+    <string name="other">Other</string>
+    <string name="about">About</string>
+    <string name="version_number_1_0">Version Number: 1.0</string>
+    <string name="developer_robert_a_jolly">Developer: Robert A. Jolly</string>
 </resources>
