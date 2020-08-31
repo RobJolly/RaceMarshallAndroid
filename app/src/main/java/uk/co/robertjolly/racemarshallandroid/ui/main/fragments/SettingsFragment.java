@@ -122,7 +122,7 @@ public class SettingsFragment extends Fragment implements CheckpointGrabber {
                     deviceList.add(device);
                     if (deviceDialog != null) {
                         deviceDialog.dismiss();
-                        createAlertDialog();
+                        createTransferAlertDialog();
                     }
                 }
 
@@ -281,7 +281,7 @@ public class SettingsFragment extends Fragment implements CheckpointGrabber {
             } else { //user has everything enabled correctly. Start listening for a checkpoint.
                 service.startScan();
                 alertBuilder = new AlertDialog.Builder(getContext());
-                createAlertDialog();
+                createTransferAlertDialog();
             }
         });
     }
@@ -291,7 +291,7 @@ public class SettingsFragment extends Fragment implements CheckpointGrabber {
      * Starts scanning for a device and allows the user to pick which device to transmit data to
      * (and which checkpoint to send).
      */
-    private void createAlertDialog() {
+    private void createTransferAlertDialog() {
         //TODO Make this a recycle view
         /*
          *  As it's less complicated at this stage, i'm using a dialog. This is not ideal, as this dialog has to be
@@ -299,24 +299,41 @@ public class SettingsFragment extends Fragment implements CheckpointGrabber {
          *  irritating to the user.
          */
         String[] deviceNames = new String[deviceList.size()];
-        int count = 0;
+        int countDevices = 0;
         for (BluetoothDevice device : deviceList) {
-            deviceNames[count] = device.getName();
-            count++;
+            deviceNames[countDevices] = device.getName();
+            countDevices++;
         }
         alertBuilder.setItems(deviceNames, (dialogInterface, i) -> {
+            service.stopScan(); //stops re-freshing the list while user is selecting checkpoint.
+            int selectedDevice = i;
 
-            raceMarshallBluetoothComponent.startConnecting(deviceList.get(i), uuidReceive);
-            Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
-                notifyBuilder.setMessage(getString(R.string.trying_get_checkpoint));
-                notifyBuilder.setPositiveButton(getString(R.string.cancel), (dialogInterface1, i1) -> {
-                    raceMarshallBluetoothComponent.stopConnecting();
-                    raceMarshallBluetoothComponent.stopConnection();
-                });
-                notifyDialog = notifyBuilder.create();
-                notifyDialog.show();
+            AlertDialog.Builder askCheckpoint = new AlertDialog.Builder(getContext()); //this asks the user for the checkpoint info.
+            final ArrayList<Integer> possibilities = grabCheckpoints().getCheckpointNumberList();
+            CharSequence[] checkpointNumberStrings = new CharSequence[possibilities.size()];
+            int countCheckpoints = 0;
+            for (int item : possibilities) {
+                checkpointNumberStrings[countCheckpoints] = String.valueOf(item);
+                countCheckpoints++;
+            }
+            askCheckpoint.setTitle("Select checkpoint to send");
+            askCheckpoint.setItems(checkpointNumberStrings, new DialogInterface.OnClickListener() { //transfers checkpoint on selection of an item.
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    raceMarshallBluetoothComponent.startConnecting(deviceList.get(selectedDevice), uuidReceive, possibilities.get(i));
+                    Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+                        notifyBuilder.setMessage(getString(R.string.trying_get_checkpoint));
+                        notifyBuilder.setPositiveButton(getString(R.string.cancel), (dialogInterface1, i1) -> {
+                            //TODO Make logic to stop an ongoing transfer in-action (so no "failed writing checkpoint" loop)
+                            raceMarshallBluetoothComponent.stopConnecting();
+                            raceMarshallBluetoothComponent.stopConnection();
+                        });
+                        notifyDialog = notifyBuilder.create();
+                        notifyDialog.show();
+                    });
+                }
             });
-
+            askCheckpoint.create().show();
         });
         deviceDialog = alertBuilder.create();
         deviceDialog.show();

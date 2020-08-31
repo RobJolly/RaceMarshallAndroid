@@ -85,7 +85,7 @@ public class RaceMarshallBluetoothComponent extends Observable {
 
             if (bluetoothSocket != null) { //Bluetooth socket has now connected - can do stuff
                 Log.e("ACThread", "Attempting to create connector");
-                connected(bluetoothSocket);
+                connected(bluetoothSocket, 0);
             }
         }
 
@@ -106,11 +106,12 @@ public class RaceMarshallBluetoothComponent extends Observable {
      */
     private class connectionCreatorThread extends Thread {
         private BluetoothSocket bluetoothSocket;
-
-        public connectionCreatorThread(BluetoothDevice sentDevice, UUID sentUuid) {
+        private int checkpointNumber;
+        public connectionCreatorThread(BluetoothDevice sentDevice, UUID sentUuid, int checkpointNumber) {
             bluetoothDevice = sentDevice;
             deviceUUID = sentUuid;
             writing = true;
+            this.checkpointNumber = checkpointNumber;
             Log.i("Connection Thread", sentDevice.getName());
         }
 
@@ -138,7 +139,7 @@ public class RaceMarshallBluetoothComponent extends Observable {
                 }
             }
 
-            connected(bluetoothSocket);
+            connected(bluetoothSocket, checkpointNumber);
         }
 
         /**
@@ -198,13 +199,13 @@ public class RaceMarshallBluetoothComponent extends Observable {
      * @param bluetoothDevice Bluetooth device to connect
      * @param uuid UUID to connect
      */
-    public synchronized void startConnecting(BluetoothDevice bluetoothDevice, UUID uuid) {
+    public synchronized void startConnecting(BluetoothDevice bluetoothDevice, UUID uuid, int checkpointNumber) {
         stopListening();
 
         if (connectionCreatorThread != null) {
             connectionCreatorThread.cancel();
         }
-        connectionCreatorThread = new connectionCreatorThread(bluetoothDevice, uuid);
+        connectionCreatorThread = new connectionCreatorThread(bluetoothDevice, uuid, checkpointNumber);
         connectionCreatorThread.start();
         Log.i("Start Connecting", "Now Started Connection");
     }
@@ -217,12 +218,13 @@ public class RaceMarshallBluetoothComponent extends Observable {
         private final BluetoothSocket bluetoothSocket;
         private final ObjectOutputStream objectOutputStream;
         private final ObjectInputStream objectInputStream;
+        private int checkpointNumber;
 
         /**
          * Constructor for the connection thread (This handles the connected devices
          * @param bluetoothSocket Bluetooth socket of the connection
          */
-        public ConnectedThread(BluetoothSocket bluetoothSocket) {
+        public ConnectedThread(BluetoothSocket bluetoothSocket, int checkpointNumber) {
             this.bluetoothSocket = bluetoothSocket;
             InputStream tmpInputStream = null;
             OutputStream tmpOutputStream = null;
@@ -270,9 +272,9 @@ public class RaceMarshallBluetoothComponent extends Observable {
          */
         public void run() {
             if (writing) {
-                boolean sucsess = false;
-                while (!sucsess) {
-                    sucsess = send(checkpoints.getCheckpoint(checkpoints.getCurrentCheckpointNumber()));
+                boolean success = false;
+                while (!success) {
+                    success = send(checkpoints.getCheckpoint(checkpointNumber));
                 }
                 Log.i("Connected Thread", "Written to connected thread");
             } else {
@@ -331,8 +333,8 @@ public class RaceMarshallBluetoothComponent extends Observable {
      * Handles the connection
      * @param bluetoothSocket the bluetooth socket of the connected device
      */
-    private void connected(BluetoothSocket bluetoothSocket) {
-        connectedThread = new ConnectedThread(bluetoothSocket);
+    private void connected(BluetoothSocket bluetoothSocket, int checkpointNumber) {
+        connectedThread = new ConnectedThread(bluetoothSocket, checkpointNumber);
         try {
             connectedThread.start();
             Log.i("Connected", "Started connected thread");
