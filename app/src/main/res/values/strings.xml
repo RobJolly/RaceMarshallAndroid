@@ -39,7 +39,7 @@
     <string name="ask_bluetooth_enable">To use this feature, bluetooth must be enabled. Click Enable to enable bluetooth, or Cancel to keep it disabled.</string>
     <string name="enable">Enable</string>
     <string name="location_permission_missing">Sorry, you\'ve not activated the location permission. Without that, this can\'t work. If the popup to enable it didn\'t appear, please go to Settings -> Apps -> RaceMarshallAndroid to manually re-enable it. Otherwise, please try again.</string>
-    <string name="trying_get_checkpoint">Trying to send checkpoint. If this takes more than a few seconds, it has likely failed, and should be cancelled.</string>
+    <string name="trying_get_checkpoint">Trying to send checkpoint. If this takes more than a few seconds, it has likely failed, and should be cancelled. Please ensure that the other person has clicked the \'Receive Checkpoint\' button prior to you clicking this.</string>
     <string name="delete_data_warning1">This will delete all data. There are currently </string>
     <string name="delete_data_warning2"> unreported or unpassed racers.</string>
     <string name="warning">Warning:</string>
@@ -80,6 +80,6 @@
     <string name="select_send_checkpoint">Select checkpoint to send</string>
     <string name="other">Other</string>
     <string name="about">About</string>
-    <string name="version_number_1_0">Version Number: 1.0</string>
+    <string name="version_number_1_0">Version Number: 1.01</string>
     <string name="developer_robert_a_jolly">Developer: Robert A. Jolly</string>
 </resources>
