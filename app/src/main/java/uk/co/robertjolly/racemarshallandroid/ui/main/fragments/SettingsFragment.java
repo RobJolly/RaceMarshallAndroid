@@ -295,10 +295,9 @@ public class SettingsFragment extends Fragment implements CheckpointGrabber {
         //TODO Make this a recycle view
         /*
          *  As it's less complicated at this stage, i'm using a dialog. This is not ideal, as this dialog has to be
-         *  un and re-made everytime we find a new device. This would be impractical in crowded enviroments and is rather
+         *  un and re-made everytime we find a new device. This would be impractical in crowded environments and is rather
          *  irritating to the user.
          */
-
         String[] deviceNames = new String[deviceList.size()];
         int count = 0;
         for (BluetoothDevice device : deviceList) {
@@ -306,6 +305,7 @@ public class SettingsFragment extends Fragment implements CheckpointGrabber {
             count++;
         }
         alertBuilder.setItems(deviceNames, (dialogInterface, i) -> {
+
             raceMarshallBluetoothComponent.startConnecting(deviceList.get(i), uuidReceive);
             Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
                 notifyBuilder.setMessage(getString(R.string.trying_get_checkpoint));

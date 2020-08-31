@@ -111,7 +111,7 @@ public class RaceMarshallBluetoothComponent extends Observable {
             bluetoothDevice = sentDevice;
             deviceUUID = sentUuid;
             writing = true;
-            Log.e("Connected Thread: ", sentDevice.getName());
+            Log.i("Connection Thread", sentDevice.getName());
         }
 
         /**
@@ -128,6 +128,7 @@ public class RaceMarshallBluetoothComponent extends Observable {
 
             try {
                 bluetoothSocket.connect(); //This waits for a successful connection or fail.
+                Log.i("Connection Thread", "connected to the other device.");
             } catch (Exception e){
                 try {
                     Log.e("Error", "Failed to connect to the bluetooth socket");
@@ -159,6 +160,7 @@ public class RaceMarshallBluetoothComponent extends Observable {
         stopConnecting();
         listeningThread = new listeningThread();
         listeningThread.start();
+        Log.i("Start Listening", "Now Listening");
     }
 
     /**
@@ -167,6 +169,7 @@ public class RaceMarshallBluetoothComponent extends Observable {
     public synchronized void stopListening() {
         if (listeningThread != null) {
             listeningThread.cancel();
+            Log.i("Stop Listening", "Now Stopped Listening");
         }
     }
 
@@ -176,6 +179,7 @@ public class RaceMarshallBluetoothComponent extends Observable {
     public synchronized void stopConnecting() {
         if (connectionCreatorThread != null) {
             connectionCreatorThread.cancel();
+            Log.i("Stop Connecting", "Now Stopped Connecting");
         }
     }
 
@@ -185,6 +189,7 @@ public class RaceMarshallBluetoothComponent extends Observable {
     public synchronized void stopConnection() {
         if (connectedThread != null) {
             connectedThread.cancel();
+            Log.i("Stop Connection", "Now Stopped Connection");
         }
     }
 
@@ -201,6 +206,7 @@ public class RaceMarshallBluetoothComponent extends Observable {
         }
         connectionCreatorThread = new connectionCreatorThread(bluetoothDevice, uuid);
         connectionCreatorThread.start();
+        Log.i("Start Connecting", "Now Started Connection");
     }
 
     /**
@@ -242,15 +248,20 @@ public class RaceMarshallBluetoothComponent extends Observable {
                     Log.e("Error", "Could not create ObjectOutputStream");
                 }
             } else {
-                try {
-                    tmpObjectInputStream = new ObjectInputStream(inputStream);
-                } catch (IOException e) {
-                    Log.e("Error", "Could not create ObjectInputStream");
+                while (true) {
+                    try {
+                        tmpObjectInputStream = new ObjectInputStream(inputStream);
+                        break;
+                    } catch (IOException e) {
+                        Log.e("Error", "Could not create ObjectInputStream");
+                    }
                 }
+
             }
 
             objectOutputStream = tmpObjectOutputStream;
             objectInputStream = tmpObjectInputStream;
+            Log.i("Connected Thread", "Initialised Connected Thread");
         }
 
         /**
@@ -263,6 +274,7 @@ public class RaceMarshallBluetoothComponent extends Observable {
                 while (!sucsess) {
                     sucsess = send(checkpoints.getCheckpoint(checkpoints.getCurrentCheckpointNumber()));
                 }
+                Log.i("Connected Thread", "Written to connected thread");
             } else {
                 while (true) {
                     try {
@@ -271,9 +283,10 @@ public class RaceMarshallBluetoothComponent extends Observable {
                         checkpoints.addCheckpoint(checkpoint);
                         break;
                     } catch (Exception e) {
-                        Log.e("Error", "Failed to create a checkpoint from the input stream data");
+                        //Log.e("Error", "Failed to create a checkpoint from the input stream data");
                     }
                 }
+                Log.i("Connected Thread", "Read Connected Thread Successfully");
             }
 
             try {
@@ -303,7 +316,9 @@ public class RaceMarshallBluetoothComponent extends Observable {
          */
         public boolean send(Checkpoint checkpoint) {
             try {
+                Log.i("Send", "Writing Checkpoint");
                 objectOutputStream.writeObject(checkpoint);
+                Log.i("Send", "Written Checkpoint");
                 return true;
             } catch (Exception e) {
                 Log.e("Error", "Failed writing checkpoint");
@@ -320,6 +335,7 @@ public class RaceMarshallBluetoothComponent extends Observable {
         connectedThread = new ConnectedThread(bluetoothSocket);
         try {
             connectedThread.start();
+            Log.i("Connected", "Started connected thread");
         } catch (Exception e) {
             Log.e("Error", " Failed to connect thread");
         }
