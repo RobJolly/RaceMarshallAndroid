@@ -7,7 +7,6 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -29,6 +28,7 @@ import java.util.Observer;
 //Projects own classes.
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoint;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
+import uk.co.robertjolly.racemarshallandroid.miscClasses.SaveAndLoadManager;
 import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.MainTabsSectionsPagerAdapter;
 
 /**
@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private Checkpoints checkpoints;
     private boolean showingDialog = false;
     private Observer askDialog;
+    private SaveAndLoadManager saveAndLoadManager;
 
     /**
      * Constructor for main activity. Initialises data.
@@ -62,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
      * Checkpoints data is loaded from file if available.
      */
     private void initialise() {
+        saveAndLoadManager = new SaveAndLoadManager(this);
         checkpoints = createRaceData();
         pagerAdapter = createPagerAdapter();
     }
@@ -71,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
      * @return the pagerAdapter that handles the tabs of the activity.
      */
     private MainTabsSectionsPagerAdapter createPagerAdapter() {
-        return new MainTabsSectionsPagerAdapter(this, getSupportFragmentManager(), getCheckpoints());
+        return new MainTabsSectionsPagerAdapter(this, getSupportFragmentManager(), getCheckpoints(), saveAndLoadManager);
     }
 
     /**
@@ -118,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
         within the Checkpoints object.
          */
         askDialog = (observable, o) -> {
-            saveData();
+            saveAndLoadManager.saveCheckpointData(getCheckpoints());
 
             if (!checkpoints.hasCheckpoints()) {
                 if (!showingDialog) {
@@ -236,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
      * @return Checkpoints, from file or new if none saved to file.
      */
     private Checkpoints createRaceData() {
-        Checkpoints loadedCheckpointData = loadCheckpoints();
+        Checkpoints loadedCheckpointData = saveAndLoadManager.loadCheckpoints();
 
         if (loadedCheckpointData != null) { //create default checkpoint data
             return loadedCheckpointData;
@@ -245,24 +247,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * This loads the checkpoints data from file if possible, returns null if not.
-     * @return Checkpoints loaded from file, or null if not managed.
-     */
-    @Nullable
-    private Checkpoints loadCheckpoints() {
-        try {
-            FileInputStream fileInputStream = this.openFileInput("checkpoints");
-            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-            Checkpoints readInCheckpoints = (Checkpoints) objectInputStream.readObject();
-            objectInputStream.close();
-            fileInputStream.close();
-            return readInCheckpoints;
-        } catch (Exception e) {
-            return null;
-        }
-
-    }
 
     /**
      * This sets the checkpoints stored within this activity to those provided.
@@ -270,18 +254,6 @@ public class MainActivity extends AppCompatActivity {
      */
     public void setCheckpoints(Checkpoints checkpoints) {
         this.checkpoints = checkpoints;
-    }
-
-    /**
-     * This saves the data to file. Returns true if successful, false if not.
-     * @return Returns true if successful, false if not.
-     */
-    public boolean saveData() {
-        try {
-            return getCheckpoints().writeToFile("checkpoints", this);
-        } catch (Exception e) {
-            return false;
-        }
     }
 
     /**

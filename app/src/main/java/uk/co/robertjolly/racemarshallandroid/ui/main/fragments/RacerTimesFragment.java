@@ -7,11 +7,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 //General/default java libraries: https://docs.oracle.com/javase/7/docs/api/index.html
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -25,7 +28,9 @@ import uk.co.robertjolly.racemarshallandroid.MainActivity;
 import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
 import uk.co.robertjolly.racemarshallandroid.data.TimesFilterManager;
+import uk.co.robertjolly.racemarshallandroid.miscClasses.SaveAndLoadManager;
 import uk.co.robertjolly.racemarshallandroid.ui.main.CheckpointGrabber;
+import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.MainTabsSectionsPagerAdapter;
 import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.RacerTimesRecyclerViewAdapter;
 import uk.co.robertjolly.racemarshallandroid.ui.main.customElements.CheckpointFab;
 
@@ -41,7 +46,8 @@ public class RacerTimesFragment extends Fragment implements Observer, Checkpoint
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         checkpoints = grabCheckpoints();
-        timesFilterManager = new TimesFilterManager();
+        timesFilterManager = new TimesFilterManager(grabSaveAndLoadManager());
+        timesFilterManager.addObserver((observable, o) -> grabSaveAndLoadManager().saveTimesFilterManagerData(getTimesFilterManager())); //saves timesFilterManager it when it changes
     }
 
     /**
@@ -65,9 +71,11 @@ public class RacerTimesFragment extends Fragment implements Observer, Checkpoint
         viewAdapter = new RacerTimesRecyclerViewAdapter(checkpoints, getFragmentManager(), timesFilterManager, getResources());
         recView.setAdapter(viewAdapter);
 
+        setSelectedCheckpointTextView(view);
         checkpointsObserver = (observable, o) -> {
             try {
                 Objects.requireNonNull(getActivity()).runOnUiThread(() -> Objects.requireNonNull(recView.getAdapter()).notifyDataSetChanged());
+                setSelectedCheckpointTextView(view);
             } catch (Exception e) {
                 Log.w("Warning", "Cold not notify the recycler view of the checkpoint update.");
             }
@@ -95,6 +103,11 @@ public class RacerTimesFragment extends Fragment implements Observer, Checkpoint
         });
 
         return view;
+    }
+
+    private void setSelectedCheckpointTextView(View view) {
+        TextView selectedCheckpoint = view.findViewById(R.id.selectedCheckpointTextView);
+        selectedCheckpoint.setText(getString(R.string.checkpoint_double_dot) + " " + checkpoints.getCurrentCheckpointNumber());
     }
 
 
@@ -133,5 +146,14 @@ public class RacerTimesFragment extends Fragment implements Observer, Checkpoint
     public void onSaveInstanceState(@NonNull Bundle outState) {
         //removeObservers(); //this deletes all observers before it's remade. Prevents continuously growing the number of observers on things such as screen rotation.
         super.onSaveInstanceState(outState);
+    }
+
+    /**
+     * This grabs the saveAndLoadManager from the MainTabsSectionsPagerAdapter, within the Activity.
+     * @return The saveAndLoadManager grabbed.
+     */
+    public SaveAndLoadManager grabSaveAndLoadManager() {
+        //This is fairly unsafe. But it's quick and works. Be careful with its use.
+        return ((MainTabsSectionsPagerAdapter) Objects.requireNonNull(((ViewPager) Objects.requireNonNull(getActivity()).findViewById(R.id.mainViewPager)).getAdapter())).getSaveAndLoadManager();
     }
 }

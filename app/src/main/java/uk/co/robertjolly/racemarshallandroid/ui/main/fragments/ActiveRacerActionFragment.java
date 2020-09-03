@@ -62,10 +62,11 @@ public class ActiveRacerActionFragment extends Fragment implements SelectionMana
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.active_racers_action_fragment, container, false);
         view.setElevation(12); //doesn't work when set in XML - I'm unsure why, but I should fix this later when I know.
-        if (savedInstanceState != null) {
+
+        if (savedInstanceState != null) { //this grabs the information in TimeButton that may have been stored from a previous instance
             try {
                 boolean hasTime = savedInstanceState.getBoolean("hasTime");
-                if (hasTime) {
+                if (hasTime) { //a time is stored, so let's grab the time data and set the timeButton.
                    long timeLong = savedInstanceState.getLong("timeOverriden");
                    TimeButton timeButton = view.findViewById(R.id.timeButton);
                    timeButton.setTimeSelected(new Date(timeLong));
@@ -76,45 +77,59 @@ public class ActiveRacerActionFragment extends Fragment implements SelectionMana
             }
         }
 
-        selectionsStateManager.addObserver((observable, o) -> {
+        selectionsStateManager.addObserver((observable, o) -> { //this is called when the selection is changed.
             try {
                 setSelectedRacersText(view.findViewById(R.id.selectedRacersTextView));
             } catch (Exception e) {
-                //TODO some kind of error here
+                Log.e("Error", "Failed to change selectedRacersText");
             }
-            view.findViewById(R.id.inButton).setEnabled(selectionsStateManager.areCompatibleIn());
-            view.findViewById(R.id.outButton).setEnabled(selectionsStateManager.areCompatableOut());
-            view.findViewById(R.id.otherActionButton).setEnabled(selectionsStateManager.areCompatableOther());
+            enableOrDisableActionButtons(view);
+            setSelectedCheckpointText(view);
+
         });
 
-        setSelectedRacersText(view.findViewById(R.id.selectedRacersTextView));
-        Button deselectAllButton = view.findViewById(R.id.deselectAllButton);
-        deselectAllButton.setOnClickListener(view14 -> {
-            if (selectionsStateManager.getSelected().size() > 0) {
-                new Vibrate().pulse(getContext());
-            }
-            selectionsStateManager.clearSelected();
-            selectionsStateManager.notifyObservers();
-        });
+        setSelectedCheckpointText(view);
 
-        Button outButton = view.findViewById(R.id.outButton);
-        outButton.setOnClickListener(view13 -> {
-            if (selectionsStateManager.getSelected().size() > 0) {
-                new Vibrate().pulse(getContext());
-            }
-           selectionsStateManager.setSelectedPassed(((TimeButton) Objects.requireNonNull(getActivity()).findViewById(R.id.timeButton)).getTime());
-           selectionsStateManager.notifyObservers();
-        });
+        setDeselectAllButton(view);
 
-        Button inButton = view.findViewById(R.id.inButton);
-        inButton.setOnClickListener(view12 -> {
-            if (selectionsStateManager.getSelected().size() > 0) {
-                new Vibrate().pulse(getContext());
-            }
-            selectionsStateManager.setSelectedIn(((TimeButton) Objects.requireNonNull(getActivity()).findViewById(R.id.timeButton)).getTime());
-            selectionsStateManager.notifyObservers();
-        });
+        setOutButton(view);
 
+        setInButton(view);
+
+        setOtherActionButton(view);
+
+        return view;
+    }
+
+    /**
+     * This enables or disables the action buttons based on the currently selected racers.
+     * E.g. if a racer has passed, the 'in' button being enabled wouldn't make sense, so it would be
+     * disabled.
+     * @param view the view that has been inflated
+     */
+    private void enableOrDisableActionButtons(View view) {
+        view.findViewById(R.id.inButton).setEnabled(selectionsStateManager.areCompatibleIn()); //Enable/Disable action buttons
+        view.findViewById(R.id.outButton).setEnabled(selectionsStateManager.areCompatableOut());
+        view.findViewById(R.id.otherActionButton).setEnabled(selectionsStateManager.areCompatableOther());
+    }
+
+    /**
+     * This sets the text that displays the currently selected checkpoint, to display the currently
+     * selected checkpoint.
+     * @param view the view that has been inflated.
+     */
+    //TODO Fix to use placeholders
+    private void setSelectedCheckpointText(View view) {
+        ((TextView) view.findViewById(R.id.currentCheckpointLabel)).setText(getString(R.string.checkpoint_double_dot) + " " + selectionsStateManager.getCheckpointSelected());
+    }
+
+    /**
+     * This sets the actions of the 'other' action button. Mainly, this displays the user a list of actions: either
+     * dropped out or did not start, with an additional cancel action. Some actions may be unavailable
+     * based on whether or not it would be sensible with the current state of selected racers.
+     * @param view the view that has been inflated
+     */
+    private void setOtherActionButton(View view) {
         Button otherActionButton = view.findViewById(R.id.otherActionButton);
         otherActionButton.setOnClickListener(view1 -> {
             final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
@@ -141,8 +156,55 @@ public class ActiveRacerActionFragment extends Fragment implements SelectionMana
             dialogBuilder.setItems(stringArray, (dialogInterface, i) -> doOtherDialogActions(optionsTypes.get(i)));
             dialogBuilder.show();
         });
+    }
 
-        return view;
+    /**
+     * This initialises the actions of the out-button - mainly, making it set the selected racers in
+     * selectionsStateManager as 'out' with the currently set time in the TimeButton.
+     * @param view the view that's been inflated
+     */
+    private void setOutButton(View view) {
+        Button outButton = view.findViewById(R.id.outButton);
+        outButton.setOnClickListener(view13 -> {
+            if (selectionsStateManager.getSelected().size() > 0) {
+                new Vibrate().pulse(getContext());
+            }
+           selectionsStateManager.setSelectedPassed(((TimeButton) Objects.requireNonNull(getActivity()).findViewById(R.id.timeButton)).getTime());
+           selectionsStateManager.notifyObservers();
+        });
+    }
+
+    /**
+     * This sets the actions of the deselect all button - mainly, deselecting all racers from
+     * selectionsStateManager if clicked.
+     * @param view the view that's been inflated
+     */
+    private void setDeselectAllButton(View view) {
+        setSelectedRacersText(view.findViewById(R.id.selectedRacersTextView));
+        Button deselectAllButton = view.findViewById(R.id.deselectAllButton);
+        deselectAllButton.setOnClickListener(view14 -> {
+            if (selectionsStateManager.getSelected().size() > 0) {
+                new Vibrate().pulse(getContext());
+            }
+            selectionsStateManager.clearSelected();
+            selectionsStateManager.notifyObservers();
+        });
+    }
+
+    /**
+     * This initialises the actions of the in-button - mainly, making it set the selected racers in
+     * selectionsStateManager as 'in' with the currently set time in the TimeButton.
+     * @param view the view that's been inflated
+     */
+    private void setInButton(View view) {
+        Button inButton = view.findViewById(R.id.inButton);
+        inButton.setOnClickListener(view12 -> {
+            if (selectionsStateManager.getSelected().size() > 0) {
+                new Vibrate().pulse(getContext());
+            }
+            selectionsStateManager.setSelectedIn(((TimeButton) Objects.requireNonNull(getActivity()).findViewById(R.id.timeButton)).getTime());
+            selectionsStateManager.notifyObservers();
+        });
     }
 
     /**
@@ -205,20 +267,26 @@ public class ActiveRacerActionFragment extends Fragment implements SelectionMana
         DROPPEDOUT, DIDNOTSTART, CANCEL
     }
 
+    /**
+     * This function handles the actions when the user has clicked on the 'other' actions dialog.
+     * Basically, it determines whether or not the user clicked dropped-out, did-not-start or cancel,
+     * and then does the actions associated with those buttons
+     * @param options possible options for the user to have clicked
+     */
     private void doOtherDialogActions(OtherDialogOptions options) {
         switch (options) {
-            case DROPPEDOUT:
+            case DROPPEDOUT: //Set selected racers to have dropped out
                 if (selectionsStateManager.getSelected().size() > 0) {
                     new Vibrate().pulse(getContext());
                 }
-                selectionsStateManager.setSelectedDroppedOut(((TimeButton) Objects.requireNonNull(getActivity()).findViewById(R.id.timeButton)).getTime());
+                selectionsStateManager.setSelectedDroppedOut(((TimeButton) Objects.requireNonNull(getActivity()).findViewById(R.id.timeButton)).getTime()); //get time from the TimeButton
                 selectionsStateManager.notifyObservers();
                 break;
-            case DIDNOTSTART:
+            case DIDNOTSTART: //set selected racers to have not started
                 if (selectionsStateManager.getSelected().size() > 0) {
                     new Vibrate().pulse(getContext());
                 }
-                selectionsStateManager.setSelectedNotStarted(((TimeButton) Objects.requireNonNull(getActivity()).findViewById(R.id.timeButton)).getTime());
+                selectionsStateManager.setSelectedNotStarted(((TimeButton) Objects.requireNonNull(getActivity()).findViewById(R.id.timeButton)).getTime()); //get time from the TimeButton
                 selectionsStateManager.notifyObservers();
                 break;
             case CANCEL:

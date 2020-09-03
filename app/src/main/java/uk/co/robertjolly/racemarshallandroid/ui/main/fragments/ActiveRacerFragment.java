@@ -20,12 +20,15 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 //General/default java libraries: https://docs.oracle.com/javase/7/docs/api/index.html
 import java.util.Objects;
+import java.util.Observable;
+import java.util.Observer;
 
 //Projects own classes.
 import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
 import uk.co.robertjolly.racemarshallandroid.data.DisplayFilterManager;
 import uk.co.robertjolly.racemarshallandroid.data.SelectionsStateManager;
+import uk.co.robertjolly.racemarshallandroid.miscClasses.SaveAndLoadManager;
 import uk.co.robertjolly.racemarshallandroid.ui.main.CheckpointGrabber;
 import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.MainTabsSectionsPagerAdapter;
 import uk.co.robertjolly.racemarshallandroid.ui.main.customElements.CheckpointFab;
@@ -37,6 +40,10 @@ import uk.co.robertjolly.racemarshallandroid.ui.main.customElements.CheckpointFa
 public class ActiveRacerFragment extends Fragment implements CheckpointGrabber {
     private SelectionsStateManager selectionsStateManager;
     private DisplayFilterManager displayFilterManager;
+
+    public ActiveRacerFragment() {
+        //saveAndLoadManager = grabSaveAndLoadManager();
+    }
 
     /**
      * This function is called upon the creation of the fragment, and is to initialise its data.
@@ -60,15 +67,25 @@ public class ActiveRacerFragment extends Fragment implements CheckpointGrabber {
                 Log.e("ERROR", "Failed to correctly obtain the SelectionsStateManager from the bundle. It has been reset with default values.");
             }
             try {
-                setDisplayFilterManager((DisplayFilterManager) savedInstanceState.get("displayFilterManager"));
+                setDisplayFilterManager((DisplayFilterManager) Objects.requireNonNull(savedInstanceState.get("displayFilterManager")));
             } catch (Exception e) { //something gone wrong with the bundle - go with the backup loading
-                setDisplayFilterManager(new DisplayFilterManager());
+
+                setDisplayFilterManager(new DisplayFilterManager(grabSaveAndLoadManager()));
                 Log.e("ERROR", "Failed to correctly obtain the DisplayFilterManager from the bundle. It has been reset with default values.");
             }
         } else {
             setSelectionsStateManager(new SelectionsStateManager(grabCheckpoints()));
-            setDisplayFilterManager(new DisplayFilterManager());
+            displayFilterManager = new DisplayFilterManager(grabSaveAndLoadManager());
+            //setDisplayFilterManager(new DisplayFilterManager(grabSaveAndLoadManager()));
         }
+
+        SaveAndLoadManager saveAndLoadManager = grabSaveAndLoadManager();
+        displayFilterManager.addObserver(new Observer() {
+            @Override
+            public void update(Observable observable, Object o) {
+                saveAndLoadManager.saveDisplayFilterManagerData(displayFilterManager);
+            }
+        });
         super.onCreate(savedInstanceState);
 
     }
@@ -122,6 +139,15 @@ public class ActiveRacerFragment extends Fragment implements CheckpointGrabber {
     public Checkpoints grabCheckpoints() {
         //This is fairly unsafe. But it's quick and works. Be careful with its use.
         return ((MainTabsSectionsPagerAdapter) Objects.requireNonNull(((ViewPager) Objects.requireNonNull(getActivity()).findViewById(R.id.mainViewPager)).getAdapter())).getCheckpoints();
+    }
+
+    /**
+     * This grabs the saveAndLoadManager from the MainTabsSectionsPagerAdapter, within the Activity.
+     * @return The saveAndLoadManager grabbed.
+     */
+    public SaveAndLoadManager grabSaveAndLoadManager() {
+        //This is fairly unsafe. But it's quick and works. Be careful with its use.
+        return ((MainTabsSectionsPagerAdapter) Objects.requireNonNull(((ViewPager) Objects.requireNonNull(getActivity()).findViewById(R.id.mainViewPager)).getAdapter())).getSaveAndLoadManager();
     }
 
     /**

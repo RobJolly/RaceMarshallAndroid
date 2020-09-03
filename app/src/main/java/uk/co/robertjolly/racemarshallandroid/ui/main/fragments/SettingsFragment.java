@@ -38,7 +38,10 @@ import java.util.UUID;
 import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoint;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
+import uk.co.robertjolly.racemarshallandroid.data.DisplayFilterManager;
+import uk.co.robertjolly.racemarshallandroid.data.TimesFilterManager;
 import uk.co.robertjolly.racemarshallandroid.miscClasses.RaceMarshallBluetoothComponent;
+import uk.co.robertjolly.racemarshallandroid.miscClasses.SaveAndLoadManager;
 import uk.co.robertjolly.racemarshallandroid.miscClasses.Vibrate;
 import uk.co.robertjolly.racemarshallandroid.ui.main.CheckpointGrabber;
 import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.MainTabsSectionsPagerAdapter;
@@ -382,7 +385,11 @@ public class SettingsFragment extends Fragment implements CheckpointGrabber {
             warnUser.setMessage(warningString);
             warnUser.setPositiveButton(R.string.cancel, null);
             warnUser.setNegativeButton(getString(R.string.delete_all), (dialogInterface, i) -> {
-                grabCheckpoints().clearCheckpointData();
+                grabSaveAndLoadManager().deleteDisplayFilterSave(); //deletes display filters file.
+                grabDisplayFilters().setFilterList(grabDisplayFilters().implementRacerFilters(grabSaveAndLoadManager()));  //deletes display filters file.
+                grabSaveAndLoadManager().deleteTimesFilterSave(); //deletes times filters file.
+                grabTimesFilterManager().setFilterList(grabTimesFilterManager().implementRacerFilters(grabSaveAndLoadManager())); //deletes display filters file.
+                grabCheckpoints().clearCheckpointData(); //clears checkpoints
                 grabCheckpoints().notifyObservers();
             });
             AlertDialog warnUserDialog = warnUser.create();
@@ -541,7 +548,21 @@ public class SettingsFragment extends Fragment implements CheckpointGrabber {
 
     }
 
-    /**
+    public DisplayFilterManager grabDisplayFilters() {
+        //This is a bit unsafe, but easy way of doing it.
+        return ((MainTabsSectionsPagerAdapter) Objects.requireNonNull(((ViewPager) Objects.requireNonNull(getActivity()).findViewById(R.id.mainViewPager)).getAdapter())).grabDisplayFilterManager();
+    }
+
+    public SaveAndLoadManager grabSaveAndLoadManager() {
+        //This is a bit unsafe, but easy way of doing it.
+        return ((MainTabsSectionsPagerAdapter) Objects.requireNonNull(((ViewPager) Objects.requireNonNull(getActivity()).findViewById(R.id.mainViewPager)).getAdapter())).getSaveAndLoadManager();
+    }
+
+    public TimesFilterManager grabTimesFilterManager() {
+        //This is a bit unsafe, but easy way of doing it.
+        return ((MainTabsSectionsPagerAdapter) Objects.requireNonNull(((ViewPager) Objects.requireNonNull(getActivity()).findViewById(R.id.mainViewPager)).getAdapter())).grabTimesFilterManager();
+    }
+     /**
      * This makes the phone request being discoverable via bluetooth for 120 seconds.
      */
     private void makeDiscoverable() {

@@ -1,6 +1,7 @@
 package uk.co.robertjolly.racemarshallandroid.data;
 
 //Open-source android libraries: https://source.android.com/. Apache 2.0.
+import android.content.Context;
 import android.content.res.Resources;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -10,14 +11,16 @@ import android.util.Log;
 import com.google.gson.annotations.SerializedName;
 
 //General/default java libraries: https://docs.oracle.com/javase/7/docs/api/index.html
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Observable;
-import javax.annotation.Nullable;
 
 //Projects own classes.
 import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.enums.RacerDisplayFilter;
+import uk.co.robertjolly.racemarshallandroid.miscClasses.SaveAndLoadManager;
 
 //TODO Implement a static array of racerDisplayFilters, so there's a consistent order - fewer bugs, less code.
 //TODO Implement saving/loaded of display filters.
@@ -32,18 +35,18 @@ public class DisplayFilterManager extends Observable implements Parcelable, Seri
      * Constructor for the DisplayFilterManager. Attempts to load from file, but if failed for any reason will default to having
      * two filters, Checked In and Unreported, selected.
      */
-    public DisplayFilterManager() {
-        filterList = implementRacerFilters();
+    public DisplayFilterManager(SaveAndLoadManager saveAndLoadManager) {
+        filterList = implementRacerFilters(saveAndLoadManager);
     }
 
     /**
      * Gets the list of filters
      * @return Loads the filters, if saved, failing that, will return with two default filters; CheckedIn and ToPass.
      */
-    public ArrayList<RacerDisplayFilter> implementRacerFilters() {
+    public ArrayList<RacerDisplayFilter> implementRacerFilters(SaveAndLoadManager saveAndLoadManager) {
         ArrayList<RacerDisplayFilter> returningList;
 
-        returningList = loadFilters();
+        returningList = saveAndLoadManager.loadDisplayFilters();
 
         if (returningList == null) {
             returningList = new ArrayList<>();
@@ -53,14 +56,7 @@ public class DisplayFilterManager extends Observable implements Parcelable, Seri
         return returningList;
     }
 
-    /**
-     * Loading function for the filters
-     * @return The stored list of filters, or null if cannot be found.
-     */
-    @Nullable
-    public ArrayList<RacerDisplayFilter> loadFilters() {
-        return null;
-    }
+
 
     /**
      * @return A boolean list of whether or not filters are in the list in order: TOPASS, CHECKEDIN, CHECKEDOUT, DROPPEDOUT, DIDNOTSTART
@@ -97,6 +93,10 @@ public class DisplayFilterManager extends Observable implements Parcelable, Seri
      */
     public ArrayList<RacerDisplayFilter> getFilterList() {
         return filterList;
+    }
+
+    public void setFilterList(ArrayList<RacerDisplayFilter> filterList) {
+        this.filterList = filterList;
     }
 
     /**
@@ -178,6 +178,7 @@ public class DisplayFilterManager extends Observable implements Parcelable, Seri
      * @param in Parcel from which to construct class
      */
     protected DisplayFilterManager(Parcel in) {
+        String filepath = in.readString();
         int arraySize = in.readInt();
         filterList = new ArrayList<>();
         for (int i = 0; i < arraySize; i++) { //using this rather than readArray as was having errors with readArray
@@ -220,5 +221,49 @@ public class DisplayFilterManager extends Observable implements Parcelable, Seri
         for (RacerDisplayFilter filter : filterList) {
             parcel.writeInt(filter.ordinal()); //write the enum as ordinal (Int)
         }
+    }
+
+
+    /**
+     * Function to write the contents of the displayFilterManager to its given filepath
+     * @param context context of app
+     * @return boolean,indicating whether not write was successful
+     */
+    public boolean writeToFile(String filepath, Context context) {
+        boolean writeSuccessful = false;
+        FileOutputStream fileOutputStream = null;
+        try {
+            fileOutputStream = context.openFileOutput(filepath, Context.MODE_PRIVATE);
+        } catch (Exception e) {
+            Log.e("Error", "Failed to write, couldn't open the given file. Error message: " + e.getMessage());
+        }
+
+        ObjectOutputStream objectOutputStream = null;
+        try {
+            if (fileOutputStream != null) { //if fileOutputStream couldn't be opened, no use trying
+                objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            }
+        } catch (Exception e) {
+            Log.e("Error", "Failed to write, couldn't open the object output stream. Error message: " + e.getMessage());
+        }
+
+        try {
+            if (objectOutputStream != null) { //if objectOutputStream couldn't be opened, no use trying
+                objectOutputStream.writeObject(this);
+                writeSuccessful = true; //write has been completed, change this so it indicates so.
+            }
+        } catch (Exception e) {
+            Log.e("Error", "Failed to object to the object output stream. Error message: " + e.getMessage());
+        }
+
+        try {
+            if (fileOutputStream != null) { //if fileOutputStream couldn't be opened, no use trying to close
+                fileOutputStream.close();
+            }
+        } catch (Exception e) {
+            Log.e("Error", "Failed to close file output stream. Error message: " + e.getMessage());
+        }
+
+        return writeSuccessful;
     }
 }

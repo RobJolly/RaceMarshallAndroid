@@ -13,7 +13,11 @@ import androidx.fragment.app.FragmentPagerAdapter;
 //Projects own classes.
 import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.Checkpoints;
+import uk.co.robertjolly.racemarshallandroid.data.DisplayFilterManager;
 import uk.co.robertjolly.racemarshallandroid.data.SelectionsStateManager;
+import uk.co.robertjolly.racemarshallandroid.data.TimesFilterManager;
+import uk.co.robertjolly.racemarshallandroid.miscClasses.SaveAndLoadManager;
+import uk.co.robertjolly.racemarshallandroid.ui.main.fragments.ActiveRacerActionFragment;
 import uk.co.robertjolly.racemarshallandroid.ui.main.fragments.ActiveRacerFragment;
 import uk.co.robertjolly.racemarshallandroid.ui.main.fragments.SettingsFragment;
 import uk.co.robertjolly.racemarshallandroid.ui.main.fragments.RacerTimesFragment;
@@ -26,11 +30,11 @@ public class MainTabsSectionsPagerAdapter extends FragmentPagerAdapter {
 
     @StringRes
     private final int[] TAB_TITLES = new int[]{R.string.tab_text_1, R.string.tab_text_2, R.string.tab_text_3};
-    private final Fragment[] mFragmentList = getFragments();
+    private final Fragment[] mFragmentList;
     private final Context mContext;
     private Checkpoints checkpoints;
     private SelectionsStateManager selectionsStateManager;
-
+    private SaveAndLoadManager saveAndLoadManager;
     /**
      * Constructor for the fragment page adapter.
      *
@@ -38,8 +42,10 @@ public class MainTabsSectionsPagerAdapter extends FragmentPagerAdapter {
      * @param fm fragment manager
      * @param checkpoints checkpoints which will be sent and grabbed from all over the app.
      */
-    public MainTabsSectionsPagerAdapter(Context context, FragmentManager fm, Checkpoints checkpoints) {
+    public MainTabsSectionsPagerAdapter(Context context, FragmentManager fm, Checkpoints checkpoints, SaveAndLoadManager saveAndLoadManager) {
         super(fm); //don't have a choice about using this.
+        this.saveAndLoadManager = saveAndLoadManager;
+        mFragmentList = getFragments();
         mContext = context;
         setCheckpoints(checkpoints);
         setSelectionsStateManager(new SelectionsStateManager(getCheckpoints()));
@@ -140,4 +146,15 @@ public class MainTabsSectionsPagerAdapter extends FragmentPagerAdapter {
         super.destroyItem(container, position, object);
     }
 
+    public DisplayFilterManager grabDisplayFilterManager() {
+        return ((ActiveRacerFragment) mFragmentList[0]).getDisplayFilterManager();
+    }
+
+    public TimesFilterManager grabTimesFilterManager() {
+        return ((RacerTimesFragment) mFragmentList[1]).getTimesFilterManager();
+    }
+
+    public SaveAndLoadManager getSaveAndLoadManager() {
+        return saveAndLoadManager;
+    }
 }

@@ -1,5 +1,6 @@
 package uk.co.robertjolly.racemarshallandroid.data;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -7,21 +8,23 @@ import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Observable;
 
 import uk.co.robertjolly.racemarshallandroid.R;
-import uk.co.robertjolly.racemarshallandroid.data.enums.RacerDisplayFilter;
 import uk.co.robertjolly.racemarshallandroid.data.enums.RacerTimesFilter;
+import uk.co.robertjolly.racemarshallandroid.miscClasses.SaveAndLoadManager;
 
 public class TimesFilterManager extends Observable implements Parcelable, Serializable {
 
     @SerializedName("filterList")
     ArrayList<RacerTimesFilter> filterList;
 
-    public TimesFilterManager() {
-        filterList = implementRacerFilters();
+    public TimesFilterManager(SaveAndLoadManager saveAndLoadManager) {
+        filterList = implementRacerFilters(saveAndLoadManager);
     }
 
     protected TimesFilterManager(Parcel in) {
@@ -62,10 +65,10 @@ public class TimesFilterManager extends Observable implements Parcelable, Serial
      * Gets the list of filters
      * @return Loads the filters, if saved, failing that, will return with two default filters; Reported and Unreported.
      */
-    public ArrayList<RacerTimesFilter> implementRacerFilters() {
+    public ArrayList<RacerTimesFilter> implementRacerFilters(SaveAndLoadManager saveAndLoadManager) {
         ArrayList<RacerTimesFilter> returningList;
 
-        returningList = loadFilters();
+        returningList = saveAndLoadManager.loadTimesFilters();
 
         if (returningList == null) {
             returningList = new ArrayList<>();
@@ -73,10 +76,6 @@ public class TimesFilterManager extends Observable implements Parcelable, Serial
             returningList.add(RacerTimesFilter.UNREPORTED);
         }
         return returningList;
-    }
-
-    public ArrayList<RacerTimesFilter> loadFilters() {
-        return null;
     }
 
     /**
@@ -175,4 +174,50 @@ public class TimesFilterManager extends Observable implements Parcelable, Serial
         return shouldShow;
     }
 
+    public void setFilterList(ArrayList<RacerTimesFilter> filterList) {
+        this.filterList = filterList;
+    }
+
+    /**
+     * Function to write the contents of the timesFilterManager to its given filepath
+     * @param context context of app
+     * @return boolean,indicating whether not write was successful
+     */
+    public boolean writeToFile(String filepath, Context context) {
+        boolean writeSuccessful = false;
+        FileOutputStream fileOutputStream = null;
+        try {
+            fileOutputStream = context.openFileOutput(filepath, Context.MODE_PRIVATE);
+        } catch (Exception e) {
+            Log.e("Error", "Failed to write, couldn't open the given file. Error message: " + e.getMessage());
+        }
+
+        ObjectOutputStream objectOutputStream = null;
+        try {
+            if (fileOutputStream != null) { //if fileOutputStream couldn't be opened, no use trying
+                objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            }
+        } catch (Exception e) {
+            Log.e("Error", "Failed to write, couldn't open the object output stream. Error message: " + e.getMessage());
+        }
+
+        try {
+            if (objectOutputStream != null) { //if objectOutputStream couldn't be opened, no use trying
+                objectOutputStream.writeObject(this);
+                writeSuccessful = true; //write has been completed, change this so it indicates so.
+            }
+        } catch (Exception e) {
+            Log.e("Error", "Failed to object to the object output stream. Error message: " + e.getMessage());
+        }
+
+        try {
+            if (fileOutputStream != null) { //if fileOutputStream couldn't be opened, no use trying to close
+                fileOutputStream.close();
+            }
+        } catch (Exception e) {
+            Log.e("Error", "Failed to close file output stream. Error message: " + e.getMessage());
+        }
+
+        return writeSuccessful;
+    }
 }

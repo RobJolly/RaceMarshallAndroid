@@ -1,15 +1,22 @@
 package uk.co.robertjolly.racemarshallandroid.miscClasses;
 
+//Open-source android libraries: https://source.android.com/. Apache 2.0.
 import android.content.Context;
 import android.os.Build;
-import android.os.Parcelable;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
 
-import static androidx.core.content.ContextCompat.getSystemService;
-
+/**
+ * This is a class that i'm using to hold the 'pulse' command. If I want to do anything more
+ * complicated with vibrations, I would add it to this section.
+ */
 public class Vibrate {
+
+    /**
+     * This creates a simple 250ms vibration, in a single pulse.
+     * @param context The context of the view calling it
+     */
     public void pulse(Context context) {
         try {
             final int vibrationTime = 250;
