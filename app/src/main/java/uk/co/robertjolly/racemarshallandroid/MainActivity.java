@@ -87,10 +87,8 @@ public class MainActivity extends AppCompatActivity {
             try {
                 setCheckpoints((Checkpoints) savedInstanceState.get("checkpoints"));
             } catch (Exception e) { //something clearly gone wrong with the bundle/bad bundle input
-                setCheckpoints(createRaceData());
+                Log.e("ERROR", "onCreate of MainActivity has been passed a bad bundle. Checkpoints cannot be retrieved.");
             }
-        } else {
-            setCheckpoints(createRaceData());
         }
 
         setContentView(R.layout.activity_main);
