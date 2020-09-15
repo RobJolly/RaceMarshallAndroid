@@ -85,7 +85,6 @@ public class ActiveRacerActionFragment extends Fragment implements SelectionMana
             }
             enableOrDisableActionButtons(view);
             setSelectedCheckpointText(view);
-
         });
 
         setSelectedCheckpointText(view);

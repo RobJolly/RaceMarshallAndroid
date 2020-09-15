@@ -17,7 +17,6 @@ import uk.co.robertjolly.racemarshallandroid.data.DisplayFilterManager;
 import uk.co.robertjolly.racemarshallandroid.data.SelectionsStateManager;
 import uk.co.robertjolly.racemarshallandroid.data.TimesFilterManager;
 import uk.co.robertjolly.racemarshallandroid.miscClasses.SaveAndLoadManager;
-import uk.co.robertjolly.racemarshallandroid.ui.main.fragments.ActiveRacerActionFragment;
 import uk.co.robertjolly.racemarshallandroid.ui.main.fragments.ActiveRacerFragment;
 import uk.co.robertjolly.racemarshallandroid.ui.main.fragments.SettingsFragment;
 import uk.co.robertjolly.racemarshallandroid.ui.main.fragments.RacerTimesFragment;

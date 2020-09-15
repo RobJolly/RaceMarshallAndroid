@@ -115,7 +115,7 @@ public class ActiveRacerFragment extends Fragment implements CheckpointGrabber {
             dialogBuilder.setTitle(R.string.filter_racers);
             dialogBuilder.setCancelable(true);
 
-            //Multi choice dialog. So users can pick from many.
+            //Multi choice dialog. So users can pick from many filters, additively.
             //TODO If it can be figured out, set the colours of the items within this dialog, to correspond with the colours of their respective racers in the activeRacerDisplay fragment
             dialogBuilder.setMultiChoiceItems(getDisplayFilterManager().getFilterNames(getResources()), getDisplayFilterManager().getBooleanFilterList(), (dialogInterface, i, b) -> {
                 getDisplayFilterManager().changeFilter(i, b);

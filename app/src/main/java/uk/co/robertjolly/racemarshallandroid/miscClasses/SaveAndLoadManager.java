@@ -1,6 +1,5 @@
 package uk.co.robertjolly.racemarshallandroid.miscClasses;
 
-import android.app.Activity;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
