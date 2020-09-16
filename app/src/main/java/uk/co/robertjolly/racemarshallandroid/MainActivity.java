@@ -37,7 +37,7 @@ import uk.co.robertjolly.racemarshallandroid.ui.main.adapters.MainTabsSectionsPa
 public class MainActivity extends AppCompatActivity {
 
     private MainTabsSectionsPagerAdapter pagerAdapter;
-    private Checkpoints checkpoints;
+    private Checkpoints checkpoints = new Checkpoints();
     private boolean showingDialog = false;
     private Observer askDialog;
     private SaveAndLoadManager saveAndLoadManager;
@@ -64,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
      */
     private void initialise() {
         saveAndLoadManager = new SaveAndLoadManager(this);
-        checkpoints = createRaceData();
         pagerAdapter = createPagerAdapter();
     }
 
@@ -83,6 +82,8 @@ public class MainActivity extends AppCompatActivity {
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        checkpoints = createRaceData();
+        pagerAdapter.setCheckpoints(checkpoints);
         if (savedInstanceState != null) {
             try {
                 setCheckpoints((Checkpoints) savedInstanceState.get("checkpoints"));

@@ -14,7 +14,6 @@ import uk.co.robertjolly.racemarshallandroid.data.DisplayFilterManager;
 import uk.co.robertjolly.racemarshallandroid.data.TimesFilterManager;
 import uk.co.robertjolly.racemarshallandroid.data.enums.RacerDisplayFilter;
 import uk.co.robertjolly.racemarshallandroid.data.enums.RacerTimesFilter;
-import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
 
 public class SaveAndLoadManager {
     MainActivity mainActivity;
@@ -30,6 +29,7 @@ public class SaveAndLoadManager {
         try {
             checkpoints.writeToFile("checkpoints", mainActivity);
         } catch (Exception e) {
+            e.printStackTrace();
             Log.e("Error", "Failed to write checkpoint data to file");
         }
     }
@@ -48,6 +48,7 @@ public class SaveAndLoadManager {
             fileInputStream.close();
             return readInCheckpoints;
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }
