@@ -122,6 +122,9 @@ public class SaveAndLoadManager {
         }
     }
 
+    /**
+     * This deletes the saved file for the time's filters. This will permanently delete this data.
+     */
     public void deleteTimesFilterSave() {
         if (!mainActivity.getFileStreamPath("timesFilterManager").delete()) {
             Log.e("Error", "Failed to delete filter manager files");

@@ -258,6 +258,11 @@ public class RaceTimes implements Parcelable, Serializable {
         }
     }
 
+    /**
+     * This returns the time for a given time type.
+     * @param timeType The type of time you wish to get
+     * @return The time stored for that time type. May be null if it has not been set, or if no time of that type is stored.
+     */
     @Nullable
     public Date getTimeOfType(TimeTypes timeType) {
         switch (timeType) {
@@ -275,6 +280,10 @@ public class RaceTimes implements Parcelable, Serializable {
         }
     }
 
+    /**
+     * This clears the time of a given time type. This will not set it to a default value, but rather, null.
+     * @param type The type of the time to clear
+     */
     public void clearTime(TimeTypes type) {
         switch (type) {
             case IN:

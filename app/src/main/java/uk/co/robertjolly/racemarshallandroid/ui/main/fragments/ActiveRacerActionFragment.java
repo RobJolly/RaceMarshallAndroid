@@ -119,7 +119,12 @@ public class ActiveRacerActionFragment extends Fragment implements SelectionMana
      */
     //TODO Fix to use placeholders
     private void setSelectedCheckpointText(View view) {
-        ((TextView) view.findViewById(R.id.currentCheckpointLabel)).setText(getString(R.string.checkpoint_double_dot) + " " + selectionsStateManager.getCheckpointSelected());
+        try {
+            ((TextView) view.findViewById(R.id.currentCheckpointLabel)).setText(getString(R.string.checkpoint_double_dot) + " " + selectionsStateManager.getCheckpointSelected());
+        } catch (Exception e) {
+            Log.e("ERROR", "Failed to change checkpoint text. Most Likely Bad Observer.");
+        }
+
     }
 
     /**

@@ -10,7 +10,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,8 +20,6 @@ import androidx.annotation.NonNull;
 import com.google.android.material.tabs.TabLayout;
 
 //General/default java libraries: https://docs.oracle.com/javase/7/docs/api/index.html
-import java.io.FileInputStream;
-import java.io.ObjectInputStream;
 import java.util.Observer;
 
 //Projects own classes.

@@ -236,6 +236,10 @@ public class ReportedRaceTimes implements Parcelable, Serializable {
         }
     };
 
+    /**
+     * This clears the time stored for a given time type.
+     * @param type the type of the time to clear
+     */
     public void clearTime(TimeTypes type) {
         getRaceTimes().clearTime(type);
         getReportedItems().setReportedItem(type, false);

@@ -448,8 +448,8 @@ public class SettingsFragment extends Fragment implements CheckpointGrabber {
             //This means that storing all data, through email or whatever other method the user wishes to use, is possible.
             Intent sendIntent = new Intent();
             sendIntent.setAction(Intent.ACTION_SEND);
-            String test = new Gson().toJson(grabCheckpoints());
-            sendIntent.putExtra(Intent.EXTRA_TEXT, test); //I need a to-String or JSON creator here
+            String toExport = new Gson().toJson(grabCheckpoints());
+            sendIntent.putExtra(Intent.EXTRA_TEXT, toExport); //I need a to-String or JSON creator here
             sendIntent.setType("text/json");
             Intent shareIntent = Intent.createChooser(sendIntent, null);
             startActivity(shareIntent);
@@ -468,6 +468,7 @@ public class SettingsFragment extends Fragment implements CheckpointGrabber {
             }
         });
     }
+
     /**
      * This sets the actions of the set new checkpoint button. The purpose of this button is to allow
      * the user to create a new checkpoint

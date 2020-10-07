@@ -28,6 +28,10 @@ import uk.co.robertjolly.racemarshallandroid.data.enums.TimeTypes;
 import uk.co.robertjolly.racemarshallandroid.miscClasses.Vibrate;
 import uk.co.robertjolly.racemarshallandroid.ui.main.customElements.ModifyTimeButton;
 
+/**
+ * This edit racer dialog fragment is designed to allow a
+ * given racer, at a given checkpoint, to have their times displayed and edited, individually.
+ */
 public class EditRacerDialogFragment extends DialogFragment {
     Checkpoints checkpoints;
     Racer racer;
@@ -37,13 +41,24 @@ public class EditRacerDialogFragment extends DialogFragment {
     ModifyTimeButton notStartedModifyButton;
     ArrayList<Observer> checkpointObservers = new ArrayList<>();
 
-
+    /**
+     * This is the constructor. Needs to be passed the checkpoints object, which contains all data and
+     * the racer it is to change. This will use the currently selected checkpoint to determine which
+     * to edit.
+     * @param checkpoints The checkpoints object, containing the racer
+     * @param racer The racer to edit in this fragment.
+     */
     public EditRacerDialogFragment(Checkpoints checkpoints, Racer racer) {
         this.checkpoints = checkpoints;
         this.racer = racer;
         setRetainInstance(true);
     }
 
+    /**
+     * This is ran upon the creation of this fragment.
+     * This will load data from a previous instance of this fragment, if it exists.
+     * @param savedInstanceState data from a previous instance of this fragment
+     */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         if (savedInstanceState != null) {
@@ -53,14 +68,28 @@ public class EditRacerDialogFragment extends DialogFragment {
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     * This method is responsible for creating the final view, and the actions,
+     * for showing to the user.
+     *
+     * This shall load all buttons, and initialise them with data.
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @SuppressLint("SetTextI18n") //for whatever reason, this is a thing. It doesn't seem to break anything.
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.edit_racer_fragment, container, false);
 
+        //Initialise the text telling the user which racer is being edited.
         TextView title = view.findViewById(R.id.racerDescriptionText);
         title.setText(getString(R.string.editing_racer) + racer.getRacerNumber());
+
+        //Initialise the times for the in, out, etc. buttons.
         inModifyButton = view.findViewById(R.id.inModifyTimeButton);
         inModifyButton.initialiseButton(checkpoints, racer, TimeTypes.IN);
 
@@ -73,6 +102,7 @@ public class EditRacerDialogFragment extends DialogFragment {
         notStartedModifyButton = view.findViewById(R.id.notStartedModifyTimeButton);
         notStartedModifyButton.initialiseButton(checkpoints, racer, TimeTypes.DIDNOTSTART);
 
+        //initialise and create actions for the clear buttons.
         Button clearInButton = view.findViewById(R.id.inClearTimeButton);
         clearInButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,9 +135,11 @@ public class EditRacerDialogFragment extends DialogFragment {
             }
         });
 
+        //Determine which buttons should be enabled, or not.
         RaceTimes timesToCheck = Objects.requireNonNull(checkpoints.getCurrentSelectedCheckpoint()).getRacerData(racer).getRaceTimes();
         enableOrDisableButtons(clearInButton, clearOutButton, clearDroppedOutButton, clearNotStartedButton, timesToCheck);
 
+        //Every time the checkpoints data changes, re-check which buttons should be enabled or disabled
         Observer checkpointsObserver = new Observer() {
             @Override
             public void update(Observable observable, Object o) {
@@ -117,6 +149,7 @@ public class EditRacerDialogFragment extends DialogFragment {
         checkpointObservers.add(checkpointsObserver);
         checkpoints.addObserver(checkpointsObserver);
 
+        //dismiss this DialogFragment on the click of the done button.
         Button doneButton = view.findViewById(R.id.finishedEditingButton);
         doneButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,9 +157,18 @@ public class EditRacerDialogFragment extends DialogFragment {
                 dismiss();
             }
         });
+
         return view;
     }
 
+    /**
+     * This function determines which buttons in the view should be enabled, or disabled, at a given time, and then enables or disables them.
+     * @param clearInButton the clear button for the in-time
+     * @param clearOutButton the clear button for the out-time
+     * @param clearDroppedOutButton the clear button for the dropped-out-time
+     * @param clearNotStartedButton the clear button for the not-started-time
+     * @param timesToCheck the times, which shall be used to determine which should be enabled or disabled
+     */
     private void enableOrDisableButtons(Button clearInButton, Button clearOutButton, Button clearDroppedOutButton, Button clearNotStartedButton, RaceTimes timesToCheck) {
         clearInButton.setEnabled(shouldBeEnabled(timesToCheck, TimeTypes.IN));
         clearOutButton.setEnabled(shouldBeEnabled(timesToCheck, TimeTypes.OUT));
@@ -134,9 +176,15 @@ public class EditRacerDialogFragment extends DialogFragment {
         clearNotStartedButton.setEnabled(shouldBeEnabled(timesToCheck, TimeTypes.DIDNOTSTART));
     }
 
+    /**
+     * This is designed to create a dialog asking the user if they're sure to clear a given time,
+     * and to do so if the user confirms they are.
+     *
+     * @param toCheck The time to clear.
+     */
     private void clearIfSure(TimeTypes toCheck) {
         AlertDialog.Builder checkBuilder = new AlertDialog.Builder(getContext());
-        String messageToShow = getString(R.string.are_you_sure_delete_the);
+        String messageToShow = getString(R.string.are_you_sure_delete_the); //Create the message to be shown to the user in dialog
         switch (toCheck) {
             case IN:
                 messageToShow = messageToShow + getString(R.string.checked_in_uncaps);
@@ -153,6 +201,8 @@ public class EditRacerDialogFragment extends DialogFragment {
                 Log.e("Error", "Attempting to clear a time type that is not handled");
         }
         messageToShow = messageToShow + " " + getString(R.string.time_question);
+
+        //tell the user if they've reported data about this time already.
         if (checkpoints.getCurrentSelectedCheckpoint().getRacerData(racer).getReportedItems().getReportedItem(toCheck)) {
             messageToShow = messageToShow + " " + getString(R.string.reported_time_already);
         }
@@ -160,15 +210,22 @@ public class EditRacerDialogFragment extends DialogFragment {
         checkBuilder.setNegativeButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                new Vibrate().pulse(getContext());
+                new Vibrate().pulse(getContext()); //clear the time and vibrate if user confirms action
                 checkpoints.clearRacerTime(checkpoints.getCurrentCheckpointNumber(), racer, toCheck);
                 checkpoints.notifyObservers();
             }
         });
         checkBuilder.setPositiveButton(getString(R.string.cancel), null);
-        checkBuilder.create().show();
+        checkBuilder.create().show(); //create the dialog
     }
 
+    /**
+     * This determines whether or a clear button should be enabled.
+     * It should be, if the time exists.
+     * @param timesToCheck The time for the racers that the dialog is editing
+     * @param typeToCheck The type of time that the specific button is supposed to be clearing
+     * @return True if the button should be enabled
+     */
     private boolean shouldBeEnabled(RaceTimes timesToCheck, TimeTypes typeToCheck) {
         return timesToCheck.getTimeOfType(typeToCheck) != null;
         /*switch (typeToCheck) {
@@ -196,7 +253,7 @@ public class EditRacerDialogFragment extends DialogFragment {
     @Override
     public void onDismiss(@NonNull DialogInterface dialog) {
         for (Observer observer : checkpointObservers) {
-            checkpoints.deleteObserver(observer);
+            checkpoints.deleteObserver(observer); //basically, clear all observers this dialog created when it's dismissed.
         }
         inModifyButton.removeObservers();
         outModifyButton.removeObservers();

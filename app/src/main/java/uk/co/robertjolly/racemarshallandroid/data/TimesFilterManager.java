@@ -18,6 +18,10 @@ import uk.co.robertjolly.racemarshallandroid.R;
 import uk.co.robertjolly.racemarshallandroid.data.enums.RacerTimesFilter;
 import uk.co.robertjolly.racemarshallandroid.miscClasses.SaveAndLoadManager;
 
+/**
+ * This class is designed to handle the filters for a racers reported items. E.g. if the racer has been
+ * reported, or unreported.
+ */
 public class TimesFilterManager extends Observable implements Parcelable, Serializable {
 
     @SerializedName("filterList")
@@ -147,6 +151,14 @@ public class TimesFilterManager extends Observable implements Parcelable, Serial
         }
     }
 
+    /**
+     * This determines if, for a given checkpoint, a racer should be shown, according to the filters stored
+     * within the class.
+     * Note: Filters are inclusive.
+     * @param checkpoint The checkpoint that the racer's data is contained in
+     * @param racer The racer to check if it should be shown
+     * @return A boolean, indicating whether or not, a racer should be shown. True if it should.
+     */
     public boolean shouldShow(Checkpoint checkpoint, Racer racer) {
         boolean shouldShow = false;
         for (RacerTimesFilter filter : filterList) {
@@ -174,6 +186,11 @@ public class TimesFilterManager extends Observable implements Parcelable, Serial
         return shouldShow;
     }
 
+    /**
+     * This sets the filters used for an object of this class.
+     * Note: Filters are inclusive.
+     * @param filterList An array list of the filters to apply.
+     */
     public void setFilterList(ArrayList<RacerTimesFilter> filterList) {
         this.filterList = filterList;
     }

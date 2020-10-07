@@ -98,6 +98,10 @@ public class CheckOffStateManager extends Observable {
         return toReport;
     }
 
+    /**
+     * This function is designed to remove the observers created by this class. This may be used to
+     * ensure that no observers are left over after an object of this class is no longer needed.
+     */
     public void removeObservers() {
         checkpoints.deleteObserver(checkpointsObserver);
         timesFilterManager.deleteObserver(timesFilterManagerObserver);

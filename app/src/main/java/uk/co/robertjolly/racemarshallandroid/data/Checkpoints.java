@@ -305,11 +305,24 @@ public class Checkpoints extends Observable implements Parcelable, Serializable 
         setChanged();
     }
 
+    /**
+     * This function sets a given time for a given racer from a given checkpoint.
+     * @param checkpointNumber Checkpoint number, of the number of the checkpoint that you wish to change
+     * @param racerToEdit The racer that you wish to change the time of
+     * @param timeTypeToEdit The type of time that you wish to edit (e.g. in, out, etc.)
+     * @param timeShown The time you wish to change the given time to.
+     */
     public void setRacerTime(int checkpointNumber, Racer racerToEdit, TimeTypes timeTypeToEdit, Date timeShown) {
         getCheckpoint(checkpointNumber).setTime(racerToEdit, timeTypeToEdit, timeShown);
         setChanged();
     }
 
+    /**
+     * This function clears the data for the given time type, that is held for a racers ReportedRaceTimes.
+     * @param checkpointNumber checkpoint number, of the checkpoint that you wish to change
+     * @param racer racer that you wish to change
+     * @param type the type of time that you wish to clear (e.g. in, out, etc.)
+     */
     public void clearRacerTime(int checkpointNumber, Racer racer, TimeTypes type) {
         getCheckpoint(checkpointNumber).getRacerData(racer).clearTime(type);
         setChanged();
